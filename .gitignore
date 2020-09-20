@@ -1,17 +1,5 @@
-.DS_Store
-node_modules/
-/dist/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+##ignore this file##
 九宫格解锁.html
+拖拽放置.html
 拖拽放置2.html
 vue表单与流程设计器.md
-
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
