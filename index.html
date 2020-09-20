@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>ortum</title>
+    <link rel="stylesheet" href="css/index.css">
+    <!-- 引入bootstrap css-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    
+    <script src="js/jquery.min.js"></script>
+    <!-- 引入bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
+    <script src="js/require.js" defer async="true"data-main="js/main" ></script>
+</head>
+<body>
+    <div id="ortum">
+        <div class="container no-gutters" style="max-width: 100%;">
+            <div class='row'>
+                <div class="col-2 p-0">
+                    <div style="text-align: center;font-weight: 800;letter-spacing: 5px;padding: 10px 0;">组件选择</div>
+                    <div id="ortum_left">
+    
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div id="ortum_body">
+                        
+                    </div>
+                </div>
+                <div class="col-2 no-gutters" style="height: 100vh;overflow: auto;padding-left:0;">
+                    <div style="text-align: center;font-weight: 800;letter-spacing: 5px;padding: 10px 0;">参数配置</div>
+                    <div id="ortum_right">
+                        <div class="accordion" id="accordionExample">
+                            <div class="card">
+                                <div class="card-header p-0" id="headingOne">
+                                    <button class="btn btn-block text-left btn-sm ortum_boot_btn_no_shadow"  type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        组件属性
+                                    </button>
+                                </div>
+                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                                    <div class="card-body" style="padding:0.8rem 0.5rem">
+                                        <div class="form-group">
+                                            <label for="ortum_property_defaultVal">默认值</label>
+                                            <input type="text" class="form-control form-control-sm" id="ortum_property_defaultVal">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ortum_property_verification">校验</label>
+                                            <input type="text" class="form-control form-control-sm" id="ortum_property_verification">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ortum_property_authority">权限</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority1" value="1" checked>
+                                                <label class="form-check-label" for="ortum_property_authority1">
+                                                    不可见
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority2" value="2">
+                                                <label class="form-check-label" for="ortum_property_authority2">
+                                                    只读
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority3" value="3">
+                                                <label class="form-check-label" for="ortum_property_authority3">
+                                                    可编辑
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority4" value="4">
+                                                <label class="form-check-label" for="ortum_property_authority4">
+                                                    必填
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ortum_property_placeholder">placeholder</label>
+                                            <input type="text" class="form-control form-control-sm" id="ortum_property_placeholder">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ortum_property_comStyle">CSS类</label>
+                                            <input type="text" class="form-control form-control-sm" id="ortum_property_comStyle">
+                                        </div>
+                                        <div class="ortum_poperty_splitLine"></div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" checked class="custom-control-input" id="ortum_property_hideLabel">
+                                                <label class="custom-control-label" for="ortum_property_hideLabel">隐藏标签</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="ortum_property_labelName">标签名称</label>
+                                            <input type="text" class="form-control form-control-sm" id="ortum_property_labelName">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="ortum_property_labelPosition">标签位置</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition1" value="topLeft" checked>
+                                                <label class="form-check-label" for="ortum_property_labelPosition1">
+                                                    顶部左边
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition2" value="topRight">
+                                                <label class="form-check-label" for="ortum_property_labelPosition2">
+                                                    顶部右边
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition3" value="rowLeft">
+                                                <label class="form-check-label" for="ortum_property_labelPosition3">
+                                                    同行左边
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition4" value="rowRight">
+                                                <label class="form-check-label" for="ortum_property_labelPosition4">
+                                                    同行左边
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ortum_property_labelPosition">标签宽度</label>
+                                            <input type="text" class="form-control form-control-sm" id="ortum_property_labelPosition">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ortum_property_labelCSS">标签CSS类</label>
+                                            <input type="text" class="form-control form-control-sm" id="ortum_property_labelCSS">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header p-0" id="headingTwo">
+                                    <button class="btn btn-block text-left btn-sm ortum_boot_btn_no_shadow" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                        父级组件①
+                                    </button>
+                                </div>
+                                <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
+                                    <div class="card-body">
+                                        待开发
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header p-0" id="headingThree">
+                                    <button class="btn btn-block text-left btn-sm ortum_boot_btn_no_shadow" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                                        父级组件②
+                                    </button>
+                                </div>
+                                <div id="collapseThree" class="collapse show" aria-labelledby="headingThree">
+                                    <div class="card-body">
+                                        待开发
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center" class="p-2">
+                        <button type="button" class="btn btn-outline-primary">保存</button>
+                        <button type="button" class="btn btn-outline-info">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <!-- <button onclick="findGloabl()">查看</button> -->
+
+    <!-- <form>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form> -->
+
+
+    <script src="index.js"></script>
+    
+
+</body>
+</html>
