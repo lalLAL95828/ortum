@@ -8,8 +8,6 @@ http://form.making.link/#/zh-CN/
 
 https://gitee.com/gavinzhulei/vue-form-making/
 
-
-
 ###### require.js
 
 http://www.ruanyifeng.com/blog/2012/11/require_js.html
