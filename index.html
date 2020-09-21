@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>ortum</title>
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
     <!-- 引入bootstrap css-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     
@@ -34,109 +35,111 @@
                 <div class="col-2 no-gutters" style="height: 100vh;overflow: auto;padding-left:0;">
                     <div style="text-align: center;font-weight: 800;letter-spacing: 5px;padding: 10px 0;">参数配置</div>
                     <div id="ortum_right">
-                        <div class="accordion" id="accordionExample">
+                        <div class="accordion">
                             <div class="card">
                                 <div class="card-header p-0" id="headingOne">
                                     <button class="btn btn-block text-left btn-sm ortum_boot_btn_no_shadow"  type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                         组件属性
                                     </button>
                                 </div>
-                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
-                                    <div class="card-body" style="padding:0.8rem 0.5rem">
-                                        <div class="form-group">
-                                            <label for="ortum_property_defaultVal">默认值</label>
-                                            <input type="text" class="form-control form-control-sm" id="ortum_property_defaultVal">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="ortum_property_verification">校验</label>
-                                            <input type="text" class="form-control form-control-sm" id="ortum_property_verification">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="ortum_property_authority">权限</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority1" value="1" checked>
-                                                <label class="form-check-label" for="ortum_property_authority1">
-                                                    不可见
-                                                </label>
+                                <form id="ortum_component_propertiesForm">
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                                        <div class="card-body" style="padding:0.8rem 0.5rem">
+                                            <div class="form-group">
+                                                <label for="ortum_property_defaultVal">默认值</label>
+                                                <input type="text" class="form-control form-control-sm" id="ortum_property_defaultVal">
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority2" value="2">
-                                                <label class="form-check-label" for="ortum_property_authority2">
-                                                    只读
-                                                </label>
+                                            <div class="form-group">
+                                                <label for="ortum_property_verification">校验</label>
+                                                <input type="text" class="form-control form-control-sm" id="ortum_property_verification">
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority3" value="3">
-                                                <label class="form-check-label" for="ortum_property_authority3">
-                                                    可编辑
-                                                </label>
+                                            <div class="form-group">
+                                                <label>权限</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_authority" id="ortum_property_authority1" value="1">
+                                                    <label class="form-check-label" for="ortum_property_authority1">
+                                                        不可见
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_authority" id="ortum_property_authority2" value="2">
+                                                    <label class="form-check-label" for="ortum_property_authority2">
+                                                        只读
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_authority" id="ortum_property_authority3" value="3">
+                                                    <label class="form-check-label" for="ortum_property_authority3">
+                                                        可编辑
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_authority" id="ortum_property_authority4" value="4">
+                                                    <label class="form-check-label" for="ortum_property_authority4">
+                                                        必填
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_authority4" value="4">
-                                                <label class="form-check-label" for="ortum_property_authority4">
-                                                    必填
-                                                </label>
+                                            <div class="form-group">
+                                                <label for="ortum_property_placeholder">placeholder</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_placeholder" id="ortum_property_placeholder">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="ortum_property_placeholder">placeholder</label>
-                                            <input type="text" class="form-control form-control-sm" id="ortum_property_placeholder">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="ortum_property_comStyle">CSS类</label>
-                                            <input type="text" class="form-control form-control-sm" id="ortum_property_comStyle">
-                                        </div>
-                                        <div class="ortum_poperty_splitLine"></div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-switch">
-                                                <input type="checkbox" checked class="custom-control-input" id="ortum_property_hideLabel">
-                                                <label class="custom-control-label" for="ortum_property_hideLabel">隐藏标签</label>
+                                            <div class="form-group">
+                                                <label for="ortum_property_cssClass">CSS类</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_cssClass" id="ortum_property_cssClass">
                                             </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="ortum_property_labelName">标签名称</label>
-                                            <input type="text" class="form-control form-control-sm" id="ortum_property_labelName">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="ortum_property_labelPosition">标签位置</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition1" value="topLeft" checked>
-                                                <label class="form-check-label" for="ortum_property_labelPosition1">
-                                                    顶部左边
-                                                </label>
+                                            <div class="ortum_poperty_splitLine"></div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" name="ortum_property_hideLabel" checked class="custom-control-input" id="ortum_property_hideLabel">
+                                                    <label class="custom-control-label" for="ortum_property_hideLabel">隐藏标签</label>
+                                                </div>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition2" value="topRight">
-                                                <label class="form-check-label" for="ortum_property_labelPosition2">
-                                                    顶部右边
-                                                </label>
+    
+                                            <div class="form-group">
+                                                <label for="ortum_property_labelName">标签名称</label>
+                                                <input type="text" class="form-control form-control-sm" id="ortum_property_labelName">
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition3" value="rowLeft">
-                                                <label class="form-check-label" for="ortum_property_labelPosition3">
-                                                    同行左边
-                                                </label>
+                                            
+                                            <div class="form-group">
+                                                <label>标签位置</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_labelPosition" id="ortum_property_labelPosition1" value="topLeft">
+                                                    <label class="form-check-label" for="ortum_property_labelPosition1">
+                                                        顶部左边
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_labelPosition" id="ortum_property_labelPosition2" value="topRight">
+                                                    <label class="form-check-label" for="ortum_property_labelPosition2">
+                                                        顶部右边
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_labelPosition" id="ortum_property_labelPosition3" value="rowLeft">
+                                                    <label class="form-check-label" for="ortum_property_labelPosition3">
+                                                        同行左边
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="ortum_property_labelPosition" id="ortum_property_labelPosition4" value="rowRight">
+                                                    <label class="form-check-label" for="ortum_property_labelPosition4">
+                                                        同行左边
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="authority" id="ortum_property_labelPosition4" value="rowRight">
-                                                <label class="form-check-label" for="ortum_property_labelPosition4">
-                                                    同行左边
-                                                </label>
+                                            <div class="form-group">
+                                                <label for="ortum_property_labelWidth">标签宽度</label>
+                                                <input type="text" class="form-control form-control-sm" id="ortum_property_labelWidth" name="ortum_property_labelWidth">
                                             </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_labelCSS">标签CSS类</label>
+                                                <input type="text" class="form-control form-control-sm" id="ortum_property_labelCSS" name="ortum_property_labelCSS">
+                                            </div>
+    
                                         </div>
-                                        <div class="form-group">
-                                            <label for="ortum_property_labelPosition">标签宽度</label>
-                                            <input type="text" class="form-control form-control-sm" id="ortum_property_labelPosition">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="ortum_property_labelCSS">标签CSS类</label>
-                                            <input type="text" class="form-control form-control-sm" id="ortum_property_labelCSS">
-                                        </div>
-
                                     </div>
-                                </div>
+                                </form>                      
                             </div>
                             <div class="card">
                                 <div class="card-header p-0" id="headingTwo">

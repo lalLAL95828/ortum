@@ -15,7 +15,7 @@ define(["require","Assist","Config","Global",'BootStrapAsider'],function(require
         createContainer && (container = $('<div class="container ortum_item"></div>'));
 
         let row = $(`
-            <div class="row ortum_item" data-col-num=2 style="background-color:#e6e6e6"></div>
+            <div class="row ortum_item" data-col-num=2></div>
         `)
         for(let i=0;i<$(row).attr('data-col-num');i++){
             // let col =$(`

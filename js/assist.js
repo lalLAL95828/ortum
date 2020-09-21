@@ -68,7 +68,15 @@ define(['require'],function(require){
         $("#ortum_shadow .ortum_shadow_deleteImg").off('click.delete').on('click.delete',deleteComponent);
 
         //TODO 在参数配置中配置
-        console.log($(this).prop('ortum_component_properties'))
+        let properiesObj = $(this).prop('ortum_component_properties')
+        let properiesType = $(this).prop('ortum_component_type')
+        switch(properiesType[0]){
+            case 'bootstrap':
+                require('BootStrapAsider').setProperties(properiesObj,properiesType[1],$(this));
+                break;
+            default:
+                break;
+        }
         return false;
     }
 

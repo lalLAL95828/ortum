@@ -75,8 +75,14 @@ define(['require','Assist','Global',"Config"],function(require,Assist,Global,Con
      * 设置组件属性
      * @param {*} properies 
      */
-    let setProperties = function(properies,type){
-        
+    let setProperties = function(properies,type,that){
+        switch(type){
+            case "input":
+                require('BootStrapInput').setProperties(properies,that);
+                break;
+            default:
+                break;
+        }
     }
 
     return {
