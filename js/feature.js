@@ -39,6 +39,10 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
 
         $(ortumLeft).append(ortumComponents)
         $(ortumBody).append(ortumField)
+
+        //事件监听注册
+        $('#ortum_import_file').on('change',importFileListen)
+        propertiesSetListen();
     }
     /**
      * 功能：创建可拖拽组件
@@ -169,11 +173,114 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
             $("body").unbind("mouseup.cancelContextMenu");
         });
     };
+    /**
+     * 功能：监听文件导入
+     * @param {*} e 
+     */
+    let importFileListen = function(e){
+        let FileList = $(this).prop('files');
+        let htmlFile = FileList[0];
+        if(FileList.length>2){
+            $('#ortum_tip_content').text("只能导入html和js文件！")
+            $('.ortum_tip').show();
+            setTimeout(function(){
+                $('.ortum_tip').hide();
+            },1000)
+            return false;
+        }
+        if(!htmlFile)return false;
+        // var name = htmlFile.name; //读取选中文件的文件名
+        // var size = htmlFile.size; //读取选中文件的大小
+        var reader = new FileReader(); 
+        reader.readAsText(htmlFile); 
+        reader.onload = function() {
+            let domArr = $(this.result);
+            // console.log(domArr)
+            for(let i of domArr){
+                // console.log($(domArr[i]))
+                if($(i).attr('id') =='ortum_body'){
+                    $('#ortum_field').removeClass("ortum_field_originState")
+                    $('#ortum_field').html($(i).find('#ortum_field').html())
+                }
+            }
+        }
+    }
+    /**
+     * 功能：监听文件导出
+     * @param {*} e 
+     */
+    let exportFileListen = function(e){
+        console.log(e)
+        let contentData=document.getElementById('ortum_body').outerHTML;
+        let urlObject = window.URL || window.webkitURL || window;
+        let export_blob = new Blob([contentData]);
+        // console.log(urlObject)
+        // console.log(export_blob)
+        let save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")//参考https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createElementNS
+        save_link.href = urlObject.createObjectURL(export_blob);
+        // urlObject.revokeObjectURL(save_link.href);//一般需要从内存中释放objectURL
+        save_link.download = "表单.html";
+        let ev = document.createEvent("MouseEvents");//原生实现一个点击事件
+        ev.initMouseEvent(
+            "click", true, false, window, 0, 0, 0, 0, 0
+            , false, false, false, false, 0, null
+            );
+        save_link.dispatchEvent(ev);
+    }
+    /**
+     * 功能：监听修改属性
+     */
+    let propertiesSetListen = function(){
+        $('#ortum_property_defaultVal').on('input',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('defaultVal',$(this).val())
+        })
+        //校验
+        $('#ortum_property_verification').on('input',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('verification',$(this).val())
+        })
+        //权限
+        $('input[name=ortum_property_authority]').on('click',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('authority',$(this).val())
+        })
+        //placeholder
+        $('#ortum_property_placeholder').on('input',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('placeholder',$(this).val())
+        })
+        //css类
+        $('#ortum_property_cssClass').on('input',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('cssClass',$(this).val())
+        })
+        //隐藏label
+        $('input[name=ortum_property_hideLabel]').on('click',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('hideLabel',$(this).val())
+        })
+        //label位置
+        $('input[name=ortum_property_labelPosition]').on('click',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelPosition',$(this).val())
+        })
+        //label名称
+        $('#ortum_property_labelName').on('input',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelName',$(this).val())
+        })
+        //label宽度
+        $('#ortum_property_labelWidth').on('input',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelWidth',$(this).val())
+        })
+        //labelCss
+        $('#ortum_property_labelCSS').on('input',function(){
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelCSS',$(this).val())
+        })   
+    }
 
     return {
         createContextMenuObj:createContextMenuObj,
         init:init,
         bindFeatureToOrtumField:bindFeatureToOrtumField,
         bindFeatureToComponents:bindFeatureToComponents,
+        
+
+        importFileListen,
+        propertiesSetListen,
+        exportFileListen,
     }
 })

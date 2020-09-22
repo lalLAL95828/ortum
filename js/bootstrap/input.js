@@ -4,12 +4,12 @@ define(["require","Assist","CreateDom","Global"],function(require,Assist,CreateD
         verification:"",//校验
         authority:"3",//权限
         placeholder:"请输入",
-        cssClass:"",//css类
+        cssClass:"col-10",//css类
         hideLabel:true,//是否隐藏标签
         labelName:"名称",//标签名称
         labelPosition:"rowLeft",//标签位置
         labelWidth:"",//标签宽度
-        labelCSS:"",//标签css类
+        labelCSS:"col-2",//标签css类
         
     }
 
@@ -28,7 +28,7 @@ define(["require","Assist","CreateDom","Global"],function(require,Assist,CreateD
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         $(outerDom).append($(`
-            <label class="col-2 col-form-label">名称</label>
+            <label class="col-form-label col-2">名称</label>
             <input type="text" name="${Assist.timestampName('input')}" class="form-control col-10" placeholder="请输入">
         `))
         $(outerDom).prop('ortum_component_properties',JSON.parse(JSON.stringify(component_properties)))
@@ -93,6 +93,7 @@ define(["require","Assist","CreateDom","Global"],function(require,Assist,CreateD
             return false;
         }
         let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties')
         switch(property){
             case "defaultVal":
                 $(globalComponent).find('input.form-control').eq(0).attr('value',val)
@@ -109,7 +110,9 @@ define(["require","Assist","CreateDom","Global"],function(require,Assist,CreateD
                 $(globalComponent).find('input.form-control').eq(0).attr('placeholder',val)
                 break; 
             case "cssClass":
-                $(globalComponent).find('input.form-control').eq(0).addClass(val)
+                // $(globalComponent).find('input.form-control').eq(0).addClass(val)
+                $(globalComponent).find('input.form-control').eq(0).attr('className',evenProperties.cssClass+" " + val)
+
                 break; 
             case "hideLabel":
                 //TODO 隐藏label
@@ -126,7 +129,8 @@ define(["require","Assist","CreateDom","Global"],function(require,Assist,CreateD
                 $(globalComponent).find('.col-form-label').eq(0).attr('width',val)
                 break; 
             case "labelCSS":
-                $(globalComponent).find('.col-form-label').eq(0).addClass(val)
+                // $(globalComponent).find('.col-form-label').eq(0).addClass(val)
+                $(globalComponent).find('.col-form-label').eq(0).attr('className',evenProperties.labelCSS+" " + val)
                 break;  
             default:
                 break;

@@ -7,7 +7,7 @@
     align-items: flex-start;
 }
 #ortum_field{
-    height:100vh;
+    height:calc(100vh - 40px);
     border: 1px solid gray;
     margin:auto;
     overflow:auto;
@@ -18,6 +18,24 @@
     text-align: center;
     line-height: 398px;
 }
+
+/* 表单操作 */
+#ortum_table_act{
+    display: flex;
+    flex-direction: row-reverse;
+    height: 40px;
+    align-items: center;
+}
+#ortum_table_act .ortum_tableAct_icon{
+    margin: 0 5px;
+    font-size: 20px;
+    color: #007bff;
+
+}
+#ortum_table_act .ortum_tableAct_icon:hover{
+    cursor: pointer;
+}
+
 
 /* 左侧组件 */
 .ortum_componentItem{
@@ -112,3 +130,13 @@
 }
 
 
+.ortum_tip{
+    position: absolute;
+    bottom:10px;
+    left: 0;
+    right: 0;
+    width: 300px;
+    z-index:2020;
+    margin: auto;
+    display: none;
+}

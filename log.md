@@ -23,3 +23,17 @@ https://popper.js.org/
 ###### 原生js阻止冒泡和默认事件
 
 http://caibaojian.com/javascript-stoppropagation-preventdefault.html
+
+
+
+
+
+
+
+###### 流程设计
+
+https://demo.bpmn.io/s/start
+
+https://www.cnblogs.com/fangnianqin/p/10882007.html
+
+http://flowchart.js.org/flowchart-latest.js
