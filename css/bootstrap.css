@@ -4,3 +4,7 @@
 }
 
 /* input */
+.ortum_boot_input_label_Right{
+    text-align: end;
+    display: block;
+}

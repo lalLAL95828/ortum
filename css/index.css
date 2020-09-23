@@ -140,3 +140,9 @@
     margin: auto;
     display: none;
 }
+
+
+/* 设置diaplay为none的类 */
+.ortum_display_NONE{
+    display: none!important;
+}

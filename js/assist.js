@@ -30,7 +30,9 @@ define(['require'],function(require){
 
         let delOrtumItem = $(this).parents('.ortum_item').eq(0)
         let nextOrtumItem = delOrtumItem.parents('.ortum_item').eq(0)
-       
+        
+        require('Global').ortum_edit_component = null;//清空正在编辑的组件
+        $('#ortum_collapseOne .form-group').show();//显示所有的可编辑属性
 
         delOrtumItem.remove();
         //删除后的下一步处理方式

@@ -252,7 +252,7 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
         })
         //隐藏label
         $('input[name=ortum_property_hideLabel]').on('click',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('hideLabel',$(this).val())
+            Global.ortum_edit_component && Global.ortum_edit_component.listen('hideLabel',$(this).prop("checked"))
         })
         //label位置
         $('input[name=ortum_property_labelPosition]').on('click',function(){
@@ -272,6 +272,33 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
         })   
     }
 
+    /**
+     * 功能: 设置右侧编辑属性的权限
+     */
+    let setEditPropertiesPurview = function(id, val){
+        
+        switch(val){
+            case 1: case "1"://不可见
+                $('#ortum_property_'+id).parents('.form-group').eq(0).hide();
+                break;
+            case 2: case "2"://只读
+                $('#ortum_property_'+id).parents('.form-group').eq(0).show();
+                $('#ortum_property_'+id).attr('disabled',"disabled")
+                break;
+            case 3: case "3"://可编辑
+                console.log($('#ortum_property_'+id).parents('.form-group').eq(0))
+                $('#ortum_property_'+id).parents('.form-group').eq(0).show();
+                break;
+            case 4: case "4"://必填
+                $('#ortum_property_'+id).parents('.form-group').eq(0).show();
+                //TODO
+                break;
+            default:
+                break
+        }
+
+    }
+
     return {
         createContextMenuObj:createContextMenuObj,
         init:init,
@@ -282,5 +309,6 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
         importFileListen,
         propertiesSetListen,
         exportFileListen,
+        setEditPropertiesPurview,
     }
 })
