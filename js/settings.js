@@ -1,4 +1,9 @@
-define(['Assist'],function(Assist){
+/* 
+
+设置全局属性
+
+*/
+define(['assist'],function(Assist){
     let menuListDataJSON;
     let menuListsData = [
     {

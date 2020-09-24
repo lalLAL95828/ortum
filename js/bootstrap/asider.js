@@ -1,5 +1,5 @@
 /* bootstrap的辅助函数 */
-define(['require','Assist','Global',"Config"],function(require,Assist,Global,Config){
+define(['require','assist','global',"settings"],function(require,Assist,Global,Settings){
 
     /**
      * grid 的col在未插入组件之前，默认的提示语
@@ -51,7 +51,7 @@ define(['require','Assist','Global',"Config"],function(require,Assist,Global,Con
             }
             
             //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-            require('CreateDom')[Config.menuListDataJSON[componentKey].createFn](this,Config.menuListDataJSON[componentKey].useType)
+            require('CreateDom')[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
             
             //把拖拽对象制空
             Global.ortumNowDragObj = null;

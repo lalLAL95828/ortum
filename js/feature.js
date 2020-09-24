@@ -1,16 +1,12 @@
-define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,CreateDom){
+define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
     /**
      * 功能：初始化函数
      * @param {*} mainId 
      */
     let init = function(mainId){
-        //可以创建的组件数组转Json
-        // Config.menuListDataJSON = Assist.toggleMapArr(Config.menuListsData)
-
         let ortumMain = document.getElementById(mainId)
         let ortumLeft = $(ortumMain).find('#ortum_left').eq(0);//左边部分
         let ortumBody = $(ortumMain).find('#ortum_body').eq(0);//中间部分
-
 
         let ortumComponents = document.createElement("div");
         ortumComponents.id = 'ortum_components';
@@ -25,7 +21,7 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
 
         //创建文档片段，一次传入多个doomappendChild
         let fragment = document.createDocumentFragment()
-        Config.menuListsData.forEach(element => {
+        Settings.menuListsData.forEach(element => {
             let item =createDragComponents(element);
             //此处的dom节点要做存储处理
             Global.ortumItem[element.key] = item;
@@ -61,11 +57,6 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
      * 功能：给可拖拽组件添加事件
      *  */
     let bindFeatureToComponents = function(ele){
-        // ele.onclick = function(){
-        //     console.log("你好")
-        //     debugger
-        // }
-
         ele.ondragstart = function(e){//我被拖动时，开始的那一刻
             Global.ortumNowDragObj = e.target;
             // console.log(Global.ortumNowDragObj);
@@ -95,8 +86,8 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
 
             //执行对应的生成组件的函数
-            CreateDom[Config.menuListDataJSON[componentKey].createFn](this,Config.menuListDataJSON[componentKey].useType)
-            //eval( CreateDom[Config.menuListDataJSON[componentKey].createFn]+ "("+ this +","+ Config.menuListDataJSON[componentKey].useType +")");
+            CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
+            //eval( CreateDom[Settings.menuListDataJSON[componentKey].createFn]+ "("+ this +","+ Settings.menuListDataJSON[componentKey].useType +")");
             
             // this.appendChild(Global.ortumNowDragObj.cloneNode(true))//深copy
             Global.ortumNowDragObj = null;
@@ -124,15 +115,15 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
 
         let leftChange =0;
         //120为最大宽度
-        if(xDis <=  (Config.contextMenuWidth +14)){
-            leftChange = xClientAxis-Config.contextMenuWidth-14;
+        if(xDis <=  (Settings.contextMenuWidth +14)){
+            leftChange = xClientAxis-Settings.contextMenuWidth-14;
         }else{
             leftChange =xClientAxis
         }
         let topChange =e.pageY;
         let targetHeight = parseFloat($(e.target).css('height'))//Feild的高度
-        if(e.clientY + Config.contextMenuMaxHeight-22 >=  targetHeight){
-            topChange = topChange - (e.clientY+Config.contextMenuMaxHeight-22-targetHeight);
+        if(e.clientY + Settings.contextMenuMaxHeight-22 >=  targetHeight){
+            topChange = topChange - (e.clientY+Settings.contextMenuMaxHeight-22-targetHeight);
         }
         if(Global.ortum_contextMenuObj){
             Global.ortum_contextMenuObj.style.top = topChange+'px';
@@ -143,12 +134,12 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
             ulObj.id= 'ortum_contextMenu';
             ulObj.style.top = topChange+'px';
             ulObj.style.left= leftChange + 'px';
-            ulObj.style.maxHeight = Config.contextMenuMaxHeight + "px";
-            ulObj.style.width = Config.contextMenuWidth + "px";
-            for(let i=0 ;i<Config.menuListsData.length;i++){
+            ulObj.style.maxHeight = Settings.contextMenuMaxHeight + "px";
+            ulObj.style.width = Settings.contextMenuWidth + "px";
+            for(let i=0 ;i<Settings.menuListsData.length;i++){
                 let liObj = document.createElement('li');
-                liObj.dataset.key = Config.menuListsData[i].key;
-                liObj.innerText = Config.menuListsData[i].name;
+                liObj.dataset.key = Settings.menuListsData[i].key;
+                liObj.innerText = Settings.menuListsData[i].name;
                 //阻止冒泡事件
                 $(liObj).on('click',function(e){
                     console.log(this.dataset.key)
@@ -276,7 +267,6 @@ define(["config","assist","Global",'CreateDom'],function(Config,Assist,Global,Cr
      * 功能: 设置右侧编辑属性的权限
      */
     let setEditPropertiesPurview = function(id, val){
-        
         switch(val){
             case 1: case "1"://不可见
                 $('#ortum_property_'+id).parents('.form-group').eq(0).hide();

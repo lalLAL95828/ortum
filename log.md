@@ -24,7 +24,9 @@ https://popper.js.org/
 
 http://caibaojian.com/javascript-stoppropagation-preventdefault.html
 
+###### requireJS的插件
 
+https://github.com/requirejs/text
 
 
 
@@ -37,3 +39,7 @@ https://demo.bpmn.io/s/start
 https://www.cnblogs.com/fangnianqin/p/10882007.html
 
 http://flowchart.js.org/flowchart-latest.js
+
+###### 虚拟dom
+
+https://www.bilibili.com/video/av41341063/

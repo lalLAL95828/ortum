@@ -1,4 +1,4 @@
-define(["require","Assist","CreateDom","Global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","CreateDom","global"],function(require,Assist,CreateDom,Global){
     let component_properties = {
         data:{
             defaultVal:"",//默认值
@@ -196,18 +196,21 @@ define(["require","Assist","CreateDom","Global"],function(require,Assist,CreateD
      */
     let setProperties = function(obj,that){
         $('#ortum_collapseOne .form-group').hide();//隐藏所有属性
-        for(let key in obj.data){
+        let data = obj.data;
+        let purview = obj.purview;
+
+        for(let key in data){
             //设置编辑属性权限
-            require('Feature').setEditPropertiesPurview(key,obj.purview[key]);
+            require('feature').setEditPropertiesPurview(key,purview[key]);
             switch(key){
                 case "authority":case "labelPosition"://checkbox
-                    $('input[name=ortum_property_'+ key +'][value='+obj[key]+']').prop("checked",true); 
+                    $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
                     break;
                 case "hideLabel"://开关
-                    $('input[name=ortum_property_'+ key +']').prop("checked",obj[key]); 
+                    $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
                     break;
                 default:
-                    $('#ortum_property_'+key).val(obj[key])
+                    $('#ortum_property_'+key).val(data[key])
                     break
             }
             // console.log(key)

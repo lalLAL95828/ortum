@@ -1,3 +1,9 @@
+/* 
+
+设置全局对象
+
+*/
+
 define([],function(){
     /* 全局对象 */
     let ortum_field;//components列表栏

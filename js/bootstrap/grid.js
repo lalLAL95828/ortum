@@ -1,4 +1,4 @@
-define(["require","Assist","Config","Global",'BootStrapAsider'],function(require,Assist,Config,Global,BootStrapAsider){
+define(["require","assist","settings","global",'BootStrapAsider'],function(require,Assist,Settings,Global,BootStrapAsider){
     /**
      * 功能：创建bootstrap的栅格系统
      */
