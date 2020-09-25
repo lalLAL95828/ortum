@@ -80,6 +80,9 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             case "input":
                 require('BootStrapInput').setProperties(properies,that);
                 break;
+            case "rangeInput":
+                require('BootStrapRangeInput').setProperties(properies,that);
+                break;
             default:
                 break;
         }

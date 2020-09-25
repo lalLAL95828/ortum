@@ -1,4 +1,5 @@
-define(["BootStrapGrid","BootStrapInput"],function(BootStrapGrid,BootStrapInput){
+define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput"],function(BootStrapGrid,BootStrapInput,BootStrapRangeInput){
+    // define(function(BootStrapGrid,BootStrapInput,BootStrapRangeInput){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -25,9 +26,24 @@ define(["BootStrapGrid","BootStrapInput"],function(BootStrapGrid,BootStrapInput)
 
         }
     }
+
+    /**
+     * 创建进度选择器
+     * @param {*} type 
+     */
+    let createRangeInputDom = function(parentDom,type){
+        switch(type){
+            case 'Bootstrap':
+                BootStrapRangeInput.RangeInputDom(parentDom)
+                break;
+            default:
+
+        }
+    }
     
     return {
         createGridDom,
         createInputDom,
+        createRangeInputDom
     }
 })

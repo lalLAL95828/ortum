@@ -2,10 +2,13 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     let component_properties = {
         data:{
             id:"",//id
-            defaultVal:"",//默认值
+            defaultVal:20,//默认值
+            maxValRange:100,//范围最大值
+            stepRange:1,
+            minValRange:0,
             verification:"",//校验
             authority:"3",//权限
-            placeholder:"请输入",
+            // placeholder:"请输入",
             cssClass:"form-control col-10",//css类
             hideLabel:false,//是否隐藏标签
             labelName:"名称",//标签名称
@@ -13,12 +16,15 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             labelWidth:"",//标签宽度
             labelCSS:"col-form-label col-2",//标签css类
         },
-        purview:{//属性编辑权限
+        purview:{//属性编辑权限{1:不可见,2:仅读,3:可编辑,4:必填}
             id:1,//id
             defaultVal:3,
+            maxValRange:3,
+            stepRange:3,
+            minValRange:3,
             verification:3,
             authority:3,//权限
-            placeholder:3,
+            // placeholder:3,
             cssClass:3,//css类
             hideLabel:3,//是否隐藏标签
             labelName:3,//标签名称
@@ -31,81 +37,36 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     /**
      * 功能：创建bootstrap的input
      */
-    let InputDom = function(parentDom){
+    let RangeInputDom = function(parentDom){
         let outerDom=$(
             `
             <div class="form-group ortum_item row" style="margin:0;padding-bottom:0.8rem">
-               
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        // $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         $(outerDom).append($(`
             <label class="col-form-label col-2">名称</label>
-            <input type="text" name="${Assist.timestampName('input')}" class="form-control col" placeholder="请输入">
+            <input type="range" class="form-control-range col" 
+                value="${component_properties.data.defaultVal}"
+                style="padding:0"
+                min="${component_properties.data.minValRange}"
+                step="${component_properties.data.stepRange}"
+                max="${component_properties.data.maxValRange}" name="${Assist.timestampName('rangeInput')}">
+            
         `))
         $(outerDom).prop('ortum_component_properties',JSON.parse(JSON.stringify(component_properties)))
-        $(outerDom).prop('ortum_component_type',['bootstrap','input']);
+        $(outerDom).prop('ortum_component_type',['bootstrap','rangeInput']);
 
         $(parentDom).append(outerDom);
-
     }
-
-    /**
-     * TODO 完善中
-     * 功能：重置bootstrap的input
-     */
-    let InputDomReset = function(outerDom){
-        
-        /* let properties = $(outerDom).prop('ortum_component_properties')
-        let nowValue = $(outerDom).val();
-        
-        let labelDom = $(outerDom).find('.col-form-label').eq(0);
-        let inputDom = $(outerDom).find('input.form-control').eq(0);
-        
-        //标签位置
-        switch(properties.labelPosition){
-            case 'topLeft':
-                break;
-            case 'topLeft':
-                break;
-            case 'rowLeft':
-                break;
-            case 'rowRight':
-                break;
-            default:
-                break;
-        }
-        //权限
-        switch(properties.authority){
-            case '1':
-                break;
-            case '2':
-                break;
-            case '3':
-                break;
-            case '4':
-                break;
-            default:
-                break;
-        }
-        $(inputDom).attr('placeholder',properties.placeholder)
-        $(inputDom).attr('value',properties.defaultVal)
-        $(inputDom).addClass(properties.cssClass);
-
-
-        $(labelDom).addClass(properties.labelCSS);
-        if(nowValue){
-            $(inputDom).val(nowValue)
-        } */
-    }
-
-    /**
+    
+     /**
      * 功能：实时设置input的值
      */
-    let setInputProperty = function(property,val){
+    let setRangeInputProperty = function(property,val){
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -223,14 +184,14 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         Global.ortum_edit_component={
             frame:"bootstrap",
             type:'input',
-            listen:setInputProperty,
+            listen:setRangeInputProperty,
             comObj:that,
         }
     };
 
     return {
-        InputDom,
-        InputDomReset,
+        RangeInputDom,
         setProperties,
+
     }
 })

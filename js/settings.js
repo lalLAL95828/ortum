@@ -16,6 +16,15 @@ define(['assist'],function(Assist){
         },
     },
     {
+        key:"RangeInputDom",
+        name:"进度选择器",
+        useType:"Bootstrap",
+        createFn:"createRangeInputDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
         key:"textareaDom",
         name:"多行文本",
         useType:"Bootstrap",

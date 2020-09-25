@@ -12,12 +12,17 @@ require.config({
         "BootStrapAsider":"bootstrap/asider",
         "BootStrapInput":"bootstrap/input",
         "BootStrapGrid":"bootstrap/grid",
+        "BootStrapRangeInput":"bootstrap/rangeInput",
         "CreateDom":"createDom",
     },
-    shim:{},//给不规则AMD格式插件使用
+    shim:{
+ 
+
+    },//给不规则AMD格式插件使用
     map:{//配置版本
        
     },
+    // deps:[],
 })
 require(['feature'],function(Feature){
     //【1】初始化
