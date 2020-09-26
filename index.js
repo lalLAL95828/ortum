@@ -8,8 +8,6 @@ function findGloabl(){
 
 let showTipSetTime;//定时器
 
-
-
 //初始化提示
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()

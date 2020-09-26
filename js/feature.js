@@ -1,3 +1,4 @@
+/* ortun的辅助函数 */
 define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
     /**
      * 功能：初始化函数
@@ -74,6 +75,22 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
         }
         ele.ondrop = function(e){
             if(!Global.ortumNowDragObj)return;
+
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+
+            //清空正在拖拽的对象
+            Global.ortumNowDragObj = null;
+            if(!CreateDom[Settings.menuListDataJSON[componentKey].createFn]){
+                $('#ortum_tip_content').text("火速赶制中！！！")
+                $('.ortum_tip').show();
+                setTimeout(function(){
+                    $('.ortum_tip').hide();
+                },1000)
+                return;
+            }
+
+
             e.preventDefault();//阻值浏览器对拖拽对象进行处理
             // var dropData = e.dataTransfer.getData("dragTarget");
 
@@ -81,16 +98,14 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
                 $(this).removeClass('ortum_field_originState')
                 this.innerHTML = "";
             }
-            // console.log(nowDragObj.toString())
-            //获取要创建的组件key
-            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
 
             //执行对应的生成组件的函数
             CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
+           
             //eval( CreateDom[Settings.menuListDataJSON[componentKey].createFn]+ "("+ this +","+ Settings.menuListDataJSON[componentKey].useType +")");
             
             // this.appendChild(Global.ortumNowDragObj.cloneNode(true))//深copy
-            Global.ortumNowDragObj = null;
+            
         }
 
         //右键事件
@@ -105,6 +120,7 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
     };
 
     /**
+     * //TODO
      * 功能：创建右键菜单
      *  */ 
     let createContextMenuObj = function (e){
@@ -222,45 +238,37 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
      * 功能：监听修改属性
      */
     let propertiesSetListen = function(){
-        $('#ortum_property_defaultVal').on('input',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('defaultVal',$(this).val())
+        //input事件
+        $('#ortum_collapseOne input').on('input',function(e){
+            let nameVal = $(this).attr('name')
+            if(nameVal){
+                let nameValArr = nameVal.split('_') || [];
+                nameValArr.length && Global.ortum_edit_component && 
+                Global.ortum_edit_component.inputEvent && 
+                Global.ortum_edit_component.inputEvent(nameValArr[nameValArr.length-1],$(this).val(),e)
+            }
+            
         })
-        //校验
-        $('#ortum_property_verification').on('input',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('verification',$(this).val())
+        //click事件
+        $('#ortum_collapseOne input').on('click',function(e){
+            let nameVal = $(this).attr('name')
+            if(nameVal){
+                let nameValArr = nameVal.split('_') || [];
+                nameValArr.length && Global.ortum_edit_component && 
+                Global.ortum_edit_component.clickEvent && 
+                Global.ortum_edit_component.clickEvent(nameValArr[nameValArr.length-1],$(this).val(),e);
+            }
         })
-        //权限
-        $('input[name=ortum_property_authority]').on('click',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('authority',$(this).val())
+        //blur事件
+        $('#ortum_collapseOne input').on('blur',function(e){
+            let nameVal = $(this).attr('name')
+            if(nameVal){
+                let nameValArr = nameVal.split('_') || [];
+                nameValArr.length && Global.ortum_edit_component && 
+                Global.ortum_edit_component.blurEvent && 
+                Global.ortum_edit_component.blurEvent(nameValArr[nameValArr.length-1],$(this).val(),e);
+            }
         })
-        //placeholder
-        $('#ortum_property_placeholder').on('input',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('placeholder',$(this).val())
-        })
-        //css类
-        $('#ortum_property_cssClass').on('input',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('cssClass',$(this).val())
-        })
-        //隐藏label
-        $('input[name=ortum_property_hideLabel]').on('click',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('hideLabel',$(this).prop("checked"))
-        })
-        //label位置
-        $('input[name=ortum_property_labelPosition]').on('click',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelPosition',$(this).val())
-        })
-        //label名称
-        $('#ortum_property_labelName').on('input',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelName',$(this).val())
-        })
-        //label宽度
-        $('#ortum_property_labelWidth').on('input',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelWidth',$(this).val())
-        })
-        //labelCss
-        $('#ortum_property_labelCSS').on('input',function(){
-            Global.ortum_edit_component && Global.ortum_edit_component.listen('labelCSS',$(this).val())
-        })   
     }
 
     /**
@@ -276,7 +284,6 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
                 $('#ortum_property_'+id).attr('disabled',"disabled")
                 break;
             case 3: case "3"://可编辑
-                console.log($('#ortum_property_'+id).parents('.form-group').eq(0))
                 $('#ortum_property_'+id).parents('.form-group').eq(0).show();
                 break;
             case 4: case "4"://必填
@@ -289,13 +296,13 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
 
     }
 
+
     return {
         createContextMenuObj:createContextMenuObj,
         init:init,
         bindFeatureToOrtumField:bindFeatureToOrtumField,
         bindFeatureToComponents:bindFeatureToComponents,
         
-
         importFileListen,
         propertiesSetListen,
         exportFileListen,

@@ -1,5 +1,22 @@
 /* 功能性辅助小工具 */
 define(['require'],function(require){
+    /**
+     * 功能：实现深copy
+     * @param {*} obj 
+     */
+    let deepClone = function(obj) {
+        // let copy = Object.create(Object.getPrototypeOf(obj));
+        // let propNames = Object.getOwnPropertyNames(obj);
+        // propNames.forEach(function(name) {
+        //     let desc = Object.getOwnPropertyDescriptor(obj, name);
+        //     Object.defineProperty(copy, name, desc);
+        // });
+        // console.log(copy);
+        // debugger
+        let copy = Object.assign({},obj)
+        return copy;
+    }
+
 
     /**
      * 功能：一个对象转成数组或者一个数组转成对象
@@ -25,14 +42,17 @@ define(['require'],function(require){
      * @param {*} e
      */
     let deleteComponent = function(e){
-        console.log($(this))
-        console.log($(this).parents('.ortum_item'))
+        // console.log($(this))
+        // console.log($(this).parents('.ortum_item'))
 
         let delOrtumItem = $(this).parents('.ortum_item').eq(0)
         let nextOrtumItem = delOrtumItem.parents('.ortum_item').eq(0)
         
         require('global').ortum_edit_component = null;//清空正在编辑的组件
-        $('#ortum_collapseOne .form-group').show();//显示所有的可编辑属性
+        
+
+        //还原编辑组件属性的表单状态
+        resetSetPropertyCom()
 
         delOrtumItem.remove();
         //删除后的下一步处理方式
@@ -69,9 +89,13 @@ define(['require'],function(require){
         `)
         $("#ortum_shadow .ortum_shadow_deleteImg").off('click.delete').on('click.delete',deleteComponent);
 
-        //TODO 在参数配置中配置
+
         let properiesObj = $(this).prop('ortum_component_properties')
-        let properiesType = $(this).prop('ortum_component_type')
+        let properiesType = $(this).prop('ortum_component_type');
+
+        //还原编辑组件属性的表单状态
+        resetSetPropertyCom()
+        
         switch(properiesType[0]){
             case 'bootstrap':
                 require('BootStrapAsider').setProperties(properiesObj,properiesType[1],$(this));
@@ -90,9 +114,33 @@ define(['require'],function(require){
         return type+"_"+(new Date().getTime());
     }
 
+    /**
+     * 功能：还原编辑组件属性的表单元素状态
+     */
+    let resetSetPropertyCom = function(){
+        //清空校验css
+        $('#ortum_collapseOne .is-invalid').removeClass('is-invalid')
+        //清空值
+        $('#ortum_collapseOne input[type=text]').val('')
+        $('#ortum_collapseOne input[type=radio]').prop('checked',false)
+        $('#ortum_collapseOne input[type=radio]').removeAttr('checked')
+        $('#ortum_collapseOne input[type=checkbox]').prop('checked',false)
+        $('#ortum_collapseOne input[type=checkbox]').removeAttr('checked')
+        $('#ortum_collapseOne input[type=range]').val('');
+
+        //显示
+        $('#ortum_collapseOne .form-group').show();
+        //可编辑
+        $('#ortum_collapseOne .form-group input').removeAttr('disabled')
+    }
+
     return {
+        deepClone,
+
         toggleMapArr,
         addClickChoose,
         timestampName,
+
+        resetSetPropertyCom,
     }
 })

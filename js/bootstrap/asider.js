@@ -76,15 +76,69 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
      * @param {*} properies 
      */
     let setProperties = function(properies,type,that){
+        //获取监听属性改变事件
+        let inputEvent =null;
+        let blurEvent =null;
+        let changeEvent =null;
+        let clickEvent =null;
+        let keyDownEvent =null;
+        let keyUpEvent =null;
         switch(type){
             case "input":
-                require('BootStrapInput').setProperties(properies,that);
+                inputEvent = require('BootStrapInput').inputSetProperties;
+                blurEvent = require('BootStrapInput').blurSetProperties;
+                changeEvent = require('BootStrapInput').changeSetProperties;
+                clickEvent = require('BootStrapInput').clickSetProperties;
+                keyDownEvent = require('BootStrapInput').keyDownSetProperties;
+                keyUpEvent = require('BootStrapInput').keyUpSetProperties;
                 break;
             case "rangeInput":
-                require('BootStrapRangeInput').setProperties(properies,that);
+                inputEvent = require('BootStrapRangeInput').inputSetProperties;
+                blurEvent = require('BootStrapRangeInput').blurSetProperties;
+                changeEvent = require('BootStrapRangeInput').changeSetProperties;
+                clickEvent = require('BootStrapRangeInput').clickSetProperties;
+                keyDownEvent = require('BootStrapRangeInput').keyDownSetProperties;
+                keyUpEvent = require('BootStrapRangeInput').keyUpSetProperties;
                 break;
             default:
                 break;
+        }
+        
+
+        
+        //获取组件的属性
+        let data = properies.data;
+        let purview = properies.purview;
+        
+        $('#ortum_collapseOne .form-group').hide();//隐藏所有属性
+        for(let key in data){
+            //设置编辑属性权限
+            require('feature').setEditPropertiesPurview(key,purview[key]);
+            switch(key){
+                case "authority":case "labelPosition"://checkbox
+                    $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
+                    break;
+                case "hideLabel"://开关
+                    $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
+                    break;
+                default:
+                    $('#ortum_property_'+key).val(data[key])
+                    break
+            }
+            // console.log(key)
+        }
+        //绑定正在编辑的对象到global对象下
+        Global.ortum_edit_component={
+            frame:"bootstrap",
+            type:type,
+
+            inputEvent:inputEvent,
+            blurEvent:blurEvent,
+            changeEvent:changeEvent,
+            clickEvent:clickEvent,
+            keyDownEvent:keyDownEvent,
+            keyUpEvent:keyUpEvent,
+            comObj:that,
         }
     }
 

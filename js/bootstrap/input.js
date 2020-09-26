@@ -2,6 +2,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     let component_properties = {
         data:{
             id:"",//id
+            name:'',//name
             defaultVal:"",//默认值
             verification:"",//校验
             authority:"3",//权限
@@ -10,11 +11,14 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             hideLabel:false,//是否隐藏标签
             labelName:"名称",//标签名称
             labelPosition:"rowLeft",//标签位置
-            labelWidth:"",//标签宽度
+            // labelWidth:"",//标签宽度
             labelCSS:"col-form-label col-2",//标签css类
         },
+        inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS"],//input事件修改值
+        clickChange:["authority","hideLabel","labelPosition"],
         purview:{//属性编辑权限
-            id:1,//id
+            id:3,//id
+            name:2,
             defaultVal:3,
             verification:3,
             authority:3,//权限
@@ -23,7 +27,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             hideLabel:3,//是否隐藏标签
             labelName:3,//标签名称
             labelPosition:3,//标签位置
-            labelWidth:1,//标签宽度
+            // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
         },
     }
@@ -42,11 +46,20 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         //点击事件，修改属性
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
+        let ortum_component_properties = Object.assign({},component_properties);
+        ortum_component_properties.data.name = Assist.timestampName('input');//设定name
+
         $(outerDom).append($(`
-            <label class="col-form-label col-2">名称</label>
-            <input type="text" name="${Assist.timestampName('input')}" class="form-control col" placeholder="请输入">
+            <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
+            <input type="text"
+                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
+                ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
+                name="${ortum_component_properties.data.name}" 
+                class="${ortum_component_properties.data.cssClass}" 
+                placeholder="${ortum_component_properties.data.placeholder}">
         `))
-        $(outerDom).prop('ortum_component_properties',JSON.parse(JSON.stringify(component_properties)))
+
+        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
         $(outerDom).prop('ortum_component_type',['bootstrap','input']);
 
         $(parentDom).append(outerDom);
@@ -54,92 +67,112 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     }
 
     /**
-     * TODO 完善中
-     * 功能：重置bootstrap的input
+     * 功能：input事件，在这个事件上重置组件属性
+     * @param {*} property 
+     * @param {*} val 
+     * @param {*} e 
      */
-    let InputDomReset = function(outerDom){
-        
-        /* let properties = $(outerDom).prop('ortum_component_properties')
-        let nowValue = $(outerDom).val();
-        
-        let labelDom = $(outerDom).find('.col-form-label').eq(0);
-        let inputDom = $(outerDom).find('input.form-control').eq(0);
-        
-        //标签位置
-        switch(properties.labelPosition){
-            case 'topLeft':
-                break;
-            case 'topLeft':
-                break;
-            case 'rowLeft':
-                break;
-            case 'rowRight':
-                break;
-            default:
-                break;
-        }
-        //权限
-        switch(properties.authority){
-            case '1':
-                break;
-            case '2':
-                break;
-            case '3':
-                break;
-            case '4':
-                break;
-            default:
-                break;
-        }
-        $(inputDom).attr('placeholder',properties.placeholder)
-        $(inputDom).attr('value',properties.defaultVal)
-        $(inputDom).addClass(properties.cssClass);
-
-
-        $(labelDom).addClass(properties.labelCSS);
-        if(nowValue){
-            $(inputDom).val(nowValue)
-        } */
-    }
-
-    /**
-     * 功能：实时设置input的值
-     */
-    let setInputProperty = function(property,val){
+    let inputSetProperties = function(property,val){
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        //判断值是否合理
+        let vertifyPause =  evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]['input'] && evenProperties.verify[property]["input"](globalComponent,e);
+        if(vertifyPause){
+            return false;
+        }
+        //更新到dom属性上
+        // evenProperties.data[property] = val;
         switch(property){
             case "defaultVal":
                 $(globalComponent).find('input.form-control').eq(0).attr('value',val)
+                $(globalComponent).find('input.form-control').eq(0).val(val)
                 break;
             case "verification":
                 //TODO 验证
                 console.log(val)
                 break;
+            case "cssClass":
+                // $(globalComponent).find('input.form-control').eq(0).addClass(val)
+                $(globalComponent).find('input.form-control').eq(0).attr('class',val)
+
+                break; 
+            case "labelName":
+                $(globalComponent).find('label').eq(0).text(val)
+                break; 
+            // case "labelWidth":
+            //     $(globalComponent).find('label').eq(0).attr('width',val)
+            //     break; 
+            case "labelCSS":
+                // $(globalComponent).find('label').eq(0).addClass(val)
+                $(globalComponent).find('label').eq(0).attr('class',val)
+                break;  
+            default:
+                if(evenProperties.clickChange.indexOf(property) != -1){
+                    $(globalComponent).find('input.form-control').eq(0).attr(property,val)
+                }
+                break;
+        }
+    }
+
+    /**
+     * 功能：blur事件
+     * @param {*} property 
+     * @param {*} val 
+     * @param {*} e 
+     */
+    let blurSetProperties = function(property,val,e){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        
+        //判断值是否合理
+        let vertifyPause = evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]["blur"] && evenProperties.verify[property]["blur"](globalComponent,e,val);
+        
+        if(vertifyPause){
+            return false;
+        };
+
+        //更新到dom属性上
+        evenProperties.data[property] = val;
+    }
+
+    /**
+     * 功能：click事件
+     * @param {*} property 
+     * @param {*} val 
+     * @param {*} e 
+     */
+    let clickSetProperties = function(property,val,e){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        
+        //判断值是否合理
+        let vertifyPause = evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]["click"] && evenProperties.verify[property]["click"](globalComponent,e,val);
+        if(vertifyPause){
+            return false;
+        }
+        //更新到dom属性上
+        // evenProperties.data[property] = val;
+        switch(property){
             case "authority":
                 //TODO 权限
                 console.log(val)
                 break;
-            case "placeholder":
-                $(globalComponent).find('input.form-control').eq(0).attr('placeholder',val)
-                break; 
-            case "cssClass":
-                $(globalComponent).find('input.form-control').eq(0).addClass(val)
-                // $(globalComponent).find('input.form-control').eq(0).attr('class',evenProperties.cssClass+" " + val)
-
-                break; 
             case "hideLabel":
                 if(val){
                     $(globalComponent).find('label').eq(0).addClass('ortum_display_NONE');
                 }else{
                     $(globalComponent).find('label').eq(0).removeClass('ortum_display_NONE');
                 }
-                break; 
-            case "labelName":
-                $(globalComponent).find('label').eq(0).text(val)
                 break; 
             case "labelPosition":
                 //TODO 位置
@@ -181,56 +214,25 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                     default:
                         break;
                 }
-
-                break;   
-            case "labelWidth":
-                $(globalComponent).find('label').eq(0).attr('width',val)
-                break; 
-            case "labelCSS":
-                $(globalComponent).find('label').eq(0).addClass(val)
-                // $(globalComponent).find('label').eq(0).attr('class',evenProperties.labelCSS+" " + val)
-                break;  
+                break;    
             default:
+                if(evenProperties.clickChange.indexOf(property) != -1){
+                    $(globalComponent).find('input.form-control').eq(0).attr(property,val)
+                }
                 break;
         }
     }
 
-    /**
-     * 回显input参数到《参数配置中》
-     */
-    let setProperties = function(obj,that){
-        $('#ortum_collapseOne .form-group').hide();//隐藏所有属性
-        let data = obj.data;
-        let purview = obj.purview;
-
-        for(let key in data){
-            //设置编辑属性权限
-            require('feature').setEditPropertiesPurview(key,purview[key]);
-            switch(key){
-                case "authority":case "labelPosition"://checkbox
-                    $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
-                    break;
-                case "hideLabel"://开关
-                    $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
-                    break;
-                default:
-                    $('#ortum_property_'+key).val(data[key])
-                    break
-            }
-            // console.log(key)
-        }
-        //绑定正在编辑的对象
-        Global.ortum_edit_component={
-            frame:"bootstrap",
-            type:'input',
-            listen:setInputProperty,
-            comObj:that,
-        }
-    };
 
     return {
         InputDom,
-        InputDomReset,
-        setProperties,
+
+        inputSetProperties,
+        blurSetProperties,
+        // changeSetProperties,
+        clickSetProperties,
+        // keyDownSetProperties,
+        // keyUpSetProperties,
+
     }
 })

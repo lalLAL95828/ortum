@@ -1,5 +1,6 @@
+/* 创建不同框架下的不同组件 */
+
 define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput"],function(BootStrapGrid,BootStrapInput,BootStrapRangeInput){
-    // define(function(BootStrapGrid,BootStrapInput,BootStrapRangeInput){
     /**
      * 创建栅格系统
      * @param {*} type 
