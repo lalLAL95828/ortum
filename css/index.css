@@ -117,15 +117,15 @@
 }
 .selectedShadow #ortum_shadow .ortum_shadow_deleteImg{
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    bottom: 0px;
+    right: 4px;
     display: block;
-    width: 26px;
-    height: 26px;
-    background-image: url(/image/delete.png);
+    color: #007bff;
+    font-size: 25px;
+    /* background-image: url(/image/delete.png);
     background-size: contain;
     background-position: bottom;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat; */
     
 }
 

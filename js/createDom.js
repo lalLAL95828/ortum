@@ -1,6 +1,7 @@
 /* 创建不同框架下的不同组件 */
 
-define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput"],function(BootStrapGrid,BootStrapInput,BootStrapRangeInput){
+define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio"],
+function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -41,10 +42,24 @@ define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput"],function(BootStr
 
         }
     }
+     /**
+     * 创建单选框
+     * @param {*} type 
+     */
+    let createRadioDom = function(parentDom,type){
+        switch(type){
+            case 'Bootstrap':
+                BootStrapRadio.RadioDom(parentDom)
+                break;
+            default:
+
+        }
+    }
     
     return {
         createGridDom,
         createInputDom,
-        createRangeInputDom
+        createRangeInputDom,
+        createRadioDom
     }
 })

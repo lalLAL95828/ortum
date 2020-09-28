@@ -1,20 +1,31 @@
 /* 功能性辅助小工具 */
 define(['require'],function(require){
+    let getDetailType= function(obj){
+        return Object.prototype.toString.call(obj).slice(8,-1);
+    }
+
+
     /**
      * 功能：实现深copy
      * @param {*} obj 
      */
     let deepClone = function(obj) {
-        // let copy = Object.create(Object.getPrototypeOf(obj));
-        // let propNames = Object.getOwnPropertyNames(obj);
-        // propNames.forEach(function(name) {
-        //     let desc = Object.getOwnPropertyDescriptor(obj, name);
-        //     Object.defineProperty(copy, name, desc);
-        // });
-        // console.log(copy);
-        // debugger
-        let copy = Object.assign({},obj)
-        return copy;
+        let type = getDetailType(obj);
+        if(["Array","Object"].indexOf(type) == -1)return obj;
+        let objClone = (type=='Array') ? [] : {};
+        //进行深拷贝的不能为空，并且是对象或者是
+        if (obj && ["Array","Object"].indexOf(type) > -1) {
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (obj[key] && ["Array","Object"].indexOf(type) > -1) {
+                        objClone[key] = deepClone(obj[key]);
+                    } else {
+                        objClone[key] = obj[key];
+                    }
+                }
+            }
+        }
+        return objClone;
     }
 
 
@@ -82,12 +93,34 @@ define(['require'],function(require){
 
         $(this).addClass('selectedShadow');
 
-        $(this).append(`
+        let shadowDiv= $(`
             <div id="ortum_shadow">
-                <div class="ortum_shadow_deleteImg"></div>
             </div>
         `)
+        //bootstrap_radio
+        if($(this).hasClass('ortum_bootstrap_radio')){
+            shadowDiv.append(`
+                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapRadio_settings" title="设置"></span>
+             `)
+        }
+
+        shadowDiv.append(`
+            <span class="iconfont icon-shanchu  ortum_shadow_deleteImg"  title="删除"></span>
+        `)
+
+        $(this).append(shadowDiv)
+
+
         $("#ortum_shadow .ortum_shadow_deleteImg").off('click.delete').on('click.delete',deleteComponent);
+
+        if($(this).hasClass('ortum_bootstrap_radio')){
+            $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',function(){
+                $('#exampleModal').modal('show')
+            });
+        }
+        
+
+
 
 
         let properiesObj = $(this).prop('ortum_component_properties')

@@ -4,7 +4,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             id:"",//id
             name:'',//name
             defaultVal:20,//默认值
-            max:2000,//范围最大值
+            max:100,//范围最大值
             step:1,
             min:0,
             verification:"",//校验
@@ -131,6 +131,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
         
         let ortum_component_properties =Assist.deepClone(component_properties);
+
         ortum_component_properties.data.name = Assist.timestampName('rangeInput');//设定name
 
         $(outerDom).append($(`

@@ -29,16 +29,9 @@ http://caibaojian.com/javascript-stoppropagation-preventdefault.html
 https://github.com/requirejs/text
 
 ###### lodash
-
 https://github.com/lodash/lodash
-
-//深copy
-
-https://lodash.com/docs/4.17.15#cloneDeep
-
-
-
-
+##### ramda
+https://ramda.cn/
 
 
 
@@ -53,7 +46,5 @@ http://flowchart.js.org/flowchart-latest.js
 ###### 虚拟dom
 
 https://www.bilibili.com/video/av41341063/
-
-
 
 ![](C:\Users\14456\Desktop\前端\image-20200926150829923.png)

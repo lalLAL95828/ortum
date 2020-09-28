@@ -8,3 +8,17 @@
     text-align: end;
     display: block;
 }
+/* radio */
+.ortum_radio_newValue{
+    border:1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.selectedShadow #ortum_shadow .ortum_shadow_bootstrapRadio_settings{
+    position: absolute;
+    bottom: 0px;
+    color: #007bff;
+    right: 38px;
+    display: block;
+    font-size: 25px;
+}

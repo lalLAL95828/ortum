@@ -13,6 +13,7 @@ require.config({
         "BootStrapInput":"bootstrap/input",
         "BootStrapGrid":"bootstrap/grid",
         "BootStrapRangeInput":"bootstrap/rangeInput",
+        "BootStrapRadio":"bootstrap/radio",
         "CreateDom":"createDom",
     },
     shim:{

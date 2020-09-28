@@ -16,7 +16,7 @@ define(['assist'],function(Assist){
         },
     },
     {
-        key:"RangeInputDom",
+        key:"rangeInputDom",
         name:"进度选择器",
         useType:"Bootstrap",
         createFn:"createRangeInputDom",
