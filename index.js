@@ -37,3 +37,11 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 })
 
 
+
+//model弹窗 事件监听
+$('#ortum_top_dialog').on('hidden.bs.modal', function (e) {
+    $('#ortum_top_model_wait').show();
+    $("#ortum_top_model_content").empty();
+})
+
+

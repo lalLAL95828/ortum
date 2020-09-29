@@ -110,19 +110,13 @@ define(['require'],function(require){
 
         $(this).append(shadowDiv)
 
-
+        //删除按钮绑定事件
         $("#ortum_shadow .ortum_shadow_deleteImg").off('click.delete').on('click.delete',deleteComponent);
-
+        //radio的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_radio')){
-            $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',function(){
-                $('#exampleModal').modal('show')
-            });
+            $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',require('BootStrapRadio').showRadioItems);
         }
         
-
-
-
-
         let properiesObj = $(this).prop('ortum_component_properties')
         let properiesType = $(this).prop('ortum_component_type');
 

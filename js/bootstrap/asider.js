@@ -101,12 +101,12 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 keyUpEvent = require('BootStrapRangeInput').keyUpSetProperties;
                 break;
             case "radio":
-                inputEvent = require('BootStraRadio').inputSetProperties;
-                blurEvent = require('BootStraRadio').blurSetProperties;
-                changeEvent = require('BootStraRadio').changeSetProperties;
-                clickEvent = require('BootStraRadio').clickSetProperties;
-                keyDownEvent = require('BootStraRadio').keyDownSetProperties;
-                keyUpEvent = require('BootStraRadio').keyUpSetProperties;
+                inputEvent = require('BootStrapRadio').inputSetProperties;
+                blurEvent = require('BootStrapRadio').blurSetProperties;
+                changeEvent = require('BootStrapRadio').changeSetProperties;
+                clickEvent = require('BootStrapRadio').clickSetProperties;
+                keyDownEvent = require('BootStrapRadio').keyDownSetProperties;
+                keyUpEvent = require('BootStrapRadio').keyUpSetProperties;
                 break;
             default:
                 break;

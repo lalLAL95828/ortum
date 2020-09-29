@@ -42,20 +42,20 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
         propertiesSetListen();
 
         //radio的选项新增行
-        $('#ortum_radio_add_newLine').on('click',function(e){
-            console.log($('.ortum_radio_newValue_item'))
-            let lineNum = $('.ortum_radio_newValue_item').length;
-            $('.ortum_radio_newValue_item').eq(lineNum-1).after(`
-                <div class="row ortum_radio_newValue_item" style="padding:0;">
-                    <div class="col-6" style="padding-right:0;">
-                        <input type="text" class="form-control form-control-sm" placeholder="名称">
-                    </div>
-                    <div class="col-6" style="padding-left:0;">
-                        <input type="text" class="form-control form-control-sm" placeholder="值">
-                    </div>
-                </div>
-            `)
-        })
+        // $('#ortum_radio_add_newLine').on('click',function(e){
+        //     console.log($('.ortum_radio_newValue_item'))
+        //     let lineNum = $('.ortum_radio_newValue_item').length;
+        //     $('.ortum_radio_newValue_item').eq(lineNum-1).after(`
+        //         <div class="row ortum_radio_newValue_item" style="padding:0;">
+        //             <div class="col-6" style="padding-right:0;">
+        //                 <input type="text" class="form-control form-control-sm" placeholder="名称">
+        //             </div>
+        //             <div class="col-6" style="padding-left:0;">
+        //                 <input type="text" class="form-control form-control-sm" placeholder="值">
+        //             </div>
+        //         </div>
+        //     `)
+        // })
     }
     /**
      * 功能：创建可拖拽组件

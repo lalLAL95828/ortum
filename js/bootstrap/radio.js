@@ -12,6 +12,18 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             labelName:"名称",//标签名称
             labelPosition:"rowLeft",//标签位置
             // labelWidth:"",//标签宽度
+            items:[
+                {
+                    "label":"香水",
+                    "value":"option1",
+                    "data-id":"miao",
+                },
+                {
+                    "label":"玫瑰",
+                    "value":"option2",
+                    "data-id":"hao",
+                },
+            ],
             labelCSS:"col-form-label col-2",//标签css类
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS"],//input事件修改值
@@ -48,21 +60,23 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
 
         let ortum_component_properties = Object.assign({},component_properties);
         ortum_component_properties.data.name = Assist.timestampName('input');//设定name
-
-        $(outerDom).append($(`
+        for(let i=0;i<ortum_component_properties.data.items.length;i++){
+            let newDom = $(`
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+1}" value="option1">
+                <input class="form-check-input" type="radio" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
                 <label class="form-check-label" for="${ortum_component_properties.data.name+"_"+1}">
-                    香水 
+                    ${ortum_component_properties.data.items[i].label}
                 </label>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+1}" value="option2">
-                <label class="form-check-label" for="${ortum_component_properties.data.name+"_"+1}">
-                    玫瑰
-                </label>
-            </div>
-        `))
+            `);
+            let obj =ortum_component_properties.data.items[i]
+            for (key in obj) {
+                if (obj.hasOwnProperty(key) && key != "label" && key != 'value') {
+                    $(newDom).find('.form-check-input').eq(0).attr(key,obj[key])
+                }
+            }
+            $(outerDom).append(newDom)
+        }
 
         $(outerDom).prop('ortum_component_properties',ortum_component_properties)
         $(outerDom).prop('ortum_component_type',['bootstrap','radio']);
@@ -72,165 +86,63 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     }
 
     /**
-     * 功能：input事件，在这个事件上重置组件属性
-     * @param {*} property 
-     * @param {*} val 
-     * @param {*} e 
+     * 功能：新增选项
+     * @param {*} newArr 
      */
-    let inputSetProperties = function(property,val){
-        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
-            return false;
-        }
+    let setRadioItems = function(newArr){
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
-
-        //判断值是否合理
-        let vertifyPause =  evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]['input'] && evenProperties.verify[property]["input"](globalComponent,e);
-        if(vertifyPause){
-            return false;
-        }
-        //更新到dom属性上
-        // evenProperties.data[property] = val;
-        switch(property){
-            case "defaultVal":
-                $(globalComponent).find('input.form-control').eq(0).attr('value',val)
-                $(globalComponent).find('input.form-control').eq(0).val(val)
-                break;
-            case "verification":
-                //TODO 验证
-                console.log(val)
-                break;
-            case "cssClass":
-                // $(globalComponent).find('input.form-control').eq(0).addClass(val)
-                $(globalComponent).find('input.form-control').eq(0).attr('class',val)
-
-                break; 
-            case "labelName":
-                $(globalComponent).find('label').eq(0).text(val)
-                break; 
-            // case "labelWidth":
-            //     $(globalComponent).find('label').eq(0).attr('width',val)
-            //     break; 
-            case "labelCSS":
-                // $(globalComponent).find('label').eq(0).addClass(val)
-                $(globalComponent).find('label').eq(0).attr('class',val)
-                break;  
-            default:
-                if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('input.form-control').eq(0).attr(property,val)
+        $(globalComponent).find('.form-check').remove()
+        for(let i=0;i<newArr.length;i++){
+            let newDom = $(`
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="${evenProperties.data.name}" id="${evenProperties.data.name+"_"+i}" value="${newArr[i].value}">
+                <label class="form-check-label" for="${evenProperties.data.name+"_"+1}">
+                    ${newArr[i].label}
+                </label>
+            </div>
+            `);
+            let obj =newArr[i];
+            for (key in obj) {
+                if (obj.hasOwnProperty(key) && key != "label" && key != 'value') {
+                    $(newDom).find('.form-check-input').eq(0).attr(key,obj[key])
                 }
-                break;
+            }
+            $(globalComponent).append(newDom)
         }
+        evenProperties.data.items = newArr;
     }
-
     /**
-     * 功能：blur事件
-     * @param {*} property 
-     * @param {*} val 
-     * @param {*} e 
+     * 功能：回显选项
      */
-    let blurSetProperties = function(property,val,e){
-        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
-            return false;
-        }
-        let globalComponent =Global.ortum_edit_component.comObj;
-        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+    let showRadioItems = function(){
         
-        //判断值是否合理
-        let vertifyPause = evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]["blur"] && evenProperties.verify[property]["blur"](globalComponent,e,val);
-        
-        if(vertifyPause){
-            return false;
-        };
+        $('#ortum_top_dialog').modal({
+            "backdrop":"static",
+        })
+        $("#ortum_top_model_content").load("/html/bootstrap/radio_settings.html",function(){
+            let globalComponent =Global.ortum_edit_component.comObj;
+            let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
-        //更新到dom属性上
-        evenProperties.data[property] = val;
-    }
+            let itemsArr = evenProperties.data.items;
+            let itemsLength = itemsArr.length;
+            for(let i =1 ;i<itemsLength;i++){
+                $('#ortum_radio_addLine').click();
+            }
+            $('#ortum_radio_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+                $(item).find('.ortum_radio_label').eq(0).val(itemsArr[index].label)
+                $(item).find('.ortum_radio_value').eq(0).val(itemsArr[index].value)
+            })
 
-    /**
-     * 功能：click事件
-     * @param {*} property 
-     * @param {*} val 
-     * @param {*} e 
-     */
-    let clickSetProperties = function(property,val,e){
-        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
-            return false;
-        }
-        let globalComponent =Global.ortum_edit_component.comObj;
-        let evenProperties = $(globalComponent).prop('ortum_component_properties');
-        
-        //判断值是否合理
-        let vertifyPause = evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]["click"] && evenProperties.verify[property]["click"](globalComponent,e,val);
-        if(vertifyPause){
-            return false;
-        }
-        //更新到dom属性上
-        // evenProperties.data[property] = val;
-        switch(property){
-            case "authority":
-                //TODO 权限
-                console.log(val)
-                break;
-            case "hideLabel":
-                if(val){
-                    $(globalComponent).find('label').eq(0).addClass('ortum_display_NONE');
-                }else{
-                    $(globalComponent).find('label').eq(0).removeClass('ortum_display_NONE');
-                }
-                break; 
-            case "labelPosition":
-                //TODO 位置
-                switch(val){
-                    case "topLeft":
-                        $(globalComponent).removeClass('row');
-                        $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
-                            return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('input.form-control').eq(0).removeClass(function (index, className) {
-                            return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
-                        break;
-                    case "topRight":
-                        $(globalComponent).removeClass('row');
-                        $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
-                            return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('input.form-control').eq(0).removeClass(function (index, className) {
-                            return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('label').eq(0).addClass('ortum_boot_input_label_Right')
-                        break;
-                    case "rowLeft":
-                        let evenLabelCss = $('#ortum_property_labelCSS').val();
-                        evenLabelCss = evenLabelCss.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                        $('#ortum_property_labelCSS').val(evenLabelCss + ' col-form-label col-2')
-                        $(globalComponent).addClass('row');
-                        $(globalComponent).find('label').eq(0).addClass('col-form-label col-2')
-                        $(globalComponent).find('input.form-control').eq(0).addClass('col');
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
-                        break;
-                    // case "rowRight":
-                    //     $(globalComponent).addClass('row');
-                    //     $(globalComponent).find('label').eq(0).addClass('col-form-label').addClass('col-2')
-                    //     $(globalComponent).find('input.form-control').eq(0).addClass('col')
-                    //     break;
-                    default:
-                        break;
-                }
-                break;    
-            default:
-                if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('input.form-control').eq(0).attr(property,val)
-                }
-                break;
-        }
-    }
-
+            $('#ortum_top_model_wait').hide();
+        });
+    };
 
     return {
         RadioDom,
+
+        setRadioItems,
+        showRadioItems,
 
         // inputSetProperties,
         // blurSetProperties,
