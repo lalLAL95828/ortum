@@ -157,7 +157,10 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * @param {*} val 
      * @param {*} e 
      */
-    let inputSetProperties = function(property,val,e){
+    let inputSetProperties = function(property,that,e){
+        let val=$(that).val();
+        let checked=$(that).prop('checked');
+
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -202,7 +205,10 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * @param {*} val 
      * @param {*} e 
      */
-    let blurSetProperties = function(property,val,e){
+    let blurSetProperties = function(property,that,e){
+        let val=$(that).val();
+        let checked=$(that).prop('checked');
+
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -215,7 +221,15 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             return false;
         }
         //更新到dom属性上
-        evenProperties.data[property] = val;
+        //更新到dom属性上
+        switch(property){
+            case "hideLabel":
+                evenProperties.data[property] = checked;
+                break;
+            default:
+                evenProperties.data[property] = val;
+                break;
+        }
     }
 
     /**
@@ -224,7 +238,10 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * @param {*} val 
      * @param {*} e 
      */
-    let clickSetProperties = function(property,val,e){
+    let clickSetProperties = function(property,that,e){
+        let val=$(that).val();
+        let checked=$(that).prop('checked');
+
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }

@@ -2,7 +2,6 @@
 #ortum_radio_addLine:hover{
     cursor: pointer;
 }
-
 </style>
 
 <div class="modal-header">
@@ -105,7 +104,8 @@
                     })
                 }
             })
-            BootStrapRadio.setRadioItems(newLine)
+            BootStrapRadio.setRadioItems(newLine);
+            $('#ortum_top_dialog').modal('toggle')
         })
     })
 

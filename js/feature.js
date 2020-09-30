@@ -261,7 +261,7 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
                 let nameValArr = nameVal.split('_') || [];
                 nameValArr.length && Global.ortum_edit_component && 
                 Global.ortum_edit_component.inputEvent && 
-                Global.ortum_edit_component.inputEvent(nameValArr[nameValArr.length-1],$(this).val(),e)
+                Global.ortum_edit_component.inputEvent(nameValArr[nameValArr.length-1],$(this),e)
             }
             
         })
@@ -272,7 +272,7 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
                 let nameValArr = nameVal.split('_') || [];
                 nameValArr.length && Global.ortum_edit_component && 
                 Global.ortum_edit_component.clickEvent && 
-                Global.ortum_edit_component.clickEvent(nameValArr[nameValArr.length-1],$(this).val(),e);
+                Global.ortum_edit_component.clickEvent(nameValArr[nameValArr.length-1],$(this),e);
             }
         })
         //blur事件
@@ -282,7 +282,7 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
                 let nameValArr = nameVal.split('_') || [];
                 nameValArr.length && Global.ortum_edit_component && 
                 Global.ortum_edit_component.blurEvent && 
-                Global.ortum_edit_component.blurEvent(nameValArr[nameValArr.length-1],$(this).val(),e);
+                Global.ortum_edit_component.blurEvent(nameValArr[nameValArr.length-1],$(this),e);
             }
         })
     }

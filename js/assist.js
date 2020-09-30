@@ -10,22 +10,24 @@ define(['require'],function(require){
      * @param {*} obj 
      */
     let deepClone = function(obj) {
-        let type = getDetailType(obj);
-        if(["Array","Object"].indexOf(type) == -1)return obj;
-        let objClone = (type=='Array') ? [] : {};
-        //进行深拷贝的不能为空，并且是对象或者是
-        if (obj && ["Array","Object"].indexOf(type) > -1) {
-            for (key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    if (obj[key] && ["Array","Object"].indexOf(type) > -1) {
-                        objClone[key] = deepClone(obj[key]);
-                    } else {
-                        objClone[key] = obj[key];
-                    }
-                }
-            }
+        let type = Object.prototype.toString.call(obj)
+        if(type == "[object Array]"){
+            let backObj = [];
+            for(let val of obj){
+                backObj.push(deepClone(val))
+            };
+            return backObj;
         }
-        return objClone;
+        if(type == "[object Object]"){
+            let backObj = {};
+            for(let key in obj){
+                if(obj.hasOwnProperty(key)){
+                    backObj[key] = deepClone(obj[key])
+                }
+            };
+            return backObj;
+        }
+        return obj;
     }
 
 

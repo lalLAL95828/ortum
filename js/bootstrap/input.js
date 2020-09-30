@@ -46,7 +46,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         //点击事件，修改属性
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = Object.assign({},component_properties);
+        let ortum_component_properties = Assist.deepClone(component_properties);
         ortum_component_properties.data.name = Assist.timestampName('input');//设定name
 
         $(outerDom).append($(`
@@ -72,7 +72,11 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * @param {*} val 
      * @param {*} e 
      */
-    let inputSetProperties = function(property,val){
+    let inputSetProperties = function(property,that,e){
+        let val=$(that).val();
+        let checked=$(that).prop('checked');
+
+
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -124,7 +128,11 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * @param {*} val 
      * @param {*} e 
      */
-    let blurSetProperties = function(property,val,e){
+    let blurSetProperties = function(property,that,e){
+        let val=$(that).val();
+        let checked=$(that).prop('checked');
+
+
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -139,7 +147,15 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         };
 
         //更新到dom属性上
-        evenProperties.data[property] = val;
+        switch(property){
+            case "hideLabel":
+                evenProperties.data[property] = checked;
+                break;
+            default:
+                evenProperties.data[property] = val;
+                break;
+        }
+        
     }
 
     /**
@@ -148,7 +164,11 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * @param {*} val 
      * @param {*} e 
      */
-    let clickSetProperties = function(property,val,e){
+    let clickSetProperties = function(property,that,e){
+        let val=$(that).val();
+        let checked=$(that).prop('checked');
+
+
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -168,7 +188,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 console.log(val)
                 break;
             case "hideLabel":
-                if(val){
+                if(checked){
                     $(globalComponent).find('label').eq(0).addClass('ortum_display_NONE');
                 }else{
                     $(globalComponent).find('label').eq(0).removeClass('ortum_display_NONE');

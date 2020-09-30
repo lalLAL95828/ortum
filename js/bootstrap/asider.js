@@ -126,7 +126,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 case "authority":case "labelPosition"://checkbox
                     $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
                     break;
-                case "hideLabel"://开关
+                case "hideLabel":case "inline"://开关
                     $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
                     break;
                 default:
