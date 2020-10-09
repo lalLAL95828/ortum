@@ -2,6 +2,12 @@
 #ortum_radio_addLine:hover{
     cursor: pointer;
 }
+#ortum_radio_addLine{
+    font-size: 28px;
+    line-height: 35px;
+    color: #bec7d1;
+    vertical-align: middle;
+}
 </style>
 
 <div class="modal-header">
@@ -30,7 +36,7 @@
                     操作
                 </td>
             </tr>
-            <tr class="ortum_order_dataTr">
+            <tr class="ortum_order_dataTr" data-line="1">
                 <td name="check" style="text-align: center;">
                     <input type="checkbox">
                 </td>
@@ -44,12 +50,13 @@
                     <input type="text" class="form-control ortum_radio_value" >
                 </td>
                 <td name="button" style="text-align:center">
-                    <button type="button" class="btn btn-outline-danger btn-sm" style="padding:3px 6px;">删除</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm ortun_radio_settingDel" style="padding:3px 6px;">删除</button>
                 </td>
             </tr>
             <tr>
                 <td colspan="5" style="text-align: center;line-height: 35px;">
-                    <span id="ortum_radio_addLine">新增</span>
+                    <!-- <span id="ortum_radio_addLine">新增</span> -->
+                    <span id="ortum_radio_addLine" class="iconfont icon-jiahao ortum_tableAct_icon"></span>
                 </td>
             </tr>
 
@@ -62,13 +69,30 @@
 </div>
 
 <script>
+    //绑定删除事件
+    $('#ortum_radio_ModalLabel .ModalLabelTable').on('click','.ortun_radio_settingDel',function(e){
+        //父级
+        let parentTr = $(this).parents('tr').eq(0);
+        //行号
+        let line = $(parentTr).attr('data-line');
+        //修改下级行号
+        let nextTr = $(parentTr).nextAll('tr.ortum_order_dataTr');
+        nextTr.each(function(index,item){
+            $(item).attr('data-line',line);
+            $(item).find(".ortum_radio_order").eq(0).html(line);
+            line = line*1 + 1;
+        });
+        $(parentTr).remove();
+    })
+
+
     //新增行
     $('#ortum_radio_addLine').off('click.add').on('click.add',function(){
         let order = $(this).parents('tr').eq(0).prev('tr').find('.ortum_radio_order').html();
         order = (order*1 + 1);
 
         $(this).parents('tr').eq(0).before(`
-            <tr class="ortum_order_dataTr">
+            <tr class="ortum_order_dataTr" data-line=${order}>
                 <td name="check" style="text-align: center;">
                     <input type="checkbox">
                 </td>
@@ -82,10 +106,9 @@
                     <input type="text" class="form-control ortum_radio_value" >
                 </td>
                 <td name="button" style="text-align:center">
-                    <button type="button" class="btn btn-outline-danger btn-sm" style="padding:3px 6px;">删除</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm ortun_radio_settingDel" style="padding:3px 6px;">删除</button>
                 </td>
             </tr>
-        
         `)
     })
 

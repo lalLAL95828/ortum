@@ -26,6 +26,19 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
         })
         return;
     }
+    //编辑js
+    if($(this).hasClass('icon-js')){
+        require([],function(){
+            $('#ortum_top_dialog_xl').modal({
+                "backdrop":"static",
+                // "focus":true,
+            })
+            $("#ortum_top_model_xl_content").load("/html/common/codemirror.html",function(){
+                $('#ortum_top_model_xl_wait').hide();
+            });
+        })
+        return;
+    }
 
     // console.log(this)
     $('#ortum_tip_content').text("火速赶制中！！！")
@@ -42,6 +55,12 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 $('#ortum_top_dialog').on('hidden.bs.modal', function (e) {
     $('#ortum_top_model_wait').show();
     $("#ortum_top_model_content").empty();
+})
+
+//model弹窗 事件监听
+$('#ortum_top_dialog_xl').on('hidden.bs.modal', function (e) {
+    $('#ortum_top_model_xl_wait').show();
+    $("#ortum_top_model_xl_content").empty();
 })
 
 

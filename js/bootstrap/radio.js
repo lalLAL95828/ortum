@@ -133,7 +133,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 $(globalComponent).find('label').attr('class',val)
                 break;  
             default:
-                if(evenProperties.clickChange.indexOf(property) != -1){
+                if(evenProperties.inputChange.indexOf(property) != -1){
                     $(globalComponent).find('input').eq(0).attr(property,val)
                 }
                 break;

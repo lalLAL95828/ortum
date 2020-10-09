@@ -12,6 +12,8 @@ https://gitee.com/gavinzhulei/vue-form-making/
 
 http://www.ruanyifeng.com/blog/2012/11/require_js.html
 
+https://blog.csdn.net/woxueliuyun/article/details/50481143
+
 ###### object对象上的方法
 
 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyNames

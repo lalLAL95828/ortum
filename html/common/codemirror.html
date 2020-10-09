@@ -1,0 +1,26 @@
+
+<div class="modal-header">
+    <h5 class="modal-title" >编辑JS</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body" id="ortum_codeMirror_ModalLabel">
+    <!-- <div id="ortum_codeMirror"></div> -->
+    <textarea id="ortum_codeMirror"></textarea>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+    <button type="button" class="btn btn-primary" id="ortum_radio_save">保存</button>
+</div>
+
+<script>
+
+    //$('#ortum_top_dialog').modal('toggle')
+
+    require(['setCodemirror'],function(SetCodemirror){
+        let myCodeMirror = SetCodemirror.init();
+    })
+
+</script>
+    

@@ -76,7 +76,6 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         let val=$(that).val();
         let checked=$(that).prop('checked');
 
-
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -92,16 +91,16 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         // evenProperties.data[property] = val;
         switch(property){
             case "defaultVal":
-                $(globalComponent).find('input.form-control').eq(0).attr('value',val)
-                $(globalComponent).find('input.form-control').eq(0).val(val)
+                $(globalComponent).find('input').eq(0).attr('value',val)
+                $(globalComponent).find('input').eq(0).val(val)
                 break;
             case "verification":
                 //TODO 验证
                 console.log(val)
                 break;
             case "cssClass":
-                // $(globalComponent).find('input.form-control').eq(0).addClass(val)
-                $(globalComponent).find('input.form-control').eq(0).attr('class',val)
+                // $(globalComponent).find('input').eq(0).addClass(val)
+                $(globalComponent).find('input').eq(0).attr('class',val)
 
                 break; 
             case "labelName":
@@ -115,8 +114,8 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 $(globalComponent).find('label').eq(0).attr('class',val)
                 break;  
             default:
-                if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('input.form-control').eq(0).attr(property,val)
+                if(evenProperties.inputChange.indexOf(property) != -1){
+                    $(globalComponent).find('input').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -202,7 +201,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                         $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
                             return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('input.form-control').eq(0).removeClass(function (index, className) {
+                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
                         $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
@@ -212,7 +211,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                         $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
                             return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('input.form-control').eq(0).removeClass(function (index, className) {
+                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
                         $(globalComponent).find('label').eq(0).addClass('ortum_boot_input_label_Right')
@@ -223,13 +222,13 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                         $('#ortum_property_labelCSS').val(evenLabelCss + ' col-form-label col-2')
                         $(globalComponent).addClass('row');
                         $(globalComponent).find('label').eq(0).addClass('col-form-label col-2')
-                        $(globalComponent).find('input.form-control').eq(0).addClass('col');
+                        $(globalComponent).find('input').eq(0).addClass('col');
                         $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
                         break;
                     // case "rowRight":
                     //     $(globalComponent).addClass('row');
                     //     $(globalComponent).find('label').eq(0).addClass('col-form-label').addClass('col-2')
-                    //     $(globalComponent).find('input.form-control').eq(0).addClass('col')
+                    //     $(globalComponent).find('inputl').eq(0).addClass('col')
                     //     break;
                     default:
                         break;
@@ -237,7 +236,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 break;    
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('input.form-control').eq(0).attr(property,val)
+                    $(globalComponent).find('input').eq(0).attr(property,val)
                 }
                 break;
         }

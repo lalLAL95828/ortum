@@ -312,6 +312,44 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
 
     }
 
+    /**
+     * 功能: 找到表单中所有的组件的id和name
+     */
+    let getComponentsPropsHint = function(){
+        let backArr = []
+        $("#ortum_body").find("input").each(function(index,item){
+            if($(item).prop("id")){
+                backArr.push({
+                    id:"id_"+$(item).prop("id"),
+                    text:$(item).prop("id"),
+                    type:"id",
+                    className:"ortum_hint",
+                    render:function(ele,self,data){
+                        var dom = $(`
+                        <span>${data.text}</span><span style="float:right; margin-left:30px">${data.type}</span>
+                        `)
+                        $(ele).html(dom)
+                    }
+                })
+            }
+            if($(item).prop("name")){
+                backArr.push({
+                    id:"name_"+$(item).prop("name"),
+                    text:$(item).prop("name"),
+                    type:"name",
+                    className:"ortum_hint",
+                    render:function(ele,self,data){
+                        var dom = $(`
+                        <span>${data.text}</span><span style="float:right; margin-left:30px">${data.type}</span>
+                        `)
+                        $(ele).html(dom)
+                    }
+                })
+            }
+            
+        })
+        return backArr;
+    }
 
     return {
         createContextMenuObj:createContextMenuObj,
@@ -323,5 +361,7 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
         propertiesSetListen,
         exportFileListen,
         setEditPropertiesPurview,
+
+        getComponentsPropsHint,
     }
 })

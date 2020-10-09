@@ -15,15 +15,24 @@ require.config({
         "BootStrapRangeInput":"bootstrap/rangeInput",
         "BootStrapRadio":"bootstrap/radio",
         "CreateDom":"createDom",
+        "CSS":"/lib/css.min",
     },
     shim:{
  
 
     },//给不规则AMD格式插件使用
-    map:{//配置版本
-       
-    },
-    // deps:[],
+    // map:{//配置版本映射
+    //     '*': {
+    //         'css': '/lib/css.min.js',
+    //     },
+
+    // },
+    deps:["CSS"],//版本依赖,
+    packages: [{
+        name: "codemirror",
+        location: "/lib/codeMirror",
+        main: "lib/codemirror"
+    }],
 })
 require(['feature'],function(Feature){
     //【1】初始化
