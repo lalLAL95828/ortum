@@ -92,6 +92,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 keyDownEvent = require('BootStrapInput').keyDownSetProperties;
                 keyUpEvent = require('BootStrapInput').keyUpSetProperties;
                 break;
+            case "textarea":
+                inputEvent = require('BootStrapTextarea').inputSetProperties;
+                blurEvent = require('BootStrapTextarea').blurSetProperties;
+                changeEvent = require('BootStrapTextarea').changeSetProperties;
+                clickEvent = require('BootStrapTextarea').clickSetProperties;
+                keyDownEvent = require('BootStrapTextarea').keyDownSetProperties;
+                keyUpEvent = require('BootStrapTextarea').keyUpSetProperties;
+                break;
             case "rangeInput":
                 inputEvent = require('BootStrapRangeInput').inputSetProperties;
                 blurEvent = require('BootStrapRangeInput').blurSetProperties;
@@ -107,6 +115,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 clickEvent = require('BootStrapRadio').clickSetProperties;
                 keyDownEvent = require('BootStrapRadio').keyDownSetProperties;
                 keyUpEvent = require('BootStrapRadio').keyUpSetProperties;
+                break;
+            case "checkbox":
+                inputEvent = require('BootStrapCheckbox').inputSetProperties;
+                blurEvent = require('BootStrapCheckbox').blurSetProperties;
+                changeEvent = require('BootStrapCheckbox').changeSetProperties;
+                clickEvent = require('BootStrapCheckbox').clickSetProperties;
+                keyDownEvent = require('BootStrapCheckbox').keyDownSetProperties;
+                keyUpEvent = require('BootStrapCheckbox').keyUpSetProperties;
                 break;
             default:
                 break;

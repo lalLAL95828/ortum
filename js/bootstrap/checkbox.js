@@ -3,7 +3,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         data:{
             // id:"",//id
             name:'',//name
-            defaultVal:"option2",//默认值
+            defaultVal:["option1"],//默认值
             verification:"",//校验
             authority:"3",//权限
             // placeholder:"请输入",
@@ -27,12 +27,12 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 },
             ],
         },
-        inputChange:["name","defaultVal","verification","cssClass","labelCSS"],//input事件修改值
+        inputChange:["name","verification","cssClass","labelCSS"],//input事件修改值
         clickChange:["authority","inline"],
         purview:{//属性编辑权限
-            // id:1,//id
+            // id:3,//id
             name:2,
-            defaultVal:3,
+            // defaultVal:1,
             verification:3,
             authority:3,//权限
             // placeholder:3,
@@ -47,12 +47,12 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     }
 
     /**
-     * 功能：创建bootstrap的input
+     * 功能：创建bootstrap的checkbox
      */
-    let RadioDom = function(parentDom){
+    let CheckboxDom = function(parentDom){
         let outerDom=$(
             `
-            <div class="form-group ortum_item ortum_bootstrap_radio" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item ortum_bootstrap_checkbox" style="margin:0;padding-bottom:0.8rem">
                
             </div>
             `
@@ -64,13 +64,13 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         ortum_component_properties.data.name = Assist.timestampName('input');//设定name
         for(let i=0;i<ortum_component_properties.data.items.length;i++){
             let choose = false;
-            if(ortum_component_properties.data.defaultVal == ortum_component_properties.data.items[i].value){
+            if(ortum_component_properties.data.defaultVal.indexOf(ortum_component_properties.data.items[i].value) != -1){
                 choose = true
             }
             
             let newDom = $(`
             <div class="form-check ${ortum_component_properties.data.inline?'form-check-inline':''}">
-                <input class="${ortum_component_properties.data.cssClass}" ${choose ? "checked" :""} type="radio" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
+                <input class="${ortum_component_properties.data.cssClass}" ${choose ? "checked" :""} type="checkbox" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
                 <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.name+"_"+1}">
                     ${ortum_component_properties.data.items[i].label}
                 </label>
@@ -86,7 +86,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         }
 
         $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','radio']);
+        $(outerDom).prop('ortum_component_type',['bootstrap','checkbox']);
 
         $(parentDom).append(outerDom);
 
@@ -112,14 +112,12 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         if(vertifyPause){
             return false;
         }
-        //更新到dom属性上
-        // evenProperties.data[property] = val;
         switch(property){
-            case "defaultVal":
-                $(globalComponent).find('input').removeAttr('checked')
-                $(globalComponent).find('input[value='+ val+']').eq(0).attr('checked',true)
-                $(globalComponent).find('input[value='+ val+']').eq(0).prop('checked',false)
-                break;
+            // case "defaultVal":
+            //     $(globalComponent).find('input').removeAttr('checked')
+            //     $(globalComponent).find('input[value='+ val+']').eq(0).attr('checked',true)
+            //     $(globalComponent).find('input[value='+ val+']').eq(0).prop('checked',false)
+            //     break;
             case "verification":
                 //TODO 验证
                 console.log(val)
@@ -223,19 +221,18 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * 功能：新增选项
      * @param {*} newArr 
      */
-    let setRadioItems = function(newArr){
+    let setCheckboxItems = function(newArr){
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
         $(globalComponent).find('.form-check').remove();
-
         for(let i=0;i<newArr.length;i++){
             let choose = false;
-            if(evenProperties.data.defaultVal == newArr[i].value){
+            if(evenProperties.data.defaultVal.indexOf(newArr[i].value) != -1){
                 choose = true
             }
             let newDom = $(`
             <div class="form-check ${evenProperties.data.inline?'form-check-inline':''}">
-                <input class="${evenProperties.data.cssClass}" ${choose ? "checked" :""} type="radio" name="${evenProperties.data.name}" id="${evenProperties.data.name+"_"+i}" value="${newArr[i].value}">
+                <input class="${evenProperties.data.cssClass}" ${choose ? "checked" :""} type="checkbox" name="${evenProperties.data.name}" id="${evenProperties.data.name+"_"+i}" value="${newArr[i].value}">
                 <label class="${evenProperties.data.labelCSS}" for="${evenProperties.data.name+"_"+1}">
                     ${newArr[i].label}
                 </label>
@@ -254,23 +251,23 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     /**
      * 功能：回显选项
      */
-    let showRadioItems = function(){
+    let showCheckboxItems = function(){
         
         $('#ortum_top_dialog').modal({
             "backdrop":"static",
         })
-        $("#ortum_top_model_content").load("/html/bootstrap/radio_settings.html",function(){
+        $("#ortum_top_model_content").load("/html/bootstrap/checkbox_settings.html",function(){
             let globalComponent =Global.ortum_edit_component.comObj;
             let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
             let itemsArr = evenProperties.data.items;
             let itemsLength = itemsArr.length;
             for(let i =1 ;i<itemsLength;i++){
-                $('#ortum_radio_addLine').click();
+                $('#ortum_checkbox_addLine').click();
             }
-            $('#ortum_radio_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
-                $(item).find('.ortum_radio_label').eq(0).val(itemsArr[index].label)
-                $(item).find('.ortum_radio_value').eq(0).val(itemsArr[index].value)
+            $('#ortum_checkbox_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+                $(item).find('.ortum_checkbox_label').eq(0).val(itemsArr[index].label)
+                $(item).find('.ortum_checkbox_value').eq(0).val(itemsArr[index].value)
             })
 
             $('#ortum_top_model_wait').hide();
@@ -278,10 +275,10 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     };
 
     return {
-        RadioDom,
+        CheckboxDom,
 
-        setRadioItems,
-        showRadioItems,
+        setCheckboxItems,
+        showCheckboxItems,
 
         inputSetProperties,
         blurSetProperties,

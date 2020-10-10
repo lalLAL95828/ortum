@@ -66,6 +66,9 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
         item.draggable = true;
         item.dataset.key=elementInfo.key;
         item.innerText = elementInfo.name;
+        item.title = elementInfo.name;
+        item.dataset.toggle = "tooltip"
+        item.dataset.placement = "bottom"
         //绑定事件
         return item;
     };

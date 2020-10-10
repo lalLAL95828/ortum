@@ -42,13 +42,18 @@
     line-height:30px;
     text-align: center;
     width: 45%;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #f4f6fc;
     text-align: center;
     margin:3px;
     padding:0 10px;
     border-radius: 5px;
-    border:1px solid #f4f6fc
+    border:1px solid #f4f6fc;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    
 }
 .ortum_componentItem:hover{
     background-color: #ced9fb;
@@ -145,4 +150,8 @@
 /* 设置diaplay为none的类 */
 .ortum_display_NONE{
     display: none!important;
+}
+
+.CodeMirror-placeholder{
+    color:#9995966b!important;
 }

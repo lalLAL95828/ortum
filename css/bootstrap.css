@@ -8,6 +8,12 @@
     text-align: end;
     display: block;
 }
+
+/* textarea */
+.ortum_boot_textarea_label_Right{
+    text-align: end;
+    display: block;
+}
 /* radio */
 .ortum_radio_newValue{
     border:1px solid #ced4da;
@@ -15,6 +21,16 @@
 }
 
 .selectedShadow #ortum_shadow .ortum_shadow_bootstrapRadio_settings{
+    position: absolute;
+    bottom: 0px;
+    color: #007bff;
+    right: 38px;
+    display: block;
+    font-size: 25px;
+}
+
+/* checkbox */
+.selectedShadow #ortum_shadow .ortum_shadow_bootstrapCheckbox_settings{
     position: absolute;
     bottom: 0px;
     color: #007bff;

@@ -43,7 +43,7 @@ define(['assist'],function(Assist){
         },
     },
     {
-        key:"checkDom",
+        key:"checkboxDom",
         name:"多选框",
         useType:"Bootstrap",
         createFn:"createCheckboxDom",

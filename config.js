@@ -14,13 +14,17 @@ require.config({
         "BootStrapGrid":"bootstrap/grid",
         "BootStrapRangeInput":"bootstrap/rangeInput",
         "BootStrapRadio":"bootstrap/radio",
+        "BootStrapCheckbox":"bootstrap/checkbox",
+        "BootStrapTextarea":"bootstrap/textarea",
         "CreateDom":"createDom",
         "CSS":"/lib/css.min",
     },
-    shim:{
- 
+    // shim:{
+    //     "JSHINT":{
+    //         exports: '/lib/jshint'
+    //     }
 
-    },//给不规则AMD格式插件使用
+    // },//给不规则AMD格式插件使用
     // map:{//配置版本映射
     //     '*': {
     //         'css': '/lib/css.min.js',

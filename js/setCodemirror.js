@@ -1,8 +1,6 @@
 define([
     "codemirror",
 
-    
-    
     "CSS!codemirror/lib/codemirror.css",
     "codemirror/mode/javascript/javascript",
     "CSS!codemirror/theme/monokai.css",
@@ -10,17 +8,25 @@ define([
     "codemirror/addon/fold/brace-fold",
     "codemirror/addon/fold/foldcode",
     "codemirror/addon/fold/foldgutter",
+    "codemirror/addon/fold/comment-fold",
 
     "codemirror/keymap/sublime",//快捷键
 
 
-    "CSS!codemirror/addon/hint/show-hint.css",
+    "CSS!codemirror/addon/hint/show-hint.css",//提示
     "codemirror/addon/hint/show-hint",
     "codemirror/addon/hint/javascript-hint",
+
     "CSS!codemirror/addon/display/fullscreen.css",//全屏
     "codemirror/addon/display/fullscreen",
 
+    "CSS!codemirror/addon/lint/lint.css",//语法检查
+    "codemirror/addon/lint/lint",
+    "codemirror/addon/lint/javascript-lint",
     
+    "codemirror/addon/display/placeholder",//placeholder
+
+    "codemirror/addon/selection/active-line",//单行高亮
 ],
 
 function(CodeMirror){
@@ -35,13 +41,20 @@ function(CodeMirror){
             autofocus:true,
             keyMap:"sublime",
             foldGutter: true,//开启折叠
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
 
             //提示
             hintOptions:{
                 // hint:CodeMirror.hint.javascript,
                 completeSingle:false,
             },
+            //语法检查
+            // gutters: ["CodeMirror-lint-markers"],
+            lint: true,
+
+            placeholder:"光标在编辑器上时，F11全屏，ESC退出",
+
+            styleActiveLine:true,//光标行高亮
         }
     
         let myCodeMirror = CodeMirror.fromTextArea(document.getElementById('ortum_codeMirror'), option);
@@ -59,11 +72,10 @@ function(CodeMirror){
         myCodeMirror.setOption("extraKeys", {
             F11:function(cm) {
                 cm.setOption("fullScreen", true)
-                return;
             },
             Esc:function(cm) {
                 cm.setOption("fullScreen", false)
-                return;
+                myCodeMirror.refresh()
             },
         });
 

@@ -31,7 +31,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
         require([],function(){
             $('#ortum_top_dialog_xl').modal({
                 "backdrop":"static",
-                // "focus":true,
+                // "focus":false,
+                "keyboard":false,
             })
             $("#ortum_top_model_xl_content").load("/html/common/codemirror.html",function(){
                 $('#ortum_top_model_xl_wait').hide();

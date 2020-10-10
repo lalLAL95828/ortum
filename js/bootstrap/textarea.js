@@ -13,8 +13,9 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             labelPosition:"rowLeft",//标签位置
             // labelWidth:"",//标签宽度
             labelCSS:"col-form-label col-2",//标签css类
+            rows:3,//行数
         },
-        inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS"],//input事件修改值
+        inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","rows"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
         purview:{//属性编辑权限
             id:3,//id
@@ -29,13 +30,14 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             labelPosition:3,//标签位置
             // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
+            rows:3,
         },
     }
 
     /**
-     * 功能：创建bootstrap的input
+     * 功能：创建bootstrap的textarea
      */
-    let InputDom = function(parentDom){
+    let TextareaDom = function(parentDom){
         let outerDom=$(
             `
             <div class="form-group ortum_item row" style="margin:0;padding-bottom:0.8rem">
@@ -47,20 +49,21 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('input');//设定name
+        ortum_component_properties.data.name = Assist.timestampName('textarea');//设定name
 
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
-            <input type="text"
+            <textarea 
                 ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
                 ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
                 name="${ortum_component_properties.data.name}" 
                 class="${ortum_component_properties.data.cssClass}" 
-                placeholder="${ortum_component_properties.data.placeholder}">
+                placeholder="${ortum_component_properties.data.placeholder}"
+                rows="${ortum_component_properties.data.rows}"></textarea>
         `))
 
         $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','input']);
+        $(outerDom).prop('ortum_component_type',['bootstrap','textarea']);
 
         $(parentDom).append(outerDom);
 
@@ -91,8 +94,8 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         // evenProperties.data[property] = val;
         switch(property){
             case "defaultVal":
-                $(globalComponent).find('input').eq(0).attr('value',val)
-                $(globalComponent).find('input').eq(0).val(val)
+                $(globalComponent).find('textarea').eq(0).attr('value',val)
+                $(globalComponent).find('textarea').eq(0).val(val)
                 break;
             case "verification":
                 //TODO 验证
@@ -100,11 +103,11 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 break;
             case "cssClass":
                 // $(globalComponent).find('input').eq(0).addClass(val)
-                $(globalComponent).find('input').eq(0).attr('class',val)
+                $(globalComponent).find('textarea').eq(0).attr('class',val)
 
                 break; 
             case "labelName":
-                $(globalComponent).find('label').eq(0).text(val)
+                $(globalComponent).find('textarea').eq(0).text(val)
                 break; 
             // case "labelWidth":
             //     $(globalComponent).find('label').eq(0).attr('width',val)
@@ -115,7 +118,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 break;  
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find('input').eq(0).attr(property,val)
+                    $(globalComponent).find('textarea').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -201,20 +204,20 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                         $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
                             return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
+                        $(globalComponent).find('textarea').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
+                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_textarea_label_Right')
                         break;
                     case "topRight":
                         $(globalComponent).removeClass('row');
                         $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
                             return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
+                        $(globalComponent).find('textarea').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('label').eq(0).addClass('ortum_boot_input_label_Right')
+                        $(globalComponent).find('label').eq(0).addClass('ortum_boot_textarea_label_Right')
                         break;
                     case "rowLeft":
                         let evenLabelCss = $('#ortum_property_labelCSS').val();
@@ -222,8 +225,8 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                         $('#ortum_property_labelCSS').val(evenLabelCss + ' col-form-label col-2')
                         $(globalComponent).addClass('row');
                         $(globalComponent).find('label').eq(0).addClass('col-form-label col-2')
-                        $(globalComponent).find('input').eq(0).addClass('col');
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
+                        $(globalComponent).find('textarea').eq(0).addClass('col');
+                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_textarea_label_Right')
                         break;
                     // case "rowRight":
                     //     $(globalComponent).addClass('row');
@@ -236,7 +239,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                 break;    
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('input').eq(0).attr(property,val)
+                    $(globalComponent).find('textarea').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -244,7 +247,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
 
 
     return {
-        InputDom,
+        TextareaDom,
 
         inputSetProperties,
         blurSetProperties,
