@@ -51,7 +51,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             }
             
             //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-            require('CreateDom')[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
+            require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
             
             //把拖拽对象制空
             Global.ortumNowDragObj = null;
@@ -124,6 +124,23 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 keyDownEvent = require('BootStrapCheckbox').keyDownSetProperties;
                 keyUpEvent = require('BootStrapCheckbox').keyUpSetProperties;
                 break;
+                
+            case "file":
+                inputEvent = require('BootStrapFile').inputSetProperties;
+                blurEvent = require('BootStrapFile').blurSetProperties;
+                changeEvent = require('BootStrapFile').changeSetProperties;
+                clickEvent = require('BootStrapFile').clickSetProperties;
+                keyDownEvent = require('BootStrapFile').keyDownSetProperties;
+                keyUpEvent = require('BootStrapFile').keyUpSetProperties;
+                break;
+            case "switch":
+                inputEvent = require('BootStrapSwitch').inputSetProperties;
+                blurEvent = require('BootStrapSwitch').blurSetProperties;
+                changeEvent = require('BootStrapSwitch').changeSetProperties;
+                clickEvent = require('BootStrapSwitch').clickSetProperties;
+                keyDownEvent = require('BootStrapSwitch').keyDownSetProperties;
+                keyUpEvent = require('BootStrapSwitch').keyUpSetProperties;
+                break;
             default:
                 break;
         }
@@ -142,7 +159,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 case "authority":case "labelPosition"://checkbox
                     $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
                     break;
-                case "hideLabel":case "inline"://开关
+                case "hideLabel":case "inline":case "multiple":case "automatic":case "checked"://开关
                     $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
                     break;
                 default:

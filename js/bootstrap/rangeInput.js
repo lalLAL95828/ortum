@@ -1,4 +1,4 @@
-define(["require","assist","CreateDom","global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
     let component_properties = {
         data:{
             id:"",//id

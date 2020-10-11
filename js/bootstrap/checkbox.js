@@ -1,4 +1,4 @@
-define(["require","assist","CreateDom","global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
     let component_properties = {
         data:{
             // id:"",//id
@@ -19,6 +19,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
                     "label":"香水",
                     "value":"option1",
                     "data-id":"miao",
+                    "checked":true,//默认选中
                 },
                 {
                     "label":"玫瑰",
@@ -61,7 +62,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('input');//设定name
+        ortum_component_properties.data.name = Assist.timestampName('checkbox');//设定name
         for(let i=0;i<ortum_component_properties.data.items.length;i++){
             let choose = false;
             if(ortum_component_properties.data.defaultVal.indexOf(ortum_component_properties.data.items[i].value) != -1){
@@ -224,11 +225,18 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
     let setCheckboxItems = function(newArr){
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+
         $(globalComponent).find('.form-check').remove();
+
+        //默认选中值清空
+        evenProperties.data.defaultVal = [];
+
         for(let i=0;i<newArr.length;i++){
             let choose = false;
-            if(evenProperties.data.defaultVal.indexOf(newArr[i].value) != -1){
-                choose = true
+            if(newArr[i].checked){
+                choose = true;
+                evenProperties.data.defaultVal.push(newArr[i].value)
             }
             let newDom = $(`
             <div class="form-check ${evenProperties.data.inline?'form-check-inline':''}">
@@ -252,10 +260,11 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
      * 功能：回显选项
      */
     let showCheckboxItems = function(){
-        
+        //显示弹窗
         $('#ortum_top_dialog').modal({
             "backdrop":"static",
         })
+        //加载配置
         $("#ortum_top_model_content").load("/html/bootstrap/checkbox_settings.html",function(){
             let globalComponent =Global.ortum_edit_component.comObj;
             let evenProperties = $(globalComponent).prop('ortum_component_properties');
@@ -268,6 +277,9 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
             $('#ortum_checkbox_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
                 $(item).find('.ortum_checkbox_label').eq(0).val(itemsArr[index].label)
                 $(item).find('.ortum_checkbox_value').eq(0).val(itemsArr[index].value)
+                if(itemsArr[index].checked){
+                    $(item).find('.ortum_default_checked').eq(0).prop('checked',true)
+                }
             })
 
             $('#ortum_top_model_wait').hide();

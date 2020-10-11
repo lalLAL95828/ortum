@@ -22,8 +22,11 @@
 </head>
 <body>
     <div class="ortum_tip">
-        <div class="alert alert-danger" role="alert" id="ortum_tip_content">
+        <div class="alert alert-danger" role="alert" id="ortum_tip_content_danger">
             火速赶制中！！！
+        </div>
+        <div class="alert alert-info" role="alert" id="ortum_tip_content_info">
+            一切OK！！！
         </div>
     </div>
     <div id="ortum">
@@ -82,6 +85,51 @@
                                                     请填写
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_accept">文件类型</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_accept" id="ortum_property_accept">
+                                                <div class="invalid-feedback">
+                                                    请填写
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_uploadUrl">上传地址</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_uploadUrl" id="ortum_property_uploadUrl">
+                                                <div class="invalid-feedback">
+                                                    请填写
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_formName">上传name</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_formName" id="ortum_property_formName">
+                                                <div class="invalid-feedback">
+                                                    请填写
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" name="ortum_property_automatic" class="custom-control-input" id="ortum_property_automatic">
+                                                    <label class="custom-control-label" for="ortum_property_automatic">自动上传</label>
+                                                    <div class="invalid-feedback">
+                                                        请填写
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" name="ortum_property_multiple" class="custom-control-input" id="ortum_property_multiple">
+                                                    <label class="custom-control-label" for="ortum_property_multiple">多文件</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" name="ortum_property_checked" class="custom-control-input" id="ortum_property_checked">
+                                                    <label class="custom-control-label" for="ortum_property_checked">默认选中</label>
+                                                </div>
+                                            </div>
+                                            
+                                            
+
                                             <div class="form-group">
                                                 <label for="ortum_property_max">最大范围</label>
                                                 <input type="number" class="form-control form-control-sm" name="ortum_property_max" id="ortum_property_max">
@@ -184,6 +232,13 @@
                                             </div>
 
                                             <div class="ortum_poperty_splitLine"></div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_browse">浏览名称</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_browse" id="ortum_property_browse">
+                                                <div class="invalid-feedback">
+                                                    请填写
+                                                </div>
+                                            </div>
 
                                             <div class="form-group">
                                                 <div class="custom-control custom-switch">
@@ -263,10 +318,10 @@
                         </div>
                     </div>
 
-                    <div style="text-align: center" class="p-2">
+                    <!-- <div style="text-align: center" class="p-2">
                         <button type="button" class="btn btn-outline-primary">保存</button>
                         <button type="button" class="btn btn-outline-info" id="testReset">重置</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

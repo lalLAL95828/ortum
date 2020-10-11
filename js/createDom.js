@@ -1,9 +1,12 @@
 /* 创建不同框架下的不同组件 */
 
 define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio","BootStrapTextarea",
-"BootStrapCheckbox"
+"BootStrapCheckbox",
+"BootStrapFile",
+"BootStrapSwitch",
 ],
-function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox){
+function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
+    BootStrapFile,BootStrapSwitch){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -83,6 +86,32 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
 
         }
     }
+    /**
+     * 创建文件上传
+     * @param {*} type 
+     */
+    let createFileDom = function(parentDom,type){
+        switch(type){
+            case 'Bootstrap':
+                BootStrapFile.FileDom(parentDom)
+                break;
+            default:
+
+        }
+    }
+    /**
+     * 创建开关
+     * @param {*} type 
+     */
+    let createSwitchDom = function(parentDom,type){
+        switch(type){
+            case 'Bootstrap':
+                BootStrapSwitch.SwitchDom(parentDom)
+                break;
+            default:
+
+        }
+    }
     
     return {
         createGridDom,
@@ -91,5 +120,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         createRangeInputDom,
         createRadioDom,
         createCheckboxDom,
+        createFileDom,
+        createSwitchDom,
     }
 })

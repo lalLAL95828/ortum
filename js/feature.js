@@ -1,5 +1,5 @@
 /* ortun的辅助函数 */
-define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
+define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
     /**
      * 功能：初始化函数
      * @param {*} mainId 
@@ -101,11 +101,7 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
             //清空正在拖拽的对象
             Global.ortumNowDragObj = null;
             if(!CreateDom[Settings.menuListDataJSON[componentKey].createFn]){
-                $('#ortum_tip_content').text("火速赶制中！！！")
-                $('.ortum_tip').show();
-                setTimeout(function(){
-                    $('.ortum_tip').hide();
-                },1000)
+                require("assist").dangerTip();
                 return;
             }
 
@@ -207,11 +203,7 @@ define(["settings","global",'CreateDom'],function(Settings,Global,CreateDom){
         let FileList = $(this).prop('files');
         let htmlFile = FileList[0];
         if(FileList.length>2){
-            $('#ortum_tip_content').text("只能导入html和js文件！")
-            $('.ortum_tip').show();
-            setTimeout(function(){
-                $('.ortum_tip').hide();
-            },1000)
+            require("assist").dangerTip("只能导入一个html和js文件！");
             return false;
         }
         if(!htmlFile)return false;

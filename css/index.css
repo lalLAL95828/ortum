@@ -116,6 +116,7 @@
     height: 100%;
     left:0;
     top: 0;
+    /* top: 100px; */
     border:1px dotted gray;
     z-index: 100;
     background-color: rgba(236, 245, 255, 0.5);
@@ -143,6 +144,9 @@
     width: 300px;
     z-index:2020;
     margin: auto;
+    display: none;
+}
+.ortum_tip .alert{
     display: none;
 }
 

@@ -42,11 +42,12 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
 
     // console.log(this)
-    $('#ortum_tip_content').text("火速赶制中！！！")
+    $('#ortum_tip_content_danger').text("火速赶制中！！！").show()
     $('.ortum_tip').show();
     clearInterval(showTipSetTime)
     showTipSetTime = setTimeout(function(){
         $('.ortum_tip').hide();
+        $('#ortum_tip_content_danger').hide()
     },1000)
 })
 

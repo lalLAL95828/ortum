@@ -1,4 +1,4 @@
-define(["require","assist","CreateDom","global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
     let component_properties = {
         data:{
             id:"",//id
@@ -107,7 +107,7 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
 
                 break; 
             case "labelName":
-                $(globalComponent).find('textarea').eq(0).text(val)
+                $(globalComponent).find('label').eq(0).text(val)
                 break; 
             // case "labelWidth":
             //     $(globalComponent).find('label').eq(0).attr('width',val)

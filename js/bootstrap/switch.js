@@ -3,42 +3,46 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         data:{
             id:"",//id
             name:'',//name
-            defaultVal:"",//默认值
+            // defaultVal:"option2",//默认值
             verification:"",//校验
             authority:"3",//权限
-            placeholder:"请输入",
-            cssClass:"form-control col-10",//css类
-            hideLabel:false,//是否隐藏标签
-            labelName:"名称",//标签名称
-            labelPosition:"rowLeft",//标签位置
+            // placeholder:"请输入",
+            cssClass:"custom-control-input",//css类
+            // hideLabel:false,//是否隐藏标签
+            labelName:"开关",//标签名称
+            // labelPosition:"rowLeft",//标签位置
             // labelWidth:"",//标签宽度
-            labelCSS:"col-form-label col-2",//标签css类
+            labelCSS:"custom-control-label",//标签css类,
+            checked:true,//选中
+
         },
-        inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS"],//input事件修改值
-        clickChange:["authority","hideLabel","labelPosition"],
+        inputChange:["id","name","verification","cssClass","labelCSS","labelName"],//input事件修改值
+        clickChange:["authority","checked"],
         purview:{//属性编辑权限
             id:3,//id
             name:2,
-            defaultVal:3,
+            // defaultVal:3,
             verification:3,
-            authority:1,//权限
-            placeholder:3,
+            authority:3,//权限
+            // placeholder:3,
             cssClass:3,//css类
-            hideLabel:3,//是否隐藏标签
+            // hideLabel:3,//是否隐藏标签
             labelName:3,//标签名称
-            labelPosition:3,//标签位置
+            // labelPosition:3,//标签位置
             // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
+            checked:3,
+
         },
     }
 
     /**
      * 功能：创建bootstrap的input
      */
-    let InputDom = function(parentDom){
+    let SwitchDom = function(parentDom){
         let outerDom=$(
             `
-            <div class="form-group ortum_item row" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item" style="margin:0;padding-bottom:0.8rem">
                
             </div>
             `
@@ -47,24 +51,25 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('input');//设定name
-
+        ortum_component_properties.data.name = Assist.timestampName('switch');//设定name
+        
         $(outerDom).append($(`
-            <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
-            <input type="text"
-                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
-                ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="${ortum_component_properties.data.cssClass}" 
                 name="${ortum_component_properties.data.name}" 
-                class="${ortum_component_properties.data.cssClass}" 
-                placeholder="${ortum_component_properties.data.placeholder}">
+                ${ortum_component_properties.data.checked ? "checked" :""}
+                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } >
+                <label class="${ortum_component_properties.data.labelCSS}" >${ortum_component_properties.data.labelName}</label>
+            </div>
         `))
 
         $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','input']);
+        $(outerDom).prop('ortum_component_type',['bootstrap','switch']);
 
         $(parentDom).append(outerDom);
 
-    }
+    };
+
 
     /**
      * 功能：input事件，在这个事件上重置组件属性
@@ -90,10 +95,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //更新到dom属性上
         // evenProperties.data[property] = val;
         switch(property){
-            case "defaultVal":
-                $(globalComponent).find('input').eq(0).attr('value',val)
-                $(globalComponent).find('input').eq(0).val(val)
-                break;
             case "verification":
                 //TODO 验证
                 console.log(val)
@@ -147,7 +148,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         //更新到dom属性上
         switch(property){
-            case "hideLabel":
+            case "checked":
                 evenProperties.data[property] = checked;
                 break;
             default:
@@ -182,58 +183,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //更新到dom属性上
         // evenProperties.data[property] = val;
         switch(property){
+            case "checked":
+                $(globalComponent).find('input').eq(0).prop(property,checked)
+                break;
             case "authority":
                 //TODO 权限
                 console.log(val)
                 break;
-            case "hideLabel":
-                if(checked){
-                    $(globalComponent).find('label').eq(0).addClass('ortum_display_NONE');
-                }else{
-                    $(globalComponent).find('label').eq(0).removeClass('ortum_display_NONE');
-                }
-                break; 
-            case "labelPosition":
-                //TODO 位置
-                switch(val){
-                    case "topLeft":
-                        $(globalComponent).removeClass('row');
-                        $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
-                            return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
-                            return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
-                        break;
-                    case "topRight":
-                        $(globalComponent).removeClass('row');
-                        $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
-                            return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
-                            return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-                        });
-                        $(globalComponent).find('label').eq(0).addClass('ortum_boot_input_label_Right')
-                        break;
-                    case "rowLeft":
-                        let evenLabelCss = $('#ortum_property_labelCSS').val();
-                        evenLabelCss = evenLabelCss.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                        $('#ortum_property_labelCSS').val(evenLabelCss + ' col-form-label col-2')
-                        $(globalComponent).addClass('row');
-                        $(globalComponent).find('label').eq(0).addClass('col-form-label col-2')
-                        $(globalComponent).find('input').eq(0).addClass('col');
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
-                        break;
-                    // case "rowRight":
-                    //     $(globalComponent).addClass('row');
-                    //     $(globalComponent).find('label').eq(0).addClass('col-form-label').addClass('col-2')
-                    //     $(globalComponent).find('inputl').eq(0).addClass('col')
-                    //     break;
-                    default:
-                        break;
-                }
-                break;    
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
                     $(globalComponent).find('input').eq(0).attr(property,val)
@@ -243,8 +199,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     }
 
 
+    
+
+
     return {
-        InputDom,
+        SwitchDom,
 
         inputSetProperties,
         blurSetProperties,

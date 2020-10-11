@@ -115,6 +115,15 @@ define(['assist'],function(Assist){
         },
     },
     {
+        key:"fileDom",
+        name:"文件上传",
+        createFn:"createFileDom",
+        useType:"Bootstrap",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
         key:"gridDom",
         name:"栅格布局",
         useType:"Bootstrap",

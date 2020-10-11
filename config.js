@@ -16,7 +16,8 @@ require.config({
         "BootStrapRadio":"bootstrap/radio",
         "BootStrapCheckbox":"bootstrap/checkbox",
         "BootStrapTextarea":"bootstrap/textarea",
-        "CreateDom":"createDom",
+        "BootStrapFile":"bootstrap/file",
+        "BootStrapSwitch":"bootstrap/switch",
         "CSS":"/lib/css.min",
     },
     // shim:{

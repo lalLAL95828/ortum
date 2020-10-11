@@ -3,6 +3,28 @@ define(['require'],function(require){
     let getDetailType= function(obj){
         return Object.prototype.toString.call(obj).slice(8,-1);
     }
+    /**
+     * 功能：提示1
+     */
+    let dangerTip = function(text="火速赶制中！！！",time=1000) {
+        $('#ortum_tip_content_danger').text(text).show();
+        $('.ortum_tip').show();
+        setTimeout(function(){
+            $('.ortum_tip').hide();
+            $('#ortum_tip_content_danger').hide();
+        },time)
+    }
+    /**
+     * 功能：提示2
+     */
+    let infoTip = function(text="一切OK！！！",time=1000) {
+        $('#ortum_tip_content_info').text(text).show();
+        $('.ortum_tip').show();
+        setTimeout(function(){
+            $('.ortum_tip').hide();
+            $('#ortum_tip_content_info').hide();
+        },time)
+    }
 
 
     /**
@@ -86,7 +108,7 @@ define(['require'],function(require){
      */
     let addClickChoose = function(e){
         //已经被选中，不在选中
-        if($(this).hasClass('selectedShadow'))return false;
+        if($(this).hasClass('selectedShadow'))return;
         $('*').removeClass('selectedShadow');
         $('#ortum_shadow').remove();
 
@@ -175,11 +197,14 @@ define(['require'],function(require){
 
     return {
         deepClone,
+        dangerTip,
+        infoTip,
 
         toggleMapArr,
         addClickChoose,
         timestampName,
 
         resetSetPropertyCom,
+
     }
 })

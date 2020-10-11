@@ -1,4 +1,4 @@
-define(["require","assist","CreateDom","global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
     let component_properties = {
         data:{
             // id:"",//id
@@ -61,13 +61,12 @@ define(["require","assist","CreateDom","global"],function(require,Assist,CreateD
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('input');//设定name
+        ortum_component_properties.data.name = Assist.timestampName('radio');//设定name
         for(let i=0;i<ortum_component_properties.data.items.length;i++){
             let choose = false;
             if(ortum_component_properties.data.defaultVal == ortum_component_properties.data.items[i].value){
                 choose = true
             }
-            
             let newDom = $(`
             <div class="form-check ${ortum_component_properties.data.inline?'form-check-inline':''}">
                 <input class="${ortum_component_properties.data.cssClass}" ${choose ? "checked" :""} type="radio" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
