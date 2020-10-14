@@ -4,9 +4,10 @@ define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio",
 "BootStrapCheckbox",
 "BootStrapFile",
 "BootStrapSwitch",
+"BootStrapSelect",
 ],
 function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
-    BootStrapFile,BootStrapSwitch){
+    BootStrapFile,BootStrapSwitch,BootStrapSelect){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -112,6 +113,19 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
 
         }
     }
+    /**
+     * 创建select
+     * @param {*} type 
+     */
+    let createSelectDom = function(parentDom,type){
+        switch(type){
+            case 'Bootstrap':
+                BootStrapSelect.SelectDom(parentDom)
+                break;
+            default:
+
+        }
+    }
     
     return {
         createGridDom,
@@ -122,5 +136,6 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         createCheckboxDom,
         createFileDom,
         createSwitchDom,
+        createSelectDom,
     }
 })

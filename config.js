@@ -18,6 +18,7 @@ require.config({
         "BootStrapTextarea":"bootstrap/textarea",
         "BootStrapFile":"bootstrap/file",
         "BootStrapSwitch":"bootstrap/switch",
+        "BootStrapSelect":"bootstrap/select",
         "CSS":"/lib/css.min",
     },
     // shim:{

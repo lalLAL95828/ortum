@@ -267,7 +267,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             for(let i =1 ;i<itemsLength;i++){
                 $('#ortum_radio_addLine').click();
             }
-            $('#ortum_radio_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+            itemsLength && $('#ortum_radio_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
                 $(item).find('.ortum_radio_label').eq(0).val(itemsArr[index].label)
                 $(item).find('.ortum_radio_value').eq(0).val(itemsArr[index].value)
             })

@@ -38,3 +38,16 @@
     display: block;
     font-size: 25px;
 }
+/* select */
+.selectedShadow #ortum_shadow .ortum_shadow_bootstrapSelect_settings{
+    position: absolute;
+    bottom: 0px;
+    color: #007bff;
+    right: 38px;
+    display: block;
+    font-size: 25px;
+}
+.ortum_boot_select_label_Right{
+    text-align: end;
+    display: block;
+}

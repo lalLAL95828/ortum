@@ -274,7 +274,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             for(let i =1 ;i<itemsLength;i++){
                 $('#ortum_checkbox_addLine').click();
             }
-            $('#ortum_checkbox_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+            itemsLength && $('#ortum_checkbox_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
                 $(item).find('.ortum_checkbox_label').eq(0).val(itemsArr[index].label)
                 $(item).find('.ortum_checkbox_value').eq(0).val(itemsArr[index].value)
                 if(itemsArr[index].checked){

@@ -141,6 +141,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 keyDownEvent = require('BootStrapSwitch').keyDownSetProperties;
                 keyUpEvent = require('BootStrapSwitch').keyUpSetProperties;
                 break;
+            case "select":
+                inputEvent = require('BootStrapSelect').inputSetProperties;
+                blurEvent = require('BootStrapSelect').blurSetProperties;
+                changeEvent = require('BootStrapSelect').changeSetProperties;
+                clickEvent = require('BootStrapSelect').clickSetProperties;
+                keyDownEvent = require('BootStrapSelect').keyDownSetProperties;
+                keyUpEvent = require('BootStrapSelect').keyUpSetProperties;
+                break;
             default:
                 break;
         }
@@ -159,7 +167,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 case "authority":case "labelPosition"://checkbox
                     $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
                     break;
-                case "hideLabel":case "inline":case "multiple":case "automatic":case "checked"://开关
+                case "hideLabel":case "inline":case "multiple":case "automatic":case "checked":case "useRemote"://开关
                     $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
                     break;
                 default:
