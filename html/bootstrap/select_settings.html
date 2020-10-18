@@ -8,10 +8,13 @@
         color: #bec7d1;
         vertical-align: middle;
     }
+    .ModalLabelTable{
+        width: 100%;
+    }
     </style>
     
     <div class="modal-header">
-        <h5 class="modal-title" >设置</h5>
+        <h5 class="modal-title">设置</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button>
@@ -28,6 +31,9 @@
                     </td>
                     <td style="width:50px;">
                         禁用
+                    </td>
+                    <td style="width:50px;">
+                        隐藏
                     </td>
                     <td>
                         <span style="font-family:宋体;color:rgb(255,0,0);font-size:14px">*</span>名称
@@ -49,6 +55,9 @@
                     <td name="check" style="text-align: center;">
                         <input type="checkbox" class="ortum_default_disabled">
                     </td>
+                    <td name="check" style="text-align: center;">
+                        <input type="checkbox" class="ortum_default_hide">
+                    </td>
                     <td name="input">
                         <input type="text" class="form-control ortum_select_name" >
                     </td>
@@ -61,7 +70,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="6" style="text-align: center;line-height: 35px;">
+                    <td colspan="7" style="text-align: center;line-height: 35px;">
                         <!-- <span id="ortum_select_addLine">新增</span> -->
                         <span id="ortum_select_addLine" class="iconfont icon-jiahao ortum_tableAct_icon"></span>
                     </td>
@@ -113,6 +122,9 @@
                     <td name="check" style="text-align: center;">
                         <input type="checkbox" class="ortum_default_disabled">
                     </td>
+                    <td name="check" style="text-align: center;">
+                        <input type="checkbox" class="ortum_default_hide">
+                    </td>
                     <td name="input">
                         <input type="text" class="form-control ortum_select_name" >
                     </td>
@@ -136,19 +148,21 @@
                     let name = $(item).find('.ortum_select_name').eq(0).val()
                     let value = $(item).find('.ortum_select_value').eq(0).val()
                     
-                    let selected = $(item).find('.ortum_default_checked').eq(0).prop('checked')
+                    let selected = $(item).find('.ortum_default_selected').eq(0).prop('checked')
                     let disabled = $(item).find('.ortum_default_disabled').eq(0).prop('checked')
+                    let hide = $(item).find('.ortum_default_hide').eq(0).prop('checked')
                     if(name && value && name.trim() && value.trim()){
                         newLine.push({
                             "name":name,
                             "value":value,
                             "selected":selected,
                             "disabled":disabled,
+                            "hide":hide,
                         })
                     }
                 })
                 BootStrapSelect.setSelectOptions(newLine);
-                $('#ortum_top_dialog').modal('toggle')
+                $('#ortum_top_dialog_lg').modal('toggle')
             })
         })
     

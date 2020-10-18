@@ -13,6 +13,8 @@ define([],function(){
     let ortum_contextMenuObj;//右键点击菜单对象
 
     let ortum_edit_component;//正在编辑的对象
+    let ortum_codemirrorJS_setVal;//设置codemirror的初始值
+    let ortum_codemirrorJS_save;//codemirror关闭函数
     // {
     //     frame:"bootstrap",
     //     type:'input',
@@ -26,5 +28,8 @@ define([],function(){
         ortumNowDragObj:ortum_nowDragObj,
         ortumCOntextMenuObj:ortum_contextMenuObj,
         ortum_edit_component:ortum_edit_component,
+
+        ortum_codemirrorJS_setVal:ortum_codemirrorJS_setVal,
+        ortum_codemirrorJS_save:ortum_codemirrorJS_save,
     }
 })

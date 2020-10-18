@@ -12,9 +12,19 @@
     margin:auto;
     overflow:auto;
     position: relative;
-
 }
+
 #ortum_field .originState{
+    text-align: center;
+    line-height: 398px;
+}
+/* 预览id */
+#ortum_field_preview{
+    margin:auto;
+    overflow:auto;
+    position: relative;
+}
+#ortum_field_preview .originState{
     text-align: center;
     line-height: 398px;
 }
@@ -115,8 +125,8 @@
     width: 100%;
     height: 100%;
     left:0;
-    top: 0;
-    /* top: 100px; */
+    /* top: 0; */
+    top: 100px;
     border:1px dotted gray;
     z-index: 100;
     background-color: rgba(236, 245, 255, 0.5);

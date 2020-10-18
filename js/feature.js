@@ -102,7 +102,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             Global.ortumNowDragObj = null;
             if(!CreateDom[Settings.menuListDataJSON[componentKey].createFn]){
                 require("assist").dangerTip();
-                return;
+                return false;
             }
 
 
@@ -120,6 +120,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             //eval( CreateDom[Settings.menuListDataJSON[componentKey].createFn]+ "("+ this +","+ Settings.menuListDataJSON[componentKey].useType +")");
             
             // this.appendChild(Global.ortumNowDragObj.cloneNode(true))//深copy
+
+            return false;
             
         }
 
@@ -228,7 +230,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} e 
      */
     let exportFileListen = function(e){
-        console.log(e)
         let contentData=document.getElementById('ortum_body').outerHTML;
         let urlObject = window.URL || window.webkitURL || window;
         let export_blob = new Blob([contentData]);
@@ -306,6 +307,38 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         }
 
     }
+    /**
+     * 功能：预览文件内容
+     * @param {*} id 
+     */
+    let previewTableContent = function(id){
+        let prevHtml =$(`
+            <div id="ortum_field_preview"></div>
+        `)
+        $('#'+id).find(".ortum_item").each(function(index,item){
+            $(item).hasClass("ortum_bootstrap_select") && (
+                prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
+            );
+        })
+
+        let WindowObjectReference = window.open("/preview.html")
+        
+        WindowObjectReference.onload = function(e){
+            $(this.document.body).eq(0).append(prevHtml)
+            WindowObjectReference.onunload = function(e){
+                // 此处写close事件回调
+            }
+        }
+        /* $('#ortum_top_dialog_xl').modal({
+            "backdrop":"static",
+            "keyboard":false,
+        })
+        $("#ortum_top_model_xl_content").load("/html/common/preview.html",function(){
+            $("#ortum_preview_ModalLabel_body").html(prevHtml);
+            $('#ortum_top_model_xl_wait').hide();
+        }); */
+        return false;
+    }
 
     /**
      * 功能: 找到表单中所有的组件的id和name
@@ -358,5 +391,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         setEditPropertiesPurview,
 
         getComponentsPropsHint,
+        previewTableContent,
     }
 })

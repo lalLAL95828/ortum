@@ -33,15 +33,21 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 "backdrop":"static",
                 // "focus":false,
                 "keyboard":false,
-            })
+            });
             $("#ortum_top_model_xl_content").load("/html/common/codemirror.html",function(){
                 $('#ortum_top_model_xl_wait').hide();
             });
         })
         return;
     }
+    //预览
+    if($(this).hasClass('icon-yulan')){
+        require(['Feature'],function(Feature){
+            Feature.previewTableContent("ortum_field")
+        })
+        return;
+    }
 
-    // console.log(this)
     $('#ortum_tip_content_danger').text("火速赶制中！！！").show()
     $('.ortum_tip').show();
     clearInterval(showTipSetTime)

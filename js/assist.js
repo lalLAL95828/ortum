@@ -112,9 +112,6 @@ define(['require'],function(require){
         $('*').removeClass('selectedShadow');
         $('#ortum_shadow').remove();
 
-        //排除grid等待插入中
-        if($(this).hasClass('ortum_boot_col_waitInsert'))return false;
-
         $(this).addClass('selectedShadow');
 
         let shadowDiv= $(`
@@ -206,6 +203,7 @@ define(['require'],function(require){
     }
 
     return {
+        getDetailType,
         deepClone,
         dangerTip,
         infoTip,

@@ -51,3 +51,6 @@
     text-align: end;
     display: block;
 }
+option:disabled{
+    color: #999999;
+}

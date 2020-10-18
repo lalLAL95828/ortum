@@ -15,6 +15,7 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
             labelCSS:"col-form-label col-2",//标签css类
             useRemote:false,//服务器获取option
             getOptions:null,
+            serverUrl:"",//服务器地址
             options:[
                 {
                     value:"123",
@@ -26,9 +27,14 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
                     name:"兰花",
                     disabled:true,
                 },
+                {
+                    value:"321",
+                    name:"菊花",
+                    hide:true,
+                },
             ]
         },
-        inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS"],//input事件修改值
+        inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS","serverUrl"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition","useRemote"],
         purview:{//属性编辑权限
             id:3,//id
@@ -44,11 +50,11 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
             // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
             useRemote:3,
+            serverUrl:3,
         },
     }
 
     /**
-     * TODO
      * 功能：远端获取options
      */
     let getOptions = function(checked=false){
@@ -56,33 +62,34 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
         if(!evenProperties.data.useRemote || !checked)return;
 
-        console.log("远端获取");
-        // OrtumReq.ortumReq({
-        //     "url":evenProperties.data.uploadUrl,
-        //     "method":"POST",
-        //     "data":fd,
-        //     "success":(xhr,e)=>{
-        //         require("assist").infoTip("上传成功。");
-        //     },
-        //     "error":(xhr,e)=>{
-        //         require("assist").dangerTip("上传失败！");
-        //     },
-        //     progress:(xhr,e)=>{
-        //         let pro = e.loaded/e.total * 100
-        //         // console.log(pro);
-        //         $(globalComponent).find(".progress-bar").eq(0).css("width", pro+"%")
-        //         $(globalComponent).find(".progress-bar").eq(0).attr("aria-valuenow", pro)
-        //     },
-        //     final:(xhr,e)=>{
-        //         setTimeout(function(){
-        //             $(globalComponent).find(".progress").eq(0).css("display","none")
-        //             $(globalComponent).find(".progress-bar").eq(0).css("width","0%")
-        //             $(globalComponent).find(".progress-bar").eq(0).attr("aria-valuenow", 0)
-        //         },300)
-        //     }
-        // })
+        if(Assist.getDetailType(evenProperties.data.customGetOptions) == "Function"){
+            evenProperties.data.customGetOptions(evenProperties.data.name,OrtumReq.ortumReq)
+        }
+        /* OrtumReq.ortumReq({
+            "url":evenProperties.data.serverUrl,
+            "method":"POST",
+            "data":fd,
+            "success":(xhr,e)=>{
+                require("assist").infoTip("上传成功。");
+            },
+            "error":(xhr,e)=>{
+                require("assist").dangerTip("上传失败！");
+            },
+            progress:(xhr,e)=>{
+                let pro = e.loaded/e.total * 100
+                // console.log(pro);
+                $(globalComponent).find(".progress-bar").eq(0).css("width", pro+"%")
+                $(globalComponent).find(".progress-bar").eq(0).attr("aria-valuenow", pro)
+            },
+            final:(xhr,e)=>{
+                setTimeout(function(){
+                    $(globalComponent).find(".progress").eq(0).css("display","none")
+                    $(globalComponent).find(".progress-bar").eq(0).css("width","0%")
+                    $(globalComponent).find(".progress-bar").eq(0).attr("aria-valuenow", 0)
+                },300)
+            }
+        }) */
     }
-
     /**
      * 功能：创建bootstrap的select
      */
@@ -118,6 +125,7 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
                 <option 
                 ${ortum_component_properties.data.options[i].selected ? "selected":""} 
                 ${ortum_component_properties.data.options[i].disabled ? "disabled":""} 
+                ${ortum_component_properties.data.options[i].hide ? "class='ortum_display_NONE'":""} 
                 value="${ortum_component_properties.data.options[i].value}">${ortum_component_properties.data.options[i].name}</option>
             `)
         }
@@ -132,6 +140,63 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
 
         $(parentDom).append(outerDom);
     }
+    /**
+     * 功能：创建已经编辑好的节点
+     */
+    let createMatureDom =function(Dom){
+        let outerDom=$(
+            `
+            <div class="form-group ortum_item row ortum_bootstrap_select" style="margin:0;padding-bottom:0.8rem">
+               
+            </div>
+            `
+        );
+        
+        let evenProperties = $(Dom).prop('ortum_component_properties');
+        
+        let selectDom = $(`
+            <select class="${evenProperties.data.cssClass}" 
+                id="${evenProperties.data.id}"
+                name="${evenProperties.data.name}"
+                placeholder="${evenProperties.data.placeholder}" 
+            </select>
+        `)
+        
+        if(!evenProperties.data.useRemote){
+            for(let i=0;i<evenProperties.data.options.length;i++){
+                let choose = false;
+                if(evenProperties.data.defaultVal.indexOf(evenProperties.data.options[i].value) != -1){
+                    choose = true
+                }
+                selectDom.append(`
+                    <option 
+                    ${evenProperties.data.options[i].selected ? "selected":""} 
+                    ${evenProperties.data.options[i].disabled ? "disabled":""} 
+                    ${evenProperties.data.options[i].hide ? "class='ortum_display_NONE'":""} 
+                    value="${evenProperties.data.options[i].value}">${evenProperties.data.options[i].name}</option>
+                `)
+            }
+        }
+        
+        if(!evenProperties.data.hideLabel){
+            $(outerDom).append($(`
+                <label class="${evenProperties.data.labelCSS}">${evenProperties.data.labelName}</label>
+            `))
+        }
+        $(outerDom).append(selectDom)
+
+        //远端获取options
+        if(evenProperties.data.useRemote && Assist.getDetailType(evenProperties.data.customGetOptions) == "Function"){
+            let scriptDom = $(`<script>${evenProperties.data.customGetOptions.toString()};getOptions_${evenProperties.data.name}("${evenProperties.data.name}",require("ortumReq").ortumReq);
+            </script>`)
+
+            $(outerDom).append(scriptDom)
+        }
+        
+        return outerDom;
+    }
+
+
 
     /**
      * 功能：input事件，在这个事件上重置组件属性
@@ -186,7 +251,6 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
                 break;
         }
     }
-
     /**
      * 功能：blur事件
      * @param {*} property 
@@ -213,7 +277,7 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
 
         //更新到dom属性上
         switch(property){
-            case "hideLabel":
+            case "hideLabel":case "useRemote":
                 evenProperties.data[property] = checked;
                 break;
             default:
@@ -233,7 +297,6 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
         let val=$(that).val();
         let checked=$(that).prop('checked');
 
-
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -251,7 +314,7 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
                 if(checked){
                     getOptions(checked);
                 }else{
-                    setSelectOptions(null,true)
+                    setSelectOptions([],true)
                 }
                 break;
             case "authority":
@@ -319,75 +382,119 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
      * @param {*} newArr 
      */
     let setSelectOptions = function(newArr,setDefault=false){
-
-
-
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
-        //TODO 可以完善
-        if(evenProperties.data.useRemote) return;//从远端获取
-
-        setDefault && (newArr = evenProperties.data.options);//设置默认值
-
-        let selectDom = $(globalComponent).find('select').eq(0).empty();
-
-        //默认选中值清空
-        evenProperties.data.defaultVal = [];
-
-        for(let i=0;i<newArr.length;i++){
-            if(newArr[i].selected){
-                evenProperties.data.defaultVal.push(newArr[i].value)
+        //从远端获取
+        if(evenProperties.data.useRemote && !Array.isArray(newArr)){
+            try{
+                //将字符串装成函数
+                eval(newArr)
+                //绑定获取option的自定义函数
+                evenProperties.data.customGetOptions = eval("getOptions_" + evenProperties.data.name);
+            }catch(err){
+                evenProperties.data.customGetOptions = null;
+                Assist.dangerTip("获取option函数编辑失败！",2000)
             }
-            let newDom = $(`
-            <option 
-                ${newArr[i].selected ? "selected":""} 
-                ${newArr[i].disabled ? "disabled":""} 
-                value="${newArr[i].value}">${newArr[i].name}</option>
-            `);
-            $(selectDom).append(newDom);
+            return;
         }
-        evenProperties.data.options = newArr;
+        //本地设置变量
+        if(!evenProperties.data.useRemote && Array.isArray(newArr)){
+            setDefault && (newArr = evenProperties.data.options);//设置默认值
+
+            let selectDom = $(globalComponent).find('select').eq(0).empty();
+
+            //默认选中值清空
+            evenProperties.data.defaultVal = [];
+            
+            for(let i=0;i<newArr.length;i++){
+                if(newArr[i].selected){
+                    evenProperties.data.defaultVal.push(newArr[i].value)
+                }
+                let newDom = $(`
+                <option 
+                    ${newArr[i].selected ? "selected":""} 
+                    ${newArr[i].disabled ? "disabled":""} 
+                    ${newArr[i].hide ? "class='ortum_display_NONE'":""} 
+                    value="${newArr[i].value}">${newArr[i].name}</option>
+                `);
+                $(selectDom).append(newDom);
+            }
+            evenProperties.data.options = newArr;
+        } 
     }
     /**
      * 功能：回显选项
      */
     let showSelectOptions = function(){
-        //显示弹窗
-        $('#ortum_top_dialog').modal({
-            "backdrop":"static",
-        })
-        //加载配置
-        $("#ortum_top_model_content").load("/html/bootstrap/select_settings.html",function(){
-            let globalComponent =Global.ortum_edit_component.comObj;
-            let evenProperties = $(globalComponent).prop('ortum_component_properties');
-
-            let itemsArr = evenProperties.data.options;
-            let itemsLength = itemsArr.length;
-            for(let i =1 ;i<itemsLength;i++){
-                $('#ortum_select_addLine').click();
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        //设置远端获取option函数
+        if(evenProperties.data.useRemote){
+            Global.ortum_codemirrorJS_setVal = function(codeObj){
+                //函数字符串
+                var funStr='';
+                if(evenProperties.data.customGetOptions){
+                    funStr=evenProperties.data.customGetOptions.toString();
+                }else{
+                    funStr = "function getOptions_"+ evenProperties.data.name +"(ortumDom,ortumAjax){\n\n\n\n\n}"
+                }
+                codeObj.setValue(`//函数名请勿编辑，只需编辑函数体内容\n//ortumDom是包裹select的节点name\n//ortumAjax是自定义的ajax请求\n${funStr}
+                `)
             }
-            itemsLength && $('#ortum_select_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
-                $(item).find('.ortum_select_name').eq(0).val(itemsArr[index].name)
-                $(item).find('.ortum_select_value').eq(0).val(itemsArr[index].value)
-                if(itemsArr[index].selected){
-                    $(item).find('.ortum_default_selected').eq(0).prop('checked',true)
-                }
-                if(itemsArr[index].disabled){
-                    $(item).find('.ortum_default_disabled').eq(0).prop('checked',true)
-                }
+
+            $('#ortum_top_dialog_xl').modal({
+                "backdrop":"static",
+                "keyboard":false,
             })
+            //编辑js保存后执行的函数
+            Global.ortum_codemirrorJS_save = setSelectOptions;
+            $("#ortum_top_model_xl_content").load("/html/common/codemirror.html",function(){
+                $('#ortum_top_model_xl_wait').hide();
+            });
+            return;
+        }
+        //本地设置option
+        if(!evenProperties.data.useRemote){
+                //显示弹窗
+            $('#ortum_top_dialog_lg').modal({
+                "backdrop":"static",
+            })
+            //加载配置
+            $("#ortum_top_model_lg_content").load("/html/bootstrap/select_settings.html",function(){
+                // let globalComponent =Global.ortum_edit_component.comObj;
+                // let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
-            $('#ortum_top_model_wait').hide();
-        });
+                let itemsArr = evenProperties.data.options;
+                let itemsLength = itemsArr.length;
+                for(let i =1 ;i<itemsLength;i++){
+                    $('#ortum_select_addLine').click();
+                }
+                itemsLength && $('#ortum_select_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+                    $(item).find('.ortum_select_name').eq(0).val(itemsArr[index].name)
+                    $(item).find('.ortum_select_value').eq(0).val(itemsArr[index].value)
+                    if(itemsArr[index].selected){
+                        $(item).find('.ortum_default_selected').eq(0).prop('checked',true)
+                    }
+                    if(itemsArr[index].disabled){
+                        $(item).find('.ortum_default_disabled').eq(0).prop('checked',true)
+                    }
+                    if(itemsArr[index].hide){
+                        $(item).find('.ortum_default_hide').eq(0).prop('checked',true)
+                    }
+                })
+
+                $('#ortum_top_model_lg_wait').hide();
+            });
+        }
     };
-
 
     return {
         SelectDom,
 
         setSelectOptions,
         showSelectOptions,
+        createMatureDom,
 
         inputSetProperties,
         blurSetProperties,
@@ -395,6 +502,8 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+
 
     }
 })

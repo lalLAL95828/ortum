@@ -11,16 +11,32 @@
     <textarea id="ortum_codeMirror"></textarea>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button> -->
     <button type="button" class="btn btn-primary" id="ortum_radio_save">保存</button>
 </div>
 <script>
 
     //$('#ortum_top_dialog').modal('toggle')
 
-    require(['setCodemirror'],function(SetCodemirror){
+    require(['setCodemirror',"global"],function(SetCodemirror,Global){
         let myCodeMirror = SetCodemirror.init();
+        
+        Global.ortum_codemirrorJS_setVal && Global.ortum_codemirrorJS_setVal(myCodeMirror);
+        //置空初始化函数
+        Global.ortum_codemirrorJS_setVal = null;
+        //保存
+        $('#ortum_radio_save').off('click.save').on('click.save',function(){
+            if(!require)return;
+            if(Global.ortum_codemirrorJS_save){
+                Global.ortum_codemirrorJS_save(myCodeMirror.getValue());
+            }
+            //置空保存函数
+            Global.ortum_codemirrorJS_save = null;
+            //关闭
+            $('#ortum_top_dialog_xl').modal('toggle')
+        })
     })
+
 
 </script>
     

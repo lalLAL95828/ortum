@@ -79,6 +79,11 @@
                                                 <input type="number" step="1" min="1" class="form-control form-control-sm" name="ortum_property_rows" id="ortum_property_rows">
                                             </div>
                                             <div class="form-group">
+                                                <label for="ortum_property_columns">columns</label>
+                                                <input type="number" step="1" min="1" class="form-control form-control-sm" name="ortum_property_columns" id="ortum_property_columns">
+                                            </div>
+
+                                            <div class="form-group">
                                                 <label for="ortum_property_defaultVal">默认值</label>
                                                 <input type="text" class="form-control form-control-sm" name="ortum_property_defaultVal" id="ortum_property_defaultVal">
                                                 <div class="invalid-feedback">
@@ -95,6 +100,13 @@
                                             <div class="form-group">
                                                 <label for="ortum_property_uploadUrl">上传地址</label>
                                                 <input type="text" class="form-control form-control-sm" name="ortum_property_uploadUrl" id="ortum_property_uploadUrl">
+                                                <div class="invalid-feedback">
+                                                    请填写
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_serverUrl">服务器地址</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_serverUrl" id="ortum_property_serverUrl">
                                                 <div class="invalid-feedback">
                                                     请填写
                                                 </div>
@@ -134,8 +146,7 @@
                                                 </div>
                                             </div>
                                             
-                                            
-
+                                
                                             <div class="form-group">
                                                 <label for="ortum_property_max">最大范围</label>
                                                 <input type="number" class="form-control form-control-sm" name="ortum_property_max" id="ortum_property_max">
@@ -297,7 +308,7 @@
                                     </div>
                                 </form>                      
                             </div>
-                            <div class="card">
+                            <!-- <div class="card">
                                 <div class="card-header p-0" id="headingTwo">
                                     <button class="btn btn-block text-left btn-sm ortum_boot_btn_no_shadow" type="button" data-toggle="collapse" data-target="#ortum_collapseTwo" aria-expanded="true" aria-controls="ortum_collapseTwo">
                                         父级组件①
@@ -320,7 +331,7 @@
                                         待开发
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -363,6 +374,18 @@
                     <span class="sr-only">Loading...</span>
                 </div>
                 <div id="ortum_top_model_xl_content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部弹窗LG -->
+    <div class="modal fade" id="ortum_top_dialog_lg" tabindex="-1" role="dialog" aria-labelledby="ortum_top_dialog_lg" aria-hidden="true" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div id="ortum_top_model_lg_wait" class="spinner-border" role="status" style="margin:100px auto;">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div id="ortum_top_model_lg_content"></div>
             </div>
         </div>
     </div>

@@ -14,7 +14,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     </div>
                 </div>
             `);
-            $(col).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose)
             bindFeatureToBootStarapCol(col);//绑定拖拽事件
         }else{
             col = $(`
@@ -34,7 +33,20 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             return false;
         })
         $(ele).on('drop.firstbind',function(e){
-        
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            if(!componentKey){//不存在对应key
+                return false;
+            }
+            if(componentKey == "gridDom"){//如果拖拽上來的是grid,则不进行创建
+                return false;
+            }
+
+            if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
+                Assist.dangerTip();
+                return false;
+            }
+
             if($(this).hasClass('ortum_boot_col_waitInsert')){
                 $(this).removeClass('ortum_boot_col_waitInsert')
                 this.innerHTML = "";
@@ -43,13 +55,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 return false;
             }
 
-            //获取要创建的组件key
-            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
-
-            if(!componentKey){//不存在对应key
-                return false;
-            }
-            
             //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
             require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
             
@@ -84,6 +89,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let keyDownEvent =null;
         let keyUpEvent =null;
         switch(type){
+            case "grid":
+                inputEvent = require('BootStrapGrid').inputSetProperties;
+                blurEvent = require('BootStrapGrid').blurSetProperties;
+                changeEvent = require('BootStrapGrid').changeSetProperties;
+                clickEvent = require('BootStrapGrid').clickSetProperties;
+                keyDownEvent = require('BootStrapGrid').keyDownSetProperties;
+                keyUpEvent = require('BootStrapGrid').keyUpSetProperties;
+                break;
             case "input":
                 inputEvent = require('BootStrapInput').inputSetProperties;
                 blurEvent = require('BootStrapInput').blurSetProperties;
@@ -152,8 +165,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             default:
                 break;
         }
-        
-
         
         //获取组件的属性
         let data = properies.data;
