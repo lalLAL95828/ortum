@@ -1,4 +1,4 @@
-define(["require","assist","createDom","global","ortumReq"],function(require,Assist,CreateDom,Global,OrtumReq){
+define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
     /**
      * 监听文件变化，并且实时上传
      */
@@ -93,13 +93,13 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
         //发送到后端
         let fd = new FormData();
         let L = filelists.length;
-        if(L)return;//为空不上传
+        if(!L)return;//为空不上传
 
         for(let i=0;i<L;i++){
             fd.append(evenProperties.data.formName, filelists[i]);
         }
-        $(globalComponent).find(".progress").eq(0).css("display","flex")
-        OrtumReq.ortumReq({
+        $(globalComponent).find(".progress").eq(0).css("display","flex");
+        ortumReq({
             "url":evenProperties.data.uploadUrl,
             "method":"POST",
             "data":fd,
@@ -120,7 +120,7 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
                     $(globalComponent).find(".progress").eq(0).css("display","none")
                     $(globalComponent).find(".progress-bar").eq(0).css("width","0%")
                     $(globalComponent).find(".progress-bar").eq(0).attr("aria-valuenow", 0)
-                },300)
+                },200)
             }
         })
     }

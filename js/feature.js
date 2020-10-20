@@ -233,8 +233,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         let contentData=document.getElementById('ortum_body').outerHTML;
         let urlObject = window.URL || window.webkitURL || window;
         let export_blob = new Blob([contentData]);
-        // console.log(urlObject)
-        // console.log(export_blob)
         let save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")//参考https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createElementNS
         save_link.href = urlObject.createObjectURL(export_blob);
         // urlObject.revokeObjectURL(save_link.href);//一般需要从内存中释放objectURL
@@ -308,10 +306,10 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
 
     }
     /**
-     * 功能：预览文件内容
+     * 功能：预览文件内容,html方式
      * @param {*} id 
      */
-    let previewTableContent = function(id){
+    let previewTableContent2 = function(id){
         let prevHtml =$(`
             <div id="ortum_field_preview"></div>
         `)
@@ -321,22 +319,118 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             );
         })
 
-        let WindowObjectReference = window.open("/preview.html")
+
+        if(Global.ortum_preview_windowSon){
+            $(Global.ortum_preview_windowSon.document.body).eq(0).find("#ortum_preview_ModalLabel_body").append(prevHtml)
+        }else{
+            let winSon = window.open("/preview.html")
         
-        WindowObjectReference.onload = function(e){
-            $(this.document.body).eq(0).append(prevHtml)
-            WindowObjectReference.onunload = function(e){
-                // 此处写close事件回调
+            winSon.onload = function(e){
+                Global.ortum_preview_windowSon = winSon;
+
+                $(winSon.document.body).eq(0).find("#ortum_preview_ModalLabel_body").append(prevHtml)
+                winSon.onunload = function(e){
+                    Global.ortum_preview_windowSon = null;
+                    // 此处写close事件回调
+                }
             }
         }
-        /* $('#ortum_top_dialog_xl').modal({
-            "backdrop":"static",
-            "keyboard":false,
-        })
-        $("#ortum_top_model_xl_content").load("/html/common/preview.html",function(){
-            $("#ortum_preview_ModalLabel_body").html(prevHtml);
-            $('#ortum_top_model_xl_wait').hide();
-        }); */
+
+
+
+        
+        
+        return false;
+    }
+    /**
+     * 功能：预览文件内容,Blob方式
+     * @param {*} id 
+     */
+    let previewTableContent = function(id){
+        
+
+        let urlOrigin=window.location.origin;
+        let outInner = `
+        <!DOCTYPE HTML>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <title>ortum预览</title>
+            <link rel="stylesheet" href="${urlOrigin}/css/index.css">
+            <link rel="stylesheet" href="${urlOrigin}/css/bootstrap.css">
+            <link rel="stylesheet" href="${urlOrigin}/css/iconfont.css">
+            <!-- 引入bootstrap css-->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+            
+            <script src="${urlOrigin}/lib/jquery.min.js"></script>
+        
+            <!-- 引入bootstrap js -->
+            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"><\/script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"><\/script>
+        
+            <script src="${urlOrigin}/lib/ortumReq.js"><\/script>
+        </head>
+        <body>
+            <div id="ortum_preview_ModalLabel_body"></div>
+        </body>
+        </html>
+        `;
+        //先销毁
+        if(Global.ortum_preview_windowSonUrl){
+            window.URL.revokeObjectURL(Global.ortum_preview_windowSonUrl)
+            Global.ortum_preview_windowSonUrl =null;
+        }
+
+        var oMyBlob = new Blob([outInner], {type : 'text/html'}); // 得到 blob
+        var urldemo = Global.ortum_preview_windowSonUrl = window.URL.createObjectURL(oMyBlob);//url
+
+        if(Global.ortum_preview_windowSon){
+            Global.ortum_preview_windowSon.location.href = urldemo;//修改url,不会触发onload
+            Global.ortum_preview_windowSon.location.reload();
+            console.log("reload")
+        }else{
+            var winSon = Global.ortum_preview_windowSon = Global.ortum_preview_windowSon = window.open(urldemo);//重新生成窗口
+            // winSon.onload = function(){
+            //     //获取组件
+            //     let prevHtml =$(`
+            //         <div id="ortum_field_preview"></div>
+            //     `)
+            //     $('#'+id).find(".ortum_item").each(function(index,item){
+            //         $(item).hasClass("ortum_bootstrap_select") && (
+            //             prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
+            //         );
+            //     })
+
+            //     $(winSon.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
+            //     console.log("onload");
+
+            //     winSon.onunload = function(){
+            //         console.log("onunload")
+            //     }
+            // }
+        }
+
+        Global.ortum_preview_windowSon.onload = function(){
+            //获取组件
+            let prevHtml =$(`
+                <div id="ortum_field_preview"></div>
+            `)
+            $('#'+id).find(".ortum_item").each(function(index,item){
+                $(item).hasClass("ortum_bootstrap_select") && (
+                    prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
+                );
+            })
+
+            $(this.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
+            console.log("onload");
+
+            this.onunload = function(){
+                Global.ortum_preview_windowSon = null;
+                console.log("onunload")
+            }
+        }
+        
         return false;
     }
 

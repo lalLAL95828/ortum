@@ -15,6 +15,9 @@ define([],function(){
     let ortum_edit_component;//正在编辑的对象
     let ortum_codemirrorJS_setVal;//设置codemirror的初始值
     let ortum_codemirrorJS_save;//codemirror关闭函数
+
+    let ortum_preview_windowSon;//打开的预览窗口
+    let ortum_preview_windowSonUrl;//打开的预览窗口Blob url
     // {
     //     frame:"bootstrap",
     //     type:'input',
@@ -31,5 +34,8 @@ define([],function(){
 
         ortum_codemirrorJS_setVal:ortum_codemirrorJS_setVal,
         ortum_codemirrorJS_save:ortum_codemirrorJS_save,
+
+        ortum_preview_windowSon:ortum_preview_windowSon,
+        ortum_preview_windowSonUrl:ortum_preview_windowSonUrl,
     }
 })

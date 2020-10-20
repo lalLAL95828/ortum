@@ -1,4 +1,4 @@
-define(["require","assist","createDom","global","ortumReq"],function(require,Assist,CreateDom,Global,OrtumReq){
+define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
     let component_properties = {
         data:{
             id:"",//id
@@ -63,7 +63,7 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
         if(!evenProperties.data.useRemote || !checked)return;
 
         if(Assist.getDetailType(evenProperties.data.customGetOptions) == "Function"){
-            evenProperties.data.customGetOptions(evenProperties.data.name,OrtumReq.ortumReq)
+            evenProperties.data.customGetOptions(evenProperties.data.name,ortumReq)
         }
         /* OrtumReq.ortumReq({
             "url":evenProperties.data.serverUrl,
@@ -187,7 +187,7 @@ define(["require","assist","createDom","global","ortumReq"],function(require,Ass
 
         //远端获取options
         if(evenProperties.data.useRemote && Assist.getDetailType(evenProperties.data.customGetOptions) == "Function"){
-            let scriptDom = $(`<script>${evenProperties.data.customGetOptions.toString()};getOptions_${evenProperties.data.name}("${evenProperties.data.name}",require("ortumReq").ortumReq);
+            let scriptDom = $(`<script>${evenProperties.data.customGetOptions.toString()};getOptions_${evenProperties.data.name}("${evenProperties.data.name}",ortumReq);
             </script>`)
 
             $(outerDom).append(scriptDom)
