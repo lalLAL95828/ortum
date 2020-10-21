@@ -22,5 +22,10 @@
 <body>
     <div id="ortum_preview_ModalLabel_body"></div>
 
+    <script>
+        let prev = window.opener.require("feature").getPreviewContent("ortum_field",window.opener.document)
+        $("#ortum_preview_ModalLabel_body").html(prev)
+    </script>
+
 </body>
 </html>

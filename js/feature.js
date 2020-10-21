@@ -309,7 +309,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * 功能：预览文件内容,html方式
      * @param {*} id 
      */
-    let previewTableContent2 = function(id){
+    let previewTableContent = function(id){
         let prevHtml =$(`
             <div id="ortum_field_preview"></div>
         `)
@@ -318,37 +318,31 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
             );
         })
+        window.open("/preview.html","preview")
 
-
-        if(Global.ortum_preview_windowSon){
-            $(Global.ortum_preview_windowSon.document.body).eq(0).find("#ortum_preview_ModalLabel_body").append(prevHtml)
-        }else{
-            let winSon = window.open("/preview.html")
-        
-            winSon.onload = function(e){
-                Global.ortum_preview_windowSon = winSon;
-
-                $(winSon.document.body).eq(0).find("#ortum_preview_ModalLabel_body").append(prevHtml)
-                winSon.onunload = function(e){
-                    Global.ortum_preview_windowSon = null;
-                    // 此处写close事件回调
-                }
-            }
-        }
-
-
-
-        
-        
         return false;
+    }
+    /**
+     * 功能: 获取win下表单信息
+     * @param {*} id 
+     * @param {*} win 
+     */
+    let getPreviewContent =function(id,win){
+        let prevHtml =$(`
+        <div id="ortum_field_preview"></div>
+        `)
+        $(win).find('#'+id).find(".ortum_item").each(function(index,item){
+            $(item).hasClass("ortum_bootstrap_select") && (
+                prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
+            );
+        })
+        return prevHtml;
     }
     /**
      * 功能：预览文件内容,Blob方式
      * @param {*} id 
      */
-    let previewTableContent = function(id){
-        
-
+    let previewTableContent1 = function(id){
         let urlOrigin=window.location.origin;
         let outInner = `
         <!DOCTYPE HTML>
@@ -373,6 +367,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         </head>
         <body>
             <div id="ortum_preview_ModalLabel_body"></div>
+            
+            <script>
+                let prev = window.opener.require("feature").getPreviewContent("ortum_field",window.opener.document)
+                $("#ortum_preview_ModalLabel_body").html(prev)
+            <\/script>
         </body>
         </html>
         `;
@@ -382,54 +381,48 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             Global.ortum_preview_windowSonUrl =null;
         }
 
-        var oMyBlob = new Blob([outInner], {type : 'text/html'}); // 得到 blob
+        var oMyBlob = new Blob([outInner], {type : 'text/html'}); //得到 blob
         var urldemo = Global.ortum_preview_windowSonUrl = window.URL.createObjectURL(oMyBlob);//url
+        //重新打开窗口
+        var winSon= window.open(urldemo,"preview");
 
-        if(Global.ortum_preview_windowSon){
-            Global.ortum_preview_windowSon.location.href = urldemo;//修改url,不会触发onload
-            Global.ortum_preview_windowSon.location.reload();
-            console.log("reload")
-        }else{
-            var winSon = Global.ortum_preview_windowSon = Global.ortum_preview_windowSon = window.open(urldemo);//重新生成窗口
-            // winSon.onload = function(){
-            //     //获取组件
-            //     let prevHtml =$(`
-            //         <div id="ortum_field_preview"></div>
-            //     `)
-            //     $('#'+id).find(".ortum_item").each(function(index,item){
-            //         $(item).hasClass("ortum_bootstrap_select") && (
-            //             prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
-            //         );
-            //     })
+        // $(winSon).on("DOMContentLoaded",function(){
+        //     $(this.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
+        //     console.log(this.readyState)
+        //     debugger
+        // })
+        // winSon.document.addEventListener('readystatechange', function(){
+        //     console.log(this.readyState)
+        // });
 
-            //     $(winSon.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
-            //     console.log("onload");
+        // if(!Global.ortum_preview_windowSon){
+        //     Global.ortum_preview_windowSon = winSon;
+        //     $(winSon).off("load.preview").on("load.preview",function(){
+        //         let prevHtml =$(`
+        //         <div id="ortum_field_preview"></div>
+        //         `)
+        //         $('#'+id).find(".ortum_item").each(function(index,item){
+        //             $(item).hasClass("ortum_bootstrap_select") && (
+        //                 prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
+        //             );
+        //         })
+    
+        //         $(this.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
+        //     })
+        // }
+        // winSon.onload = function(){
+        //     console.log("触发了onload")
+        // }
+        // $(winSon).off("load.preview").on("load.preview",function(){
+        //     $(this.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml);
+        //     $(this).off("load.preview");
+        //     console.log("load.preview")
+        // })
 
-            //     winSon.onunload = function(){
-            //         console.log("onunload")
-            //     }
-            // }
-        }
-
-        Global.ortum_preview_windowSon.onload = function(){
-            //获取组件
-            let prevHtml =$(`
-                <div id="ortum_field_preview"></div>
-            `)
-            $('#'+id).find(".ortum_item").each(function(index,item){
-                $(item).hasClass("ortum_bootstrap_select") && (
-                    prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
-                );
-            })
-
-            $(this.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
-            console.log("onload");
-
-            this.onunload = function(){
-                Global.ortum_preview_windowSon = null;
-                console.log("onunload")
-            }
-        }
+        // this.onunload = function(){
+        //     Global.ortum_preview_windowSon = null;
+        //     console.log("onunload")
+        // }
         
         return false;
     }
@@ -486,5 +479,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
 
         getComponentsPropsHint,
         previewTableContent,
+        getPreviewContent,
     }
 })
