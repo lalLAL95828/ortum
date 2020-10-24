@@ -1,6 +1,6 @@
 require.config({
     // waitSeconds: 500000,
-    baseUrl:"/js",
+    // baseUrl:"/js",
     paths:{
         //用绝对路径更准确，使用相对路径，在相对的其他文件中会引入失败
         // "jquery":"jquery.min",
@@ -9,17 +9,17 @@ require.config({
         // "Settings":"/js/settings",
         // "Global":"/js/global",
 
-        "BootStrapAsider":"bootstrap/asider",
-        "BootStrapInput":"bootstrap/input",
-        "BootStrapGrid":"bootstrap/grid",
-        "BootStrapRangeInput":"bootstrap/rangeInput",
-        "BootStrapRadio":"bootstrap/radio",
-        "BootStrapCheckbox":"bootstrap/checkbox",
-        "BootStrapTextarea":"bootstrap/textarea",
-        "BootStrapFile":"bootstrap/file",
-        "BootStrapSwitch":"bootstrap/switch",
-        "BootStrapSelect":"bootstrap/select",
-        "CSS":"/lib/css.min",
+        "BootStrapAsider":"js/bootstrap/asider",
+        "BootStrapInput":"js/bootstrap/input",
+        "BootStrapGrid":"js/bootstrap/grid",
+        "BootStrapRangeInput":"js/bootstrap/rangeInput",
+        "BootStrapRadio":"js/bootstrap/radio",
+        "BootStrapCheckbox":"js/bootstrap/checkbox",
+        "BootStrapTextarea":"js/bootstrap/textarea",
+        "BootStrapFile":"js/bootstrap/file",
+        "BootStrapSwitch":"js/bootstrap/switch",
+        "BootStrapSelect":"js/bootstrap/select",
+        "CSS":"lib/css.min",
     },
     // shim:{
     //     "JSHINT":{
@@ -36,7 +36,7 @@ require.config({
     deps:["CSS"],//版本依赖,
     packages: [{
         name: "codemirror",
-        location: "/lib/codeMirror",
+        location: "lib/codeMirror",
         main: "lib/codemirror"
     }],
 })
