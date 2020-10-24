@@ -90,10 +90,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             }
         }) */
     }
+
     /**
      * 功能：创建bootstrap的select
+     * @param {*} parentDom 
+     * @param {*} customProps 自定义prop
+     * @param {*} generateDom 函数也存在dom中
      */
-    let SelectDom = function(parentDom){
+    let SelectDom = function(parentDom,customProps=null,generateDom=false){
         let outerDom=$(
             `
             <div class="form-group ortum_item row ortum_bootstrap_select" style="margin:0;padding-bottom:0.8rem">
@@ -104,9 +108,42 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //点击事件，修改属性
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('select');//设定nameselect
+        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //设定nameselect
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('select'));
         
+        //控制标签
+        if(ortum_component_properties.data.hideLabel){
+            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_component_properties.data.labelCSS") : '';
+
+        }else{
+            switch(ortum_component_properties.data.labelPosition){
+                case "topLeft":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_select_label_Right",'')
+                    break;
+                case "topRight":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.indexOf("ortum_boot_select_label_Right") == -1 ? ortum_component_properties.data.labelCSS+=" ortum_boot_select_label_Right" : ''
+
+                    break;
+                case "rowLeft":
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'');
+                    ortum_component_properties.data.labelCSS += ' col-form-label col-2';
+                    $(outerDom).addClass('row');
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass += " col";
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_select_label_Right",'')
+                    break;
+                default:
+                    break;
+            }
+        }
+        //生成selectDom
         let selectDom = $(`
             <select class="${ortum_component_properties.data.cssClass}" 
                 id="${ortum_component_properties.data.id}"
@@ -114,36 +151,60 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 placeholder="${ortum_component_properties.data.placeholder}" 
             </select>
         `)
-
-
-        for(let i=0;i<ortum_component_properties.data.options.length;i++){
-            let choose = false;
-            if(ortum_component_properties.data.defaultVal.indexOf(ortum_component_properties.data.options[i].value) != -1){
-                choose = true
+        
+        //scriptDom
+        let scriptDom ='';
+        if(ortum_component_properties.data.useRemote && Assist.getDetailType(ortum_component_properties.data.customGetOptions) == "Function"){
+            //函数生成script节点中
+            if(generateDom){
+                scriptDom = $(`<script>${ortum_component_properties.data.customGetOptions.toString()};getOptions_${ortum_component_properties.data.name}("${ortum_component_properties.data.name}",ortumReq);
+                </script>`)
             }
-            selectDom.append(`
-                <option 
-                ${ortum_component_properties.data.options[i].selected ? "selected":""} 
-                ${ortum_component_properties.data.options[i].disabled ? "disabled":""} 
-                ${ortum_component_properties.data.options[i].hide ? "class='ortum_display_NONE'":""} 
-                value="${ortum_component_properties.data.options[i].value}">${ortum_component_properties.data.options[i].name}</option>
-            `)
+            if(!generateDom){
+                //返回TODO
+                let optionArr =ortum_component_properties.data.customGetOptions(evenProperties.data.name,ortumReq)
+                if(optionArr && Array.isArray(optionArr)){//存在返回数组
+                    //插入selectDom中
+                }
+            }    
         }
-
+        if(!ortum_component_properties.data.useRemote){
+            //循环生成option
+            for(let i=0;i<ortum_component_properties.data.options.length;i++){
+                let choose = false;
+                if(ortum_component_properties.data.defaultVal.indexOf(ortum_component_properties.data.options[i].value) != -1){
+                    choose = true
+                }
+                selectDom.append(`
+                    <option 
+                    ${ortum_component_properties.data.options[i].selected ? "selected":""} 
+                    ${ortum_component_properties.data.options[i].disabled ? "disabled":""} 
+                    ${ortum_component_properties.data.options[i].hide ? "class='ortum_display_NONE'":""} 
+                    value="${ortum_component_properties.data.options[i].value}">${ortum_component_properties.data.options[i].name}</option>
+                `)
+            }
+        }
+        //插入label
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
         `))
+        //插入select
         $(outerDom).append(selectDom)
+        //插入script
+        generateDom && scriptDom && $(outerDom).append(scriptDom)
 
-        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','select']);
-
-        $(parentDom).append(outerDom);
+        if(parentDom){
+            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
+            $(outerDom).prop('ortum_component_type',['bootstrap','select']);
+            $(parentDom).append(outerDom);
+        }else{
+            return outerDom
+        } 
     }
     /**
      * 功能：创建已经编辑好的节点
      */
-    let createMatureDom =function(Dom){
+    /* let createMatureDom =function(Dom){
         let outerDom=$(
             `
             <div class="form-group ortum_item row ortum_bootstrap_select" style="margin:0;padding-bottom:0.8rem">
@@ -189,14 +250,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         if(evenProperties.data.useRemote && Assist.getDetailType(evenProperties.data.customGetOptions) == "Function"){
             let scriptDom = $(`<script>${evenProperties.data.customGetOptions.toString()};getOptions_${evenProperties.data.name}("${evenProperties.data.name}",ortumReq);
             </script>`)
-
             $(outerDom).append(scriptDom)
         }
         
         return outerDom;
-    }
-
-
+    } */
 
     /**
      * 功能：input事件，在这个事件上重置组件属性
@@ -494,7 +552,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         setSelectOptions,
         showSelectOptions,
-        createMatureDom,
+        // createMatureDom,
 
         inputSetProperties,
         blurSetProperties,

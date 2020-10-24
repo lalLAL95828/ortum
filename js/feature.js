@@ -309,17 +309,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * 功能：预览文件内容,html方式
      * @param {*} id 
      */
-    let previewTableContent = function(id){
-        let prevHtml =$(`
-            <div id="ortum_field_preview"></div>
-        `)
-        $('#'+id).find(".ortum_item").each(function(index,item){
-            $(item).hasClass("ortum_bootstrap_select") && (
-                prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
-            );
-        })
+    let previewTableHtmlContent = function(id){
         window.open("/preview.html","preview")
-
         return false;
     }
     /**
@@ -327,13 +318,17 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} id 
      * @param {*} win 
      */
-    let getPreviewContent =function(id,win){
+    let getPreviewContent =function(id,win=window){
         let prevHtml =$(`
         <div id="ortum_field_preview"></div>
         `)
         $(win).find('#'+id).find(".ortum_item").each(function(index,item){
             $(item).hasClass("ortum_bootstrap_select") && (
-                prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
+                prevHtml.append(require("BootStrapSelect").SelectDom(
+                    null,
+                    $(item).prop('ortum_component_properties'),
+                    true)
+                )
             );
         })
         return prevHtml;
@@ -342,7 +337,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * 功能：预览文件内容,Blob方式
      * @param {*} id 
      */
-    let previewTableContent1 = function(id){
+    let previewTableBlobContent = function(id){
         let urlOrigin=window.location.origin;
         let outInner = `
         <!DOCTYPE HTML>
@@ -478,7 +473,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         setEditPropertiesPurview,
 
         getComponentsPropsHint,
-        previewTableContent,
+
+        previewTableHtmlContent,
         getPreviewContent,
+        previewTableBlobContent,
     }
 })
