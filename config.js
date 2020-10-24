@@ -4,10 +4,13 @@ require.config({
     paths:{
         //用绝对路径更准确，使用相对路径，在相对的其他文件中会引入失败
         // "jquery":"jquery.min",
-        // "Assist":"/js/assist",
-        // "Feature":"/js/feature",
-        // "Settings":"/js/settings",
-        // "Global":"/js/global",
+
+        "assist":"js/assist",
+        "global":"js/global",
+        "createDom":"js/createDom",
+        "settings":"js/settings",
+        "feature":"js/feature",
+        
 
         "BootStrapAsider":"js/bootstrap/asider",
         "BootStrapInput":"js/bootstrap/input",
@@ -20,6 +23,8 @@ require.config({
         "BootStrapSwitch":"js/bootstrap/switch",
         "BootStrapSelect":"js/bootstrap/select",
         "CSS":"lib/css.min",
+
+        "setCodemirror":"js/setCodemirror",
     },
     // shim:{
     //     "JSHINT":{
