@@ -1,5 +1,5 @@
 require.config({
-    // waitSeconds: 500000,
+    waitSeconds: 500000,
     // baseUrl:"/js",
     paths:{
         //用绝对路径更准确，使用相对路径，在相对的其他文件中会引入失败
