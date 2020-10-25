@@ -49,20 +49,38 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
     /**
      * 功能：创建bootstrap的checkbox
+     * @param {*} parentDom 
+     * @param {*} moreProps 一个json对象，
+     * @param {*} moreProps.customProps 自定义属性
+     * @param {*} moreProps.generateDom 函数也存在dom中
+     * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
-    let CheckboxDom = function(parentDom){
+    let CheckboxDom = function(parentDom,moreProps=null){
+        let customProps = null;
+        let generateDom =  null;
+        let clickChangeAttrs = true;
+        if(Assist.getDetailType(moreProps) == "Object"){
+            customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
+            generateDom =  moreProps.generateDom;
+            clickChangeAttrs =  moreProps.clickChangeAttrs
+        }
+
         let outerDom=$(
             `
-            <div class="form-group ortum_item ortum_bootstrap_checkbox" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item ortum_bootstrap_checkbox" 
+            data-frame="Bootstrap" 
+            data-componentKey="checkboxDom">
                
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('checkbox');//设定name
+        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //设定name
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('checkbox'));
+
         for(let i=0;i<ortum_component_properties.data.items.length;i++){
             let choose = false;
             if(ortum_component_properties.data.defaultVal.indexOf(ortum_component_properties.data.items[i].value) != -1){
@@ -86,11 +104,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             $(outerDom).append(newDom)
         }
 
-        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','checkbox']);
-
-        $(parentDom).append(outerDom);
-
+        if(parentDom){
+            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
+            $(outerDom).prop('ortum_component_type',['Bootstrap','checkbox']);
+            $(parentDom).append(outerDom);
+        }else{
+            return outerDom
+        } 
     }
     /**
      * 功能：input事件，在这个事件上重置组件属性

@@ -21,7 +21,14 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
     //导出
     if($(this).hasClass('icon-daochu')){
-        require(['Feature'],function(Feature){
+        require(['feature'],function(Feature){
+            Feature.exportFileListen(e)
+        })
+        return;
+    }
+    //保存
+    if($(this).hasClass('icon-baocun')){
+        require(['feature'],function(Feature){
             Feature.exportFileListen(e)
         })
         return;
@@ -77,7 +84,9 @@ $('#ortum_top_dialog_xl').on('hidden.bs.modal', function (e) {
 
 //关闭或刷新浏览器之前的操作，可以启用一个线程保存到服务器中
 window.onbeforeunload = function (e) {
-    console.log("要删除了，自动保存")
+    //发送给后端进行保存数据
+    navigator.sendBeacon('http://localhost:3000/Beacon', 'foo=bar');
+
     e = e || window.event;
     // 兼容IE8和Firefox 4之前的版本
     if (e) {

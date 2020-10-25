@@ -31,7 +31,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             multiple:false,//多个文件
             onChange:changeLabelName,//文件改变，修改labelName
             uploadUrl:"http://localhost:3000/uploadfile",//自动上传的url
-            formName:"files",//form的name
+            formName:"files",//form的name(上传时候的name)
             automatic:true,//自动上传
         },
         inputChange:["id","name","accept","verification","cssClass","labelName","formName","uploadUrl"],//input事件修改值
@@ -86,70 +86,100 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * 监听文件变化，并且实时上传
      */
     let uploadFile = function(e){
-        let globalComponent =Global.ortum_edit_component.comObj;
-        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        // let globalComponent =Global.ortum_edit_component.comObj;
+        // let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
-        let filelists = $(this).prop('files')
+        let formName = $(this).attr("data-formname");
+        let uploadUrl = $(this).attr("data-uploadurl");
+        let itemParents = $(this).parents(".ortum_item").eq(0);
+        let filelists = $(this).prop('files');
         //发送到后端
         let fd = new FormData();
         let L = filelists.length;
         if(!L)return;//为空不上传
 
         for(let i=0;i<L;i++){
-            fd.append(evenProperties.data.formName, filelists[i]);
+            fd.append(formName, filelists[i]);
         }
-        $(globalComponent).find(".progress").eq(0).css("display","flex");
+        $(itemParents).find(".progress").eq(0).css("display","flex");
         ortumReq({
-            "url":evenProperties.data.uploadUrl,
+            "url":uploadUrl,
             "method":"POST",
             "data":fd,
             "success":(xhr,e)=>{
-                require("assist").infoTip("上传成功。");
+                // require("assist").infoTip("上传成功！");
+                alert("上传成功！");
             },
             "error":(xhr,e)=>{
-                require("assist").dangerTip("上传失败！");
+                // require("assist").dangerTip("上传失败！");
+                alert("上传失败！");
             },
             progress:(xhr,e)=>{
                 let pro = e.loaded/e.total * 100
-                // console.log(pro);
-                $(globalComponent).find(".progress-bar").eq(0).css("width", pro+"%")
-                $(globalComponent).find(".progress-bar").eq(0).attr("aria-valuenow", pro)
+
+                $(itemParents).find(".progress-bar").eq(0).css("width", pro+"%")
+                $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", pro)
             },
             final:(xhr,e)=>{
                 setTimeout(function(){
-                    $(globalComponent).find(".progress").eq(0).css("display","none")
-                    $(globalComponent).find(".progress-bar").eq(0).css("width","0%")
-                    $(globalComponent).find(".progress-bar").eq(0).attr("aria-valuenow", 0)
+                    $(itemParents).find(".progress").eq(0).css("display","none")
+                    $(itemParents).find(".progress-bar").eq(0).css("width","0%")
+                    $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", 0)
                 },200)
             }
         })
     }
 
     /**
-     * 功能：创建bootstrap的input
+     * 功能：创建bootstrap的file
+     * @param {*} parentDom 
+     * @param {*} moreProps 一个json对象，
+     * @param {*} moreProps.customProps 自定义属性
+     * @param {*} moreProps.generateDom 函数转化为String，保存到script标签中
+     * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
-    let FileDom = function(parentDom){
+    let FileDom = function(parentDom,moreProps=null){
+        let customProps = null;
+        let generateDom =  null;
+        let clickChangeAttrs = true;
+        if(Assist.getDetailType(moreProps) == "Object"){
+            customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
+            generateDom =  moreProps.generateDom;
+            clickChangeAttrs =  moreProps.clickChangeAttrs
+        }
+
         let outerDom=$(
             `
-            <div class="form-group ortum_item" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item" data-frame="Bootstrap" 
+            data-componentKey="fileDom">
                
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('file');//设定name
+        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //设定name
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('file'));
+
+
+        //点击事件，修改属性
+        // $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+
+        // let ortum_component_properties = Assist.deepClone(component_properties);
+        // ortum_component_properties.data.name = Assist.timestampName('file');//设定name
         
         //<button class="btn btn-outline-secondary" type="button">预览</button>
         //<button class="btn btn-outline-secondary" type="button">下载</button>
-
+        
         $(outerDom).append($(`
             <div class="input-group">
                 <div class="custom-file">
                     <input type="file" class="${ortum_component_properties.data.cssClass}" 
                     name="${ortum_component_properties.data.name}" 
+                    ${ortum_component_properties.data.formName ? "data-formname="+ortum_component_properties.data.formName : ""}
+                    ${ortum_component_properties.data.uploadUrl ? "data-uploadurl="+ortum_component_properties.data.uploadUrl : ""}
                     ${ortum_component_properties.data.multiple ? "multiple" : ""}
                     id="${ortum_component_properties.data.id ? ortum_component_properties.data.id : ortum_component_properties.data.name}" 
                     accept="${ortum_component_properties.data.accept}" 
@@ -165,16 +195,57 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         `))
-        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','file']);
-        //绑定文件onchange
-        $(outerDom).find('input').on('change.changeLabelname',ortum_component_properties.data.onChange)
-        if(ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
-            $(outerDom).find('input').off("change.automatic").on("change.automatic",uploadFile)
-        }else{
-            $(outerDom).find('input').off("change.automatic")
+
+        //scriptDom
+        let scriptDom ='';
+        let scriptStr = "";
+
+        //change事件修改labelName
+        scriptStr = `
+        let ortum_bootstrap_file_changeLabelName = ${changeLabelName.toString()};
+        !function(fileDomName){
+            $('input[name='+fileDomName+']').off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName)
+        }('${ortum_component_properties.data.name}');
+        `
+
+        if(generateDom && ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
+            //函数生成script节点中
+            //change事件自动上传
+            scriptStr +=`
+                let ortum_bootstrap_file_uploadFile = ${uploadFile.toString()};
+                !function(fileDomName){
+                    $('input[name='+fileDomName+']').off("change.automatic").on("change.automatic",ortum_bootstrap_file_uploadFile)
+                }('${ortum_component_properties.data.name}');
+
+            `
         }
-        $(parentDom).append(outerDom);
+        scriptDom = $(`
+            <script>${scriptStr}<\/script>
+        `)
+
+
+
+        if(!generateDom){
+            //绑定文件onchange
+            $(outerDom).find('input').on('change.changeLabelname',ortum_component_properties.data.onChange)
+            if(ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
+                $(outerDom).find('input').off("change.automatic").on("change.automatic",uploadFile)
+            }else{
+                $(outerDom).find('input').off("change.automatic")
+            }
+        }  
+
+        //插入script
+        generateDom && scriptDom && $(outerDom).append(scriptDom)
+
+
+        if(parentDom){
+            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
+            $(outerDom).prop('ortum_component_type',['Bootstrap','file']);
+            $(parentDom).append(outerDom);
+        }else{
+            return outerDom
+        } 
     }
 
     /**
@@ -205,6 +276,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 //TODO 验证
                 console.log(val)
                 break;
+            case "uploadUrl":
+                $(globalComponent).find('input').eq(0).attr('data-uploadurl',val)
+                break; 
+            case "formName":
+                $(globalComponent).find('input').eq(0).attr('data-formname',val)
+                break; 
             case "cssClass":
                 $(globalComponent).find('input').eq(0).attr('class',val)
                 break; 

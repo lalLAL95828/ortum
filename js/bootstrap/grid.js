@@ -22,7 +22,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
         let ortum_component_properties = Assist.deepClone(component_properties);
         ortum_component_properties.data.name = Assist.timestampName('grid');//设定name
 
-        let outerDom= $('<div class="container ortum_item ortum_bootstrap_grid"></div>');
+        let outerDom= $('<div class="container ortum_item ortum_bootstrap_grid" data-frame="Bootstrap" data-componentKey="gridDom"></div>');
 
 
         let row = $(`
@@ -42,7 +42,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
         $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','grid']);
+        $(outerDom).prop('ortum_component_type',['Bootstrap','grid']);
 
         $(parentDom).append(outerDom)
         return outerDom;

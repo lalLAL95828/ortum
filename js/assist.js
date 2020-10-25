@@ -77,8 +77,6 @@ define(['require'],function(require){
      * @param {*} e
      */
     let deleteComponent = function(e){
-        // console.log($(this))
-        // console.log($(this).parents('.ortum_item'))
 
         let delOrtumItem = $(this).parents('.ortum_item').eq(0)
         let nextOrtumItem = delOrtumItem.parents('.ortum_item').eq(0)
@@ -165,7 +163,7 @@ define(['require'],function(require){
         resetSetPropertyCom()
         
         switch(properiesType[0]){
-            case 'bootstrap':
+            case 'Bootstrap':
                 require('BootStrapAsider').setProperties(properiesObj,properiesType[1],$(this));
                 break;
             default:

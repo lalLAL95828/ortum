@@ -118,36 +118,97 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     }
     /**
      * 功能：创建bootstrap的input
-     * @param {]} parentDom 
+     * @param {*} parentDom 
+     * @param {*} moreProps 一个json对象，
+     * @param {*} moreProps.customProps 自定义属性
+     * @param {*} moreProps.generateDom 函数也存在dom中
+     * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
-    let RangeInputDom = function(parentDom){
+    let RangeInputDom = function(parentDom,moreProps=null){
+        let customProps = null;
+        let generateDom =  null;
+        let clickChangeAttrs = true;
+        if(Assist.getDetailType(moreProps) == "Object"){
+            customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
+            generateDom =  moreProps.generateDom;
+            clickChangeAttrs =  moreProps.clickChangeAttrs
+        }
+
         let outerDom=$(
             `
-            <div class="form-group ortum_item row" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item row" data-frame="Bootstrap" 
+            data-componentKey="rangeInputDom">
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
-        
-        let ortum_component_properties =Assist.deepClone(component_properties);
+        clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        ortum_component_properties.data.name = Assist.timestampName('rangeInput');//设定name
+        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //设定name
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('rangeInput'));
 
+
+        //点击事件，修改属性
+        // $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        // let ortum_component_properties =Assist.deepClone(component_properties);
+        // ortum_component_properties.data.name = Assist.timestampName('rangeInput');//设定name
+
+        //控制标签
+        if(ortum_component_properties.data.hideLabel){
+            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_component_properties.data.labelCSS") : '';
+        }else{
+            switch(ortum_component_properties.data.labelPosition){
+                case "topLeft":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_rangeInput_label_Right",'')
+                    break;
+                case "topRight":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.indexOf("ortum_boot_rangeInput_label_Right") == -1 ? ortum_component_properties.data.labelCSS+=" ortum_boot_rangeInput_label_Right" : ''
+
+                    break;
+                case "rowLeft":
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'');
+                    ortum_component_properties.data.labelCSS += ' col-form-label col-2';
+                    $(outerDom).addClass('row');
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass += " col";
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_rangeInput_label_Right",'')
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //生成rangeInputDom
+        let rangeInputDom = $(`
+            <input type="range" class="${ortum_component_properties.data.cssClass}" 
+            value="${ortum_component_properties.data.defaultVal}"
+            style="padding:0" 
+            min="${ortum_component_properties.data.min}"
+            step="${ortum_component_properties.data.step}"
+            max="${ortum_component_properties.data.max}" name="${ortum_component_properties.data.name}">
+        `)
+
+        //插入label
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
-            <input type="range" class="${ortum_component_properties.data.cssClass}" 
-                value="${ortum_component_properties.data.defaultVal}"
-                style="padding:0"
-                min="${ortum_component_properties.data.min}"
-                step="${ortum_component_properties.data.step}"
-                max="${ortum_component_properties.data.max}" name="${ortum_component_properties.data.name}">
         `))
+        //插入dom
+        $(outerDom).append(rangeInputDom)
 
-        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','rangeInput']);
-
-        $(parentDom).append(outerDom);
+        if(parentDom){
+            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
+            $(outerDom).prop('ortum_component_type',['Bootstrap','rangeInput']);
+            $(parentDom).append(outerDom);
+        }else{
+            return outerDom
+        } 
     }
     
 
@@ -277,7 +338,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(globalComponent).find('input.form-control-range').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
+                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_rangeInput_label_Right')
                         break;
                     case "topRight":
                         $(globalComponent).removeClass('row');
@@ -287,7 +348,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(globalComponent).find('input.form-control-range').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('label').eq(0).addClass('ortum_boot_input_label_Right')
+                        $(globalComponent).find('label').eq(0).addClass('ortum_boot_rangeInput_label_Right')
                         break;
                     case "rowLeft":
                         let evenLabelCss = $('#ortum_property_labelCSS').val();
@@ -296,7 +357,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(globalComponent).addClass('row');
                         $(globalComponent).find('label').eq(0).addClass('col-form-label col-2')
                         $(globalComponent).find('input.form-control-range').eq(0).addClass('col');
-                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_input_label_Right')
+                        $(globalComponent).find('label').eq(0).removeClass('ortum_boot_rangeInput_label_Right')
                         break;
                     // case "rowRight":
                     //     $(globalComponent).addClass('row');

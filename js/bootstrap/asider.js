@@ -56,7 +56,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             }
 
             //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-            require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
+            require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
             
             //把拖拽对象制空
             Global.ortumNowDragObj = null;
@@ -189,7 +189,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         }
         //绑定正在编辑的对象到global对象下
         Global.ortum_edit_component={
-            frame:"bootstrap",
+            frame:"Bootstrap",
             type:type,
 
             inputEvent:inputEvent,

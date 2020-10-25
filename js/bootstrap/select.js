@@ -94,19 +94,33 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     /**
      * 功能：创建bootstrap的select
      * @param {*} parentDom 
-     * @param {*} customProps 自定义prop
-     * @param {*} generateDom 函数也存在dom中
+     * @param {*} moreProps 一个json对象，
+     * @param {*} moreProps.customProps 自定义属性
+     * @param {*} moreProps.generateDom 函数也存在dom中
+     * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
-    let SelectDom = function(parentDom,customProps=null,generateDom=false){
+    let SelectDom = function(parentDom,moreProps=null){
+        let customProps = null;
+        let generateDom =  null;
+        let clickChangeAttrs = true;
+        if(Assist.getDetailType(moreProps) == "Object"){
+            customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
+            generateDom =  moreProps.generateDom;
+            clickChangeAttrs =  moreProps.clickChangeAttrs
+        }
+
         let outerDom=$(
             `
-            <div class="form-group ortum_item row ortum_bootstrap_select" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item row ortum_bootstrap_select" 
+                data-frame="Bootstrap" 
+                data-componentKey="selectDom" 
+                >
                
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定nameselect
@@ -115,7 +129,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //控制标签
         if(ortum_component_properties.data.hideLabel){
             ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_component_properties.data.labelCSS") : '';
-
         }else{
             switch(ortum_component_properties.data.labelPosition){
                 case "topLeft":
@@ -195,66 +208,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         if(parentDom){
             $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['bootstrap','select']);
+            $(outerDom).prop('ortum_component_type',['Bootstrap','select']);
             $(parentDom).append(outerDom);
         }else{
             return outerDom
         } 
     }
-    /**
-     * 功能：创建已经编辑好的节点
-     */
-    /* let createMatureDom =function(Dom){
-        let outerDom=$(
-            `
-            <div class="form-group ortum_item row ortum_bootstrap_select" style="margin:0;padding-bottom:0.8rem">
-               
-            </div>
-            `
-        );
-        
-        let evenProperties = $(Dom).prop('ortum_component_properties');
-        
-        let selectDom = $(`
-            <select class="${evenProperties.data.cssClass}" 
-                id="${evenProperties.data.id}"
-                name="${evenProperties.data.name}"
-                placeholder="${evenProperties.data.placeholder}" 
-            </select>
-        `)
-        
-        if(!evenProperties.data.useRemote){
-            for(let i=0;i<evenProperties.data.options.length;i++){
-                let choose = false;
-                if(evenProperties.data.defaultVal.indexOf(evenProperties.data.options[i].value) != -1){
-                    choose = true
-                }
-                selectDom.append(`
-                    <option 
-                    ${evenProperties.data.options[i].selected ? "selected":""} 
-                    ${evenProperties.data.options[i].disabled ? "disabled":""} 
-                    ${evenProperties.data.options[i].hide ? "class='ortum_display_NONE'":""} 
-                    value="${evenProperties.data.options[i].value}">${evenProperties.data.options[i].name}</option>
-                `)
-            }
-        }
-        
-        if(!evenProperties.data.hideLabel){
-            $(outerDom).append($(`
-                <label class="${evenProperties.data.labelCSS}">${evenProperties.data.labelName}</label>
-            `))
-        }
-        $(outerDom).append(selectDom)
-
-        //远端获取options
-        if(evenProperties.data.useRemote && Assist.getDetailType(evenProperties.data.customGetOptions) == "Function"){
-            let scriptDom = $(`<script>${evenProperties.data.customGetOptions.toString()};getOptions_${evenProperties.data.name}("${evenProperties.data.name}",ortumReq);
-            </script>`)
-            $(outerDom).append(scriptDom)
-        }
-        
-        return outerDom;
-    } */
 
     /**
      * 功能：input事件，在这个事件上重置组件属性
@@ -552,7 +511,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         setSelectOptions,
         showSelectOptions,
-        // createMatureDom,
 
         inputSetProperties,
         blurSetProperties,

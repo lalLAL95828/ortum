@@ -38,20 +38,37 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
     /**
      * 功能：创建bootstrap的input
+     * @param {*} parentDom 
+     * @param {*} moreProps 一个json对象，
+     * @param {*} moreProps.customProps 自定义属性
+     * @param {*} moreProps.generateDom 函数也存在dom中
+     * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
-    let SwitchDom = function(parentDom){
+    let SwitchDom = function(parentDom,moreProps=null){
+        let customProps = null;
+        let generateDom =  null;
+        let clickChangeAttrs = true;
+        if(Assist.getDetailType(moreProps) == "Object"){
+            customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
+            generateDom =  moreProps.generateDom;
+            clickChangeAttrs =  moreProps.clickChangeAttrs
+        }
+
         let outerDom=$(
             `
-            <div class="form-group ortum_item" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item" data-frame="Bootstrap" 
+            data-componentKey="switchDom">
                
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('switch');//设定name
+        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //设定name
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('switch'));
+
         
         $(outerDom).append($(`
             <div class="custom-control custom-switch">
@@ -63,10 +80,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             </div>
         `))
 
-        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','switch']);
-
-        $(parentDom).append(outerDom);
+        if(parentDom){
+            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
+            $(outerDom).prop('ortum_component_type',['Bootstrap','switch']);
+            $(parentDom).append(outerDom);
+        }else{
+            return outerDom
+        } 
 
     };
 

@@ -18,6 +18,8 @@ define([],function(){
 
     let ortum_preview_windowSon;//打开的预览窗口
     let ortum_preview_windowSonUrl;//打开的预览窗口Blob url
+
+    let ortum_createDom_frame = "Bootstrap";//默认创建组件使用的框架
     // {
     //     frame:"bootstrap",
     //     type:'input',
@@ -34,6 +36,8 @@ define([],function(){
 
         ortum_codemirrorJS_setVal:ortum_codemirrorJS_setVal,
         ortum_codemirrorJS_save:ortum_codemirrorJS_save,
+
+        ortum_createDom_frame:ortum_createDom_frame,
 
         ortum_preview_windowSon:ortum_preview_windowSon,
         ortum_preview_windowSonUrl:ortum_preview_windowSonUrl,

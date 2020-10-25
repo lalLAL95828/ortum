@@ -100,7 +100,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
 
             //清空正在拖拽的对象
             Global.ortumNowDragObj = null;
-            if(!CreateDom[Settings.menuListDataJSON[componentKey].createFn]){
+            if(!CreateDom[Settings.menuListDataJSON[componentKey].createFn] || !CreateDom[Settings.menuListDataJSON[componentKey].createFn]["ortum_"+Global.ortum_createDom_frame]){
                 require("assist").dangerTip();
                 return false;
             }
@@ -115,9 +115,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             }
 
             //执行对应的生成组件的函数
-            CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Settings.menuListDataJSON[componentKey].useType)
+            CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
            
-            //eval( CreateDom[Settings.menuListDataJSON[componentKey].createFn]+ "("+ this +","+ Settings.menuListDataJSON[componentKey].useType +")");
+            //eval( CreateDom[Settings.menuListDataJSON[componentKey].createFn]+ "("+ this +","+ Global.ortum_createDom_frame +")");
             
             // this.appendChild(Global.ortumNowDragObj.cloneNode(true))//深copy
 
@@ -305,14 +305,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         }
 
     }
-    /**
-     * 功能：预览文件内容,html方式
-     * @param {*} id 
-     */
-    let previewTableHtmlContent = function(id){
-        window.open("preview.html","preview")
-        return false;
-    }
+
     /**
      * 功能: 获取win下表单信息
      * @param {*} id 
@@ -323,15 +316,27 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         <div id="ortum_field_preview"></div>
         `)
         $(win).find('#'+id).find(".ortum_item").each(function(index,item){
-            $(item).hasClass("ortum_bootstrap_select") && (
-                prevHtml.append(require("BootStrapSelect").SelectDom(
-                    null,
-                    $(item).prop('ortum_component_properties'),
-                    true)
-                )
-            );
+            //bootstrap_select
+            let frame= $(item).attr("data-frame");
+            let componentKey = $(item).attr("data-componentKey");
+
+            frame && componentKey && (
+                prevHtml.append(CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                    customProps:$(item).prop('ortum_component_properties'),
+                    generateDom:true,
+                    clickChangeAttrs:false,
+                }))
+            )
         })
         return prevHtml;
+    }
+    /**
+     * 功能：预览文件内容,html方式
+     * @param {*} id 
+     */
+    let previewTableHtmlContent = function(id){
+        window.open("preview.html","preview")
+        return false;
     }
     /**
      * 功能：预览文件内容,Blob方式
@@ -380,44 +385,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         var urldemo = Global.ortum_preview_windowSonUrl = window.URL.createObjectURL(oMyBlob);//url
         //重新打开窗口
         var winSon= window.open(urldemo,"preview");
-
-        // $(winSon).on("DOMContentLoaded",function(){
-        //     $(this.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
-        //     console.log(this.readyState)
-        //     debugger
-        // })
-        // winSon.document.addEventListener('readystatechange', function(){
-        //     console.log(this.readyState)
-        // });
-
-        // if(!Global.ortum_preview_windowSon){
-        //     Global.ortum_preview_windowSon = winSon;
-        //     $(winSon).off("load.preview").on("load.preview",function(){
-        //         let prevHtml =$(`
-        //         <div id="ortum_field_preview"></div>
-        //         `)
-        //         $('#'+id).find(".ortum_item").each(function(index,item){
-        //             $(item).hasClass("ortum_bootstrap_select") && (
-        //                 prevHtml.append(require("BootStrapSelect").createMatureDom($(item)))
-        //             );
-        //         })
-    
-        //         $(this.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml)
-        //     })
-        // }
-        // winSon.onload = function(){
-        //     console.log("触发了onload")
-        // }
-        // $(winSon).off("load.preview").on("load.preview",function(){
-        //     $(this.document.body).find("#ortum_preview_ModalLabel_body").append(prevHtml);
-        //     $(this).off("load.preview");
-        //     console.log("load.preview")
-        // })
-
-        // this.onunload = function(){
-        //     Global.ortum_preview_windowSon = null;
-        //     console.log("onunload")
-        // }
         
         return false;
     }
@@ -474,8 +441,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
 
         getComponentsPropsHint,
 
-        previewTableHtmlContent,
-        getPreviewContent,
+        getPreviewContent,//预览
         previewTableBlobContent,
+        previewTableHtmlContent,
     }
 })

@@ -36,36 +36,93 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
     /**
      * 功能：创建bootstrap的textarea
+     * @param {*} parentDom 
+     * @param {*} moreProps 一个json对象，
+     * @param {*} moreProps.customProps 自定义属性
+     * @param {*} moreProps.generateDom 函数也存在dom中
+     * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
-    let TextareaDom = function(parentDom){
+    let TextareaDom = function(parentDom,moreProps=null){
+        let customProps = null;
+        let generateDom =  null;
+        let clickChangeAttrs = true;
+        if(Assist.getDetailType(moreProps) == "Object"){
+            customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
+            generateDom =  moreProps.generateDom;
+            clickChangeAttrs =  moreProps.clickChangeAttrs
+        }
+
         let outerDom=$(
             `
-            <div class="form-group ortum_item row" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item row" data-frame="Bootstrap" 
+            data-componentKey="textareaDom">
                
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('textarea');//设定name
+        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //设定name
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('textarea'));
 
+        //控制标签
+        if(ortum_component_properties.data.hideLabel){
+            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_component_properties.data.labelCSS") : '';
+        }else{
+            switch(ortum_component_properties.data.labelPosition){
+                case "topLeft":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_textarea_label_Right",'')
+                    break;
+                case "topRight":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.indexOf("ortum_boot_textarea_label_Right") == -1 ? ortum_component_properties.data.labelCSS+=" ortum_boot_textarea_label_Right" : ''
+
+                    break;
+                case "rowLeft":
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'');
+                    ortum_component_properties.data.labelCSS += ' col-form-label col-2';
+                    $(outerDom).addClass('row');
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass += " col";
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_textarea_label_Right",'')
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //生成inputDom
+        let textareaDom = $(`
+            <textarea 
+            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
+            ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
+            name="${ortum_component_properties.data.name}" 
+            class="${ortum_component_properties.data.cssClass}" 
+            placeholder="${ortum_component_properties.data.placeholder}"
+            rows="${ortum_component_properties.data.rows}"></textarea>
+        `)
+
+        //插入label
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
-            <textarea 
-                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
-                ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
-                name="${ortum_component_properties.data.name}" 
-                class="${ortum_component_properties.data.cssClass}" 
-                placeholder="${ortum_component_properties.data.placeholder}"
-                rows="${ortum_component_properties.data.rows}"></textarea>
         `))
+        //插入dom
+        $(outerDom).append(textareaDom)
 
-        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','textarea']);
-
-        $(parentDom).append(outerDom);
+        if(parentDom){
+            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
+            $(outerDom).prop('ortum_component_type',['Bootstrap','textarea']);
+            $(parentDom).append(outerDom);
+        }else{
+            return outerDom
+        } 
 
     }
 

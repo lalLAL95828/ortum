@@ -1,4 +1,4 @@
-define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","createDom","global","settings"],function(require,Assist,CreateDom,Global,Settings){
     let component_properties = {
         data:{
             id:"",//id
@@ -34,36 +34,95 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
     /**
      * 功能：创建bootstrap的input
+     * @param {*} parentDom 
+     * @param {*} moreProps 一个json对象，
+     * @param {*} moreProps.customProps 自定义属性
+     * @param {*} moreProps.generateDom 函数也存在dom中
+     * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
-    let InputDom = function(parentDom){
+    let InputDom = function(parentDom,moreProps=null){
+        let customProps = null;
+        let generateDom =  null;
+        let clickChangeAttrs = true;
+        if(Assist.getDetailType(moreProps) == "Object"){
+            customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
+            generateDom =  moreProps.generateDom;
+            clickChangeAttrs =  moreProps.clickChangeAttrs
+        }
+
         let outerDom=$(
             `
-            <div class="form-group ortum_item row" style="margin:0;padding-bottom:0.8rem">
+            <div class="form-group ortum_item row" 
+                data-frame="Bootstrap" 
+                data-componentKey="inputDom"
+            >
                
             </div>
             `
         );
         //点击事件，修改属性
-        $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = Assist.deepClone(component_properties);
-        ortum_component_properties.data.name = Assist.timestampName('input');//设定name
+        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //设定name
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('input'));
 
+
+        //控制标签
+        if(ortum_component_properties.data.hideLabel){
+            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_component_properties.data.labelCSS") : '';
+        }else{
+            switch(ortum_component_properties.data.labelPosition){
+                case "topLeft":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_input_label_Right",'')
+                    break;
+                case "topRight":
+                    $(outerDom).removeClass('row');
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.labelCSS.indexOf("ortum_boot_input_label_Right") == -1 ? ortum_component_properties.data.labelCSS+=" ortum_boot_input_label_Right" : ''
+
+                    break;
+                case "rowLeft":
+                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'');
+                    ortum_component_properties.data.labelCSS += ' col-form-label col-2';
+                    $(outerDom).addClass('row');
+                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
+                    ortum_component_properties.data.cssClass += " col";
+                    ortum_component_properties.data.labelCSS.replace("ortum_boot_input_label_Right",'')
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //生成inputDom
+        let inputDom = $(`
+            <input type="text"
+            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
+            ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
+            name="${ortum_component_properties.data.name}" 
+            class="${ortum_component_properties.data.cssClass}" 
+            placeholder="${ortum_component_properties.data.placeholder}"/>
+        `)
+
+        //插入label
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
-            <input type="text"
-                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
-                ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
-                name="${ortum_component_properties.data.name}" 
-                class="${ortum_component_properties.data.cssClass}" 
-                placeholder="${ortum_component_properties.data.placeholder}">
         `))
+        //插入dom
+        $(outerDom).append(inputDom)
 
-        $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-        $(outerDom).prop('ortum_component_type',['bootstrap','input']);
-
-        $(parentDom).append(outerDom);
-
+        if(parentDom){
+            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
+            $(outerDom).prop('ortum_component_type',['Bootstrap','input']);
+            $(parentDom).append(outerDom);
+        }else{
+            return outerDom
+        } 
     }
 
     /**

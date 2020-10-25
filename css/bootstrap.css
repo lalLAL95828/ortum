@@ -1,3 +1,8 @@
+.ortum_item{
+    margin:0!important;
+    padding-bottom:0.8rem!important;
+}
+
 /* grid柵格 */
 .ortum_boot_col_waitInsert{
     background-color:#e6e6e6;
@@ -5,6 +10,11 @@
 
 /* input */
 .ortum_boot_input_label_Right{
+    text-align: end;
+    display: block;
+}
+/* rangeInput */
+.ortum_boot_rangeInput_label_Right{
     text-align: end;
     display: block;
 }
