@@ -34,7 +34,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 // "focus":false,
                 "keyboard":false,
             });
-            $("#ortum_top_model_xl_content").load("/html/common/codemirror.html",function(){
+            $("#ortum_top_model_xl_content").load("html/common/codemirror.html",function(){
                 $('#ortum_top_model_xl_wait').hide();
             });
         })

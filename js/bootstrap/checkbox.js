@@ -265,7 +265,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             "backdrop":"static",
         })
         //加载配置
-        $("#ortum_top_model_content").load("/html/bootstrap/checkbox_settings.html",function(){
+        $("#ortum_top_model_content").load("html/bootstrap/checkbox_settings.html",function(){
             let globalComponent =Global.ortum_edit_component.comObj;
             let evenProperties = $(globalComponent).prop('ortum_component_properties');
 

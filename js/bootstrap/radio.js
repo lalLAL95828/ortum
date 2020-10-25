@@ -258,7 +258,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         $('#ortum_top_dialog').modal({
             "backdrop":"static",
         })
-        $("#ortum_top_model_content").load("/html/bootstrap/radio_settings.html",function(){
+        $("#ortum_top_model_content").load("html/bootstrap/radio_settings.html",function(){
             let globalComponent =Global.ortum_edit_component.comObj;
             let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
