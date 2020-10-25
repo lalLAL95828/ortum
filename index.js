@@ -42,7 +42,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
     //预览
     if($(this).hasClass('icon-yulan')){
-        require(['Feature'],function(Feature){
+        require(['feature'],function(Feature){
             //html方式
             Feature.previewTableHtmlContent("ortum_field")
             //blob方式

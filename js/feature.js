@@ -310,7 +310,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} id 
      */
     let previewTableHtmlContent = function(id){
-        window.open("/preview.html","preview")
+        window.open("preview.html","preview")
         return false;
     }
     /**
