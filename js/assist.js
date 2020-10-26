@@ -79,7 +79,7 @@ define(['require'],function(require){
     let deleteComponent = function(e){
 
         let delOrtumItem = $(this).parents('.ortum_item').eq(0)
-        let nextOrtumItem = delOrtumItem.parents('.ortum_item').eq(0)
+        let nextOrtumItem = delOrtumItem.parent()
         
         require('global').ortum_edit_component = null;//清空正在编辑的组件
         

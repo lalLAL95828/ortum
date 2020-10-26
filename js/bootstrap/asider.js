@@ -4,11 +4,42 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
     /**
      * grid 的col在未插入组件之前，默认的提示语
      */
-    let tipAddComponentFn = function(createOrtumItem=true){
-        let col;
+    let tipAddComponentFn = function(createOrtumItem=true,moreProps=null){
+        let bindDropEvent = true;//绑定拖拽事件
+        let createWaitSpan = true;//创建待拖入提示
+        if(Assist.getDetailType(moreProps) == "Object"){
+            (moreProps.bindDropEvent !== undefined || moreProps.bindDropEvent !== null) && (bindDropEvent = moreProps.bindDropEvent);
+            (moreProps.createWaitSpan !== undefined || moreProps.createWaitSpan !== null) && (createWaitSpan = moreProps.createWaitSpan);
+        }
+        let col;//要返回的值
         if(createOrtumItem){
             col = $(`
-                <div class="col ortum_boot_col_default ortum_boot_col_waitInsert ortum_item">
+                <div class="col ortum_boot_col_default ortum_boot_col_waitInsert">
+                    
+                </div>
+            `);
+            bindDropEvent && bindFeatureToBootStarapCol(col);//绑定拖拽事件
+        }
+        if(createWaitSpan){
+            col && (
+                $(col).append(`
+                    <div style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
+                        <span>选择其他组件插入</span>
+                    </div>
+                `)
+            );
+            !col && (
+                col = $(`
+                    <div style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
+                        <span>选择其他组件插入</span>
+                    </div>
+                `)
+            )
+        }
+
+        /*if(createOrtumItem){
+            col = $(`
+                <div class="col ortum_boot_col_default ortum_boot_col_waitInsert">
                     <div style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
                         <span>选择其他组件插入</span>
                     </div>
@@ -21,7 +52,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     <span>选择其他组件插入</span>
                 </div>
             `)
-        }
+        }*/
         return col;
     }
     /**

@@ -311,24 +311,86 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} id 
      * @param {*} win 
      */
-    let getPreviewContent =function(id,win=window){
-        let prevHtml =$(`
-        <div id="ortum_field_preview"></div>
-        `)
-        $(win).find('#'+id).find(".ortum_item").each(function(index,item){
-            //bootstrap_select
-            let frame= $(item).attr("data-frame");
-            let componentKey = $(item).attr("data-componentKey");
+    // let getPreviewContent =function(id,win=window,parentDom = null){
+    let getPreviewContent =function(mode="id",datas={"win":window}){
+        switch (mode) {
+            case "id":
+                if(!datas.id){
+                    return $("缺少id")
+                }
+                !datas.win && (datas.win = window);
+                let prevHtml =$(`
+                    <div id="ortum_field_preview"></div>
+                `)
 
-            frame && componentKey && (
-                prevHtml.append(CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
-                    customProps:$(item).prop('ortum_component_properties'),
-                    generateDom:true,
-                    clickChangeAttrs:false,
-                }))
-            )
-        })
-        return prevHtml;
+                $(datas.win).find('#'+datas.id).find(".ortum_item").each(function(index,item){
+                    let appendDom;
+
+                    let frame= $(item).attr("data-frame");
+                    let componentKey = $(item).attr("data-componentKey");
+
+                    //如果父级存在bootstrap的grid，不进行处理
+                    if($(item).parents(".ortum_bootstrap_grid").length){
+                        return true;
+                    }
+                    //组件为bootstrap_grid时，特殊处理
+                    if(frame == "Bootstrap" && componentKey == "gridDom"){
+                        let bootstrapGridSonArr = getPreviewContent(mode="dom",{dom:$(item),win:datas.win})
+                        appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                            customProps:$(item).prop('ortum_component_properties'),
+                            generateDom:true,
+                            clickChangeAttrs:false,
+                            createWaitSpan:false,
+                            bindDropEvent:false,
+                        })
+                        $(appendDom).find(".ortum_boot_col_default").each(function (index2,item2) {
+                            if(bootstrapGridSonArr[index2]){
+                                $(item2).removeClass("ortum_boot_col_waitInsert")
+                                $(item2).html(bootstrapGridSonArr[index2])
+                            }
+                        })
+                        prevHtml.append(appendDom)
+                    }
+                    frame && componentKey && !appendDom && (
+                        prevHtml.append(CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                            customProps:$(item).prop('ortum_component_properties'),
+                            generateDom:true,
+                            clickChangeAttrs:false,
+                        }))
+                    )
+                })
+                return prevHtml;
+                break;
+            case "dom"://处理bootstrap的grid
+                if(!datas.dom){
+                    return $("缺少dom")
+                }
+                !datas.win && (datas.win = window);
+                let prevHtmlArr = [];
+
+                $(datas.win).find(datas.dom).find(".ortum_boot_col_default").each(function(index,item){
+                    let OrtumItem = $(item).find(".ortum_item")
+                    if(!OrtumItem.length){
+                        return true;
+                    }
+                    let frame= $(OrtumItem).eq(0).attr("data-frame");
+                    let componentKey = $(OrtumItem).eq(0).attr("data-componentKey");
+                    frame && componentKey && (
+                        prevHtmlArr[index] = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                            customProps:$(item).prop('ortum_component_properties'),
+                            generateDom:true,
+                            clickChangeAttrs:false,
+                        })
+                    )
+                })
+                return  prevHtmlArr;
+                break;
+            default:
+                break;
+
+        }
+
+
     }
     /**
      * 功能：预览文件内容,html方式
@@ -369,7 +431,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             <div id="ortum_preview_ModalLabel_body"></div>
             
             <script>
-                let prev = window.opener.require("feature").getPreviewContent("ortum_field",window.opener.document)
+                let prev = window.opener.require("feature").getPreviewContent("id",{id:"ortum_field",win:window.opener.document})
                 $("#ortum_preview_ModalLabel_body").html(prev)
             <\/script>
         </body>
