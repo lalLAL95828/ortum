@@ -1,6 +1,7 @@
 .ortum_item{
     margin:0!important;
-    padding-bottom:0.8rem!important;
+    padding-bottom:0!important;
+    /* padding-bottom:0.8rem!important; */
 }
 
 /* grid柵格 */
@@ -25,10 +26,16 @@
     display: block;
 }
 /* radio */
+.ortum_bootstrap_radio{
+    height: calc(1.5em + .75rem + 2px);
+    display: flex;
+    align-items: center;
+}
 .ortum_radio_newValue{
     border:1px solid #ced4da;
     border-radius: 5px;
 }
+
 
 .selectedShadow #ortum_shadow .ortum_shadow_bootstrapRadio_settings{
     position: absolute;
@@ -40,6 +47,11 @@
 }
 
 /* checkbox */
+.ortum_bootstrap_checkbox{
+    height: calc(1.5em + .75rem + 2px);
+    display: flex;
+    align-items: center;
+}
 .selectedShadow #ortum_shadow .ortum_shadow_bootstrapCheckbox_settings{
     position: absolute;
     bottom: 0px;
@@ -63,4 +75,11 @@
 }
 option:disabled{
     color: #999999;
+}
+
+/* switch */
+.ortum_bootstrap_switch{
+    height: calc(1.5em + .75rem + 2px);
+    display: flex;
+    align-items: center;
 }

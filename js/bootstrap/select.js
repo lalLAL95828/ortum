@@ -469,7 +469,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             $("#ortum_top_model_xl_content").load("/html/common/codemirror.html",function(){
                 $('#ortum_top_model_xl_wait').hide();
             });
-            return;
+            return false;
         }
         //本地设置option
         if(!evenProperties.data.useRemote){

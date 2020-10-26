@@ -304,6 +304,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
             $('#ortum_top_model_wait').hide();
         });
+
+        return false;
     };
 
     return {

@@ -56,7 +56,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let outerDom=$(
             `
-            <div class="form-group ortum_item" data-frame="Bootstrap" 
+            <div class="form-group ortum_item ortum_bootstrap_switch" data-frame="Bootstrap" 
             data-componentKey="switchDom">
                
             </div>
