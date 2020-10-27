@@ -470,8 +470,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             })
             //加载配置
             $("#ortum_top_model_lg_content").load("html/bootstrap/select_settings.html",function(){
-                // let globalComponent =Global.ortum_edit_component.comObj;
-                // let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
                 let itemsArr = evenProperties.data.options;
                 let itemsLength = itemsArr.length;
@@ -494,6 +492,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
                 $('#ortum_top_model_lg_wait').hide();
             });
+            return false;
         }
     };
 

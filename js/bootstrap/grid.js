@@ -87,8 +87,8 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
      * @param {*} e 
      */
     let inputSetProperties = function(property,that,e){
-        let val=$(that).val();
-        let checked=$(that).prop('checked');
+        let val = $(that).val();
+        let checked = $(that).prop('checked');
 
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
@@ -110,12 +110,16 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
                 if(cloumLength > val*1){
                     for(let i =0;i<(cloumLength -(val*1));i++){
                         $(globalComponent).find(".row").eq(0).children().last().remove();
+                        evenProperties.data.columnsArr.pop();
                     }
                 }
                 if(cloumLength < val*1){
                     for(let i =0;i<(val*1 - cloumLength);i++){
                         let col=BootStrapAsider.tipAddComponentFn()
                         $(globalComponent).find(".row").eq(0).append(col)
+                        evenProperties.data.columnsArr.push({
+                            "classValue":"col"
+                        })
                     }
                 }
                 break; 

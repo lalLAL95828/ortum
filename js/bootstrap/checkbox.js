@@ -283,7 +283,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //显示弹窗
         $('#ortum_top_dialog').modal({
             "backdrop":"static",
-        })
+        });
         //加载配置
         $("#ortum_top_model_content").load("html/bootstrap/checkbox_settings.html",function(){
             let globalComponent =Global.ortum_edit_component.comObj;
