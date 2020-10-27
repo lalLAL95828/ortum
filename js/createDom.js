@@ -5,9 +5,10 @@ define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio",
 "BootStrapFile",
 "BootStrapSwitch",
 "BootStrapSelect",
+"BootStrapLabel",
 ],
 function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
-    BootStrapFile,BootStrapSwitch,BootStrapSelect){
+    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -126,6 +127,20 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
 
         }
     }
+    /**
+     * 创建label
+     * @param {*} type
+     */
+    let createLabelDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                console.log()
+                return BootStrapLabel.LabelDom(parentDom,moreProps)
+                break;
+            default:
+
+        }
+    }
 
     //设置对应Bootstrap框架 生成组件的函数是否开启
     createGridDom.ortum_Bootstrap = true;
@@ -137,7 +152,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     createFileDom.ortum_Bootstrap = true;
     createSwitchDom.ortum_Bootstrap = true;
     createSelectDom.ortum_Bootstrap = true;
-    
+    createLabelDom.ortum_Bootstrap = true;
     return {
         createGridDom,
         createInputDom,
@@ -148,5 +163,6 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         createFileDom,
         createSwitchDom,
         createSelectDom,
+        createLabelDom,
     }
 })

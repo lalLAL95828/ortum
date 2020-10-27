@@ -130,8 +130,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let clickChangeAttrs = true;
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            generateDom =  moreProps.generateDom;
-            clickChangeAttrs =  moreProps.clickChangeAttrs
+            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
         let outerDom=$(
@@ -156,29 +156,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         //控制标签
         if(ortum_component_properties.data.hideLabel){
-            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_component_properties.data.labelCSS") : '';
+            //ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_display_NONE") : '';
         }else{
             switch(ortum_component_properties.data.labelPosition){
-                case "topLeft":
+                case "topLeft":case "topRight":
                     $(outerDom).removeClass('row');
-                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.labelCSS.replace("ortum_boot_rangeInput_label_Right",'')
-                    break;
-                case "topRight":
-                    $(outerDom).removeClass('row');
-                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.labelCSS.indexOf("ortum_boot_rangeInput_label_Right") == -1 ? ortum_component_properties.data.labelCSS+=" ortum_boot_rangeInput_label_Right" : ''
-
                     break;
                 case "rowLeft":
-                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'');
-                    ortum_component_properties.data.labelCSS += ' col-form-label col-2';
                     $(outerDom).addClass('row');
-                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.cssClass += " col";
-                    ortum_component_properties.data.labelCSS.replace("ortum_boot_rangeInput_label_Right",'')
                     break;
                 default:
                     break;
@@ -326,6 +311,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 }else{
                     $(globalComponent).find('label').eq(0).removeClass('ortum_display_NONE');
                 }
+                evenProperties.data.labelCSS = $(globalComponent).find('label').eq(0).attr("class")
+                $('#ortum_property_labelCSS').val($(globalComponent).find('label').eq(0).attr("class"))
                 break; 
             case "labelPosition":
                 //TODO 位置
@@ -367,6 +354,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     default:
                         break;
                 }
+                $('#ortum_property_cssClass').val($(globalComponent).find('input.form-control-range').eq(0).attr("class"))
+                $('#ortum_property_labelCSS').val($(globalComponent).find('label').eq(0).attr("class"))
+                evenProperties.data.cssClass = $(globalComponent).find('input.form-control-range').eq(0).attr("class")
+                evenProperties.data.labelCSS = $(globalComponent).find('label').eq(0).attr("class")
                 break;    
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){

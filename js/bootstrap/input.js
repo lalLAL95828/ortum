@@ -7,7 +7,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             verification:"",//校验
             authority:"3",//权限
             placeholder:"请输入",
-            cssClass:"form-control col-10",//css类
+            cssClass:"form-control col",//css类
             hideLabel:false,//是否隐藏标签
             labelName:"名称",//标签名称
             labelPosition:"rowLeft",//标签位置
@@ -46,8 +46,8 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let clickChangeAttrs = true;
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            generateDom =  moreProps.generateDom;
-            clickChangeAttrs =  moreProps.clickChangeAttrs
+            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
         let outerDom=$(
@@ -63,36 +63,21 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         //点击事件，修改属性
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
-        let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        let ortum_component_properties = (customProps ? customProps : Assist.deepClone(component_properties));
+
         //设定name
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('input'));
 
-
         //控制标签
         if(ortum_component_properties.data.hideLabel){
-            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_component_properties.data.labelCSS") : '';
+            // ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_display_NONE") : '';
         }else{
             switch(ortum_component_properties.data.labelPosition){
-                case "topLeft":
+                case "topLeft":case "topRight":
                     $(outerDom).removeClass('row');
-                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.labelCSS.replace("ortum_boot_input_label_Right",'')
-                    break;
-                case "topRight":
-                    $(outerDom).removeClass('row');
-                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.labelCSS.indexOf("ortum_boot_input_label_Right") == -1 ? ortum_component_properties.data.labelCSS+=" ortum_boot_input_label_Right" : ''
-
                     break;
                 case "rowLeft":
-                    ortum_component_properties.data.labelCSS = ortum_component_properties.data.labelCSS.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'');
-                    ortum_component_properties.data.labelCSS += ' col-form-label col-2';
                     $(outerDom).addClass('row');
-                    ortum_component_properties.data.cssClass = ortum_component_properties.data.cssClass.replace(/(?<=(^|\s))col(\S)*?(?=($|\s))/g,'')
-                    ortum_component_properties.data.cssClass += " col";
-                    ortum_component_properties.data.labelCSS.replace("ortum_boot_input_label_Right",'')
                     break;
                 default:
                     break;
@@ -251,6 +236,8 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                 }else{
                     $(globalComponent).find('label').eq(0).removeClass('ortum_display_NONE');
                 }
+                evenProperties.data.labelCSS = $(globalComponent).find('label').eq(0).attr("class")
+                $('#ortum_property_labelCSS').val($(globalComponent).find('label').eq(0).attr("class"))
                 break; 
             case "labelPosition":
                 //TODO 位置
@@ -274,6 +261,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
                         $(globalComponent).find('label').eq(0).addClass('ortum_boot_input_label_Right')
+
                         break;
                     case "rowLeft":
                         let evenLabelCss = $('#ortum_property_labelCSS').val();
@@ -291,7 +279,12 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                     //     break;
                     default:
                         break;
+
                 }
+                $('#ortum_property_cssClass').val($(globalComponent).find('input').eq(0).attr("class"))
+                $('#ortum_property_labelCSS').val($(globalComponent).find('label').eq(0).attr("class"))
+                evenProperties.data.cssClass = $(globalComponent).find('input').eq(0).attr("class")
+                evenProperties.data.labelCSS = $(globalComponent).find('label').eq(0).attr("class")
                 break;    
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){

@@ -5,6 +5,14 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
             name:'',//name
             cssClass:"row",//css类
             columns:2,//多少列
+            columnsArr:[//
+                {
+                    "classValue":"col",
+                },
+                {
+                    "classValue":"col",
+                },
+            ],
         },
         inputChange:["id","name","cssClass","columns"],//input事件修改值
         clickChange:[],
@@ -19,6 +27,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
      * 功能：创建bootstrap的栅格系统
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数转化为String，保存到script标签中
+     * @param {*} moreProps.classValue 一个col的宽度，例如 col-2，col-3
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let GridDom = function(parentDom,moreProps=null){
@@ -27,11 +36,11 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
         let clickChangeAttrs = true;
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            generateDom =  moreProps.generateDom;
-            clickChangeAttrs =  moreProps.clickChangeAttrs
+            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
-        let outerDom= $('<div class="ortum_item ortum_bootstrap_grid" data-frame="Bootstrap" data-componentKey="gridDom" style="margin: 0!important;padding:0!important;"></div>');
+        let outerDom= $('<div class="ortum_item ortum_bootstrap_grid" data-frame="Bootstrap" data-componentKey="gridDom"></div>');
         //点击事件，修改属性
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
@@ -47,6 +56,14 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
             data-col-num=${ortum_component_properties.data.columns}></div>
         `)
         for(let i=0;i<ortum_component_properties.data.columns;i++){
+            if(moreProps){
+                moreProps.classValue = ortum_component_properties.data.columnsArr[i] && ortum_component_properties.data.columnsArr[i].classValue
+            }else{
+                moreProps={
+                    "classValue" :ortum_component_properties.data.columnsArr[i] && ortum_component_properties.data.columnsArr[i].classValue
+                }
+            }
+
             let col=BootStrapAsider.tipAddComponentFn(true,moreProps)
             $(row).append(col)
         }
@@ -179,6 +196,48 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
     }
 
 
+    /**
+     * 功能：新增选项
+     * @param {*} newArr
+     */
+    let setGridItems = function(newArr){
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        let colDiv = $(globalComponent).find('.ortum_boot_col_default');
+
+        colDiv.each(function (index,item) {
+            $(item).removeClass(function (index, className) {
+                return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
+            })
+            $(item).addClass(newArr[index].classValue)
+        })
+
+        evenProperties.data.columnsArr = newArr;
+    }
+    /**
+     * 功能：回显选项
+     */
+    let showGridItems = function(){
+        $('#ortum_top_dialog').modal({
+            "backdrop":"static",
+        });
+        $("#ortum_top_model_content").load("html/bootstrap/grid_settings.html",function(){
+            let globalComponent =Global.ortum_edit_component.comObj;
+            let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+            let itemsArr = evenProperties.data.columnsArr;
+            let itemsLength = itemsArr.length;
+            for(let i =1 ;i<itemsLength;i++){
+                $('#ortum_grid_addLine').click();
+            }
+            itemsLength && $('#ortum_grid_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
+                $(item).find('.ortum_grid_colValue').eq(0).val(itemsArr[index].classValue)
+            })
+            $('#ortum_top_model_wait').hide();
+        });
+        return false;
+    };
+
     return {
         GridDom,
 
@@ -188,5 +247,8 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+        setGridItems,
+        showGridItems,
     }
 })

@@ -132,6 +132,15 @@ define(['assist'],function(Assist){
             "Bootstrap":null,
         },
     },
+    {
+        key:"labelDom",
+        name:"标签",
+        // useType:"Bootstrap",
+        createFn:"createLabelDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
     ];
 
     let contextMenuMaxHeight=210;

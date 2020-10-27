@@ -7,14 +7,16 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
     let tipAddComponentFn = function(createOrtumItem=true,moreProps=null){
         let bindDropEvent = true;//绑定拖拽事件
         let createWaitSpan = true;//创建待拖入提示
+        let classValue = "col";
         if(Assist.getDetailType(moreProps) == "Object"){
-            (moreProps.bindDropEvent !== undefined || moreProps.bindDropEvent !== null) && (bindDropEvent = moreProps.bindDropEvent);
-            (moreProps.createWaitSpan !== undefined || moreProps.createWaitSpan !== null) && (createWaitSpan = moreProps.createWaitSpan);
+            (moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null) && (bindDropEvent = moreProps.bindDropEvent);
+            (moreProps.createWaitSpan !== undefined && moreProps.createWaitSpan !== null) && (createWaitSpan = moreProps.createWaitSpan);
+            (moreProps.classValue !== undefined && moreProps.classValue !== null) && (classValue = moreProps.classValue);
         }
         let col;//要返回的值
         if(createOrtumItem){
             col = $(`
-                <div class="col ortum_boot_col_default ortum_boot_col_waitInsert">
+                <div class="${classValue} ortum_boot_col_default ortum_boot_col_waitInsert">
                     
                 </div>
             `);
@@ -36,7 +38,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 `)
             )
         }
-
         /*if(createOrtumItem){
             col = $(`
                 <div class="col ortum_boot_col_default ortum_boot_col_waitInsert">

@@ -116,6 +116,13 @@ define(['require'],function(require){
             <div id="ortum_shadow">
             </div>
         `)
+
+        //bootstrap_grid
+        if($(this).hasClass('ortum_bootstrap_grid')){
+            shadowDiv.append(`
+                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapGrid_settings" title="设置"></span>
+             `)
+        }
         //bootstrap_radio
         if($(this).hasClass('ortum_bootstrap_radio')){
             shadowDiv.append(`
@@ -146,6 +153,10 @@ define(['require'],function(require){
         //radio的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_radio')){
             $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',require('BootStrapRadio').showRadioItems);
+        }
+        //grid的设置按钮绑定事件
+        if($(this).hasClass('ortum_bootstrap_grid')){
+            $("#ortum_shadow .ortum_shadow_bootstrapGrid_settings").off('click.setting').on('click.setting',require('BootStrapGrid').showGridItems);
         }
         //checkbox的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_checkbox')){

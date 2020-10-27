@@ -8,6 +8,18 @@
 .ortum_boot_col_waitInsert{
     background-color:#e6e6e6;
 }
+.ortum_bootstrap_grid{
+    margin: 0!important;
+    padding:0!important;
+}
+.selectedShadow #ortum_shadow .ortum_shadow_bootstrapGrid_settings{
+    position: absolute;
+    bottom: 0px;
+    color: #007bff;
+    right: 38px;
+    display: block;
+    font-size: 25px;
+}
 
 /* input */
 .ortum_boot_input_label_Right{
@@ -82,4 +94,18 @@ option:disabled{
     height: calc(1.5em + .75rem + 2px);
     display: flex;
     align-items: center;
+}
+/* label */
+.ortum_bootstrap_label{
+    height: calc(1.5em + .75rem + 2px);
+}
+.ortum_bootstrap_label_labelCSS{
+    margin-bottom: 0px;
+}
+.ortum_bootstrap_label_cssClass{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding:0 10px;
 }

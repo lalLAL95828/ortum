@@ -377,7 +377,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     let componentKey = $(OrtumItem).eq(0).attr("data-componentKey");
                     frame && componentKey && (
                         prevHtmlArr[index] = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
-                            customProps:$(item).prop('ortum_component_properties'),
+                            customProps:$(OrtumItem).prop('ortum_component_properties'),
                             generateDom:true,
                             clickChangeAttrs:false,
                         })

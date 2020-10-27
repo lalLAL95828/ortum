@@ -22,6 +22,7 @@ require.config({
         "BootStrapFile":"js/bootstrap/file",
         "BootStrapSwitch":"js/bootstrap/switch",
         "BootStrapSelect":"js/bootstrap/select",
+        "BootStrapLabel":"js/bootstrap/label",
         "CSS":"lib/css.min",
 
         "setCodemirror":"js/setCodemirror",

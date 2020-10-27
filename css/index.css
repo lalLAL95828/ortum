@@ -21,7 +21,6 @@
 /* 预览id */
 #ortum_field_preview{
     margin:auto;
-    overflow:auto;
     position: relative;
 }
 #ortum_field_preview .originState{
