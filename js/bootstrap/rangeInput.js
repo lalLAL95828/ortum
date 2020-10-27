@@ -122,16 +122,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps 一个json对象，
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数也存在dom中
+     * @param {*} moreProps.createJson 生成对应的json
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let RangeInputDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
+
+        let createJson = false;
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
-            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
+            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
+            moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
         }
 
         let outerDom=$(
@@ -148,11 +152,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定name
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('rangeInput'));
 
-
-        //点击事件，修改属性
-        // $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
-        // let ortum_component_properties =Assist.deepClone(component_properties);
-        // ortum_component_properties.data.name = Assist.timestampName('rangeInput');//设定name
 
         //控制标签
         if(ortum_component_properties.data.hideLabel){
@@ -191,6 +190,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             $(outerDom).prop('ortum_component_properties',ortum_component_properties)
             $(outerDom).prop('ortum_component_type',['Bootstrap','rangeInput']);
             $(parentDom).append(outerDom);
+        }else if(createJson){//生成json
+            return {
+                "name":ortum_component_properties.data.name,
+                "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+            }
         }else{
             return outerDom
         } 

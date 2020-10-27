@@ -8,9 +8,11 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let bindDropEvent = true;//绑定拖拽事件
         let createWaitSpan = true;//创建待拖入提示
         let classValue = "col";
+        let createJson = false;
         if(Assist.getDetailType(moreProps) == "Object"){
             (moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null) && (bindDropEvent = moreProps.bindDropEvent);
             (moreProps.createWaitSpan !== undefined && moreProps.createWaitSpan !== null) && (createWaitSpan = moreProps.createWaitSpan);
+            moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             (moreProps.classValue !== undefined && moreProps.classValue !== null) && (classValue = moreProps.classValue);
         }
         let col;//要返回的值
@@ -38,22 +40,19 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 `)
             )
         }
-        /*if(createOrtumItem){
-            col = $(`
-                <div class="col ortum_boot_col_default ortum_boot_col_waitInsert">
-                    <div style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
-                        <span>选择其他组件插入</span>
-                    </div>
-                </div>
-            `);
-            bindFeatureToBootStarapCol(col);//绑定拖拽事件
-        }else{
-            col = $(`
-                <div style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
-                    <span>选择其他组件插入</span>
-                </div>
-            `)
-        }*/
+
+        if(!createWaitSpan && createJson){
+            col && (
+                $(col).append(`
+                    <ortum_children></ortum_children>
+                `)
+            );
+            !col && (
+                col = $(`
+                    <ortum_children></ortum_children>
+                `)
+            )
+        }
         return col;
     }
     /**

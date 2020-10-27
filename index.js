@@ -29,7 +29,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     //保存
     if($(this).hasClass('icon-baocun')){
         require(['feature'],function(Feature){
-            Feature.exportFileListen(e)
+            let ortumJson = Feature.getPreviewContentJson("id",{id:"ortum_field"})
+            console.log(ortumJson)
         })
         return;
     }

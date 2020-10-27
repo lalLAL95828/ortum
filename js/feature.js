@@ -311,14 +311,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} id 
      * @param {*} win 
      */
-    // let getPreviewContent =function(id,win=window,parentDom = null){
     let getPreviewContent =function(mode="id",datas={"win":window}){
+        !datas.win && (datas.win = window.document);
+
         switch (mode) {
             case "id":
                 if(!datas.id){
                     return $("缺少id")
                 }
-                !datas.win && (datas.win = window);
                 let prevHtml =$(`
                     <div id="ortum_field_preview"></div>
                 `)
@@ -365,7 +365,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 if(!datas.dom){
                     return $("缺少dom")
                 }
-                !datas.win && (datas.win = window);
+
                 let prevHtmlArr = [];
 
                 $(datas.win).find(datas.dom).find(".ortum_boot_col_default").each(function(index,item){
@@ -387,10 +387,104 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 break;
             default:
                 break;
-
         }
+    }
+    /**
+     * 功能: 获取win下表单信息,生成对应的虚拟dom树
+     * @param {*} id
+     * @param {*} win
+     */
+    let getPreviewContentJson = function(mode="id",datas={"win":window}){
+        let parentsJson = {};
+        if(datas && datas.parentsJson){
+            parentsJson = datas.parentsJson;
+        }
+        !datas.win && (datas.win = window.document);
+        switch (mode) {
+            case "id":
+                if(!datas.id){
+                    return $("缺少id")
+                }
+                $(datas.win).find('#'+datas.id).find(".ortum_item").each(function(index,item){
+                    //父级存在ortum_item，不在该case处理，在case: "dom"处理
+                    if($(item).parents(".ortum_item").length){
+                        return true;
+                    };
 
+                    let frame= $(item).attr("data-frame");
+                    let componentKey = $(item).attr("data-componentKey");
 
+                    let comDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                        customProps:$(item).prop('ortum_component_properties'),
+                        createJson:true,//生成对应的json
+                        generateDom:true,
+                        clickChangeAttrs:false,
+                        bindDropEvent:false,
+                        createWaitSpan:false,
+                    });
+
+                    parentsJson[comDom.name] = {
+                        "frame":frame,
+                        "componentKey":componentKey,
+                        "name":comDom.name,
+                        "html":comDom.html,
+                        "attrs":comDom.attrs,
+                        "css":comDom.css,
+                        "script":comDom.script,
+                        "children":[],
+                    }
+
+                    $(item).find(".ortum_item").each(function(index2,html2){
+                        getPreviewContentJson(mode="dom",{
+                            "dom":$(html2),
+                            "win":datas.win,
+                            "parent":parentsJson[comDom.name],
+                        })
+                    })
+                })
+                return parentsJson;
+                break;
+            case "dom"://处理bootstrap的grid
+                if(!datas.dom){
+                    return $("缺少dom")
+                }
+                if(!datas.parent){
+                    return $("缺少parent")
+                }
+                let frame= $(datas.dom).attr("data-frame");
+                let componentKey = $(datas.dom).attr("data-componentKey");
+
+                let comDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                    customProps:$(datas.dom).prop('ortum_component_properties'),
+                    createJson:true,//生成对应的json
+                    generateDom:true,
+                    clickChangeAttrs:false,
+                    bindDropEvent:false,
+                    createWaitSpan:false,
+                });
+
+                datas.parent.children.push({
+                    "frame":frame,
+                    "componentKey":componentKey,
+                    "name":comDom.name,
+                    "html":comDom.html,
+                    "attrs":comDom.attrs,
+                    "css":comDom.css,
+                    "script":comDom.script,
+                    "children":[],
+                });
+                let length = datas.parent.children.length;
+                $(datas.dom).find(".ortum_item").each(function(index2,html2){
+                    getPreviewContentJson(mode="dom",{
+                        "dom":$(html2),
+                        "win":datas.win,
+                        "parent":datas.parent.children[length-1],
+                    })
+                })
+                break;
+            default:
+                break;
+        }
     }
     /**
      * 功能：预览文件内容,html方式
@@ -506,5 +600,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         getPreviewContent,//预览
         previewTableBlobContent,
         previewTableHtmlContent,
+
+        getPreviewContentJson,//生成dom树
     }
 })

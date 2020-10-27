@@ -136,15 +136,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps 一个json对象，
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数转化为String，保存到script标签中
+     * @param {*} moreProps.createJson 生成对应的json
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let FileDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
+
+        let createJson = false;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
@@ -204,9 +209,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         scriptStr = `
         let ortum_bootstrap_file_changeLabelName = ${changeLabelName.toString()};
         !function(fileDomName){
-            $('input[name='+fileDomName+']').off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName)
+            $('input[name='+fileDomName+']').off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName);
         }('${ortum_component_properties.data.name}');
-        `
+        `;
 
         if(generateDom && ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
             //函数生成script节点中
@@ -236,13 +241,18 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }  
 
         //插入script
-        generateDom && scriptDom && $(outerDom).append(scriptDom)
-
+        generateDom && scriptDom && !createJson && $(outerDom).append(scriptDom)
 
         if(parentDom){
             $(outerDom).prop('ortum_component_properties',ortum_component_properties)
             $(outerDom).prop('ortum_component_type',['Bootstrap','file']);
             $(parentDom).append(outerDom);
+        }else if(createJson){//生成json
+            return {
+                "name":ortum_component_properties.data.name,
+                "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+            }
         }else{
             return outerDom
         } 

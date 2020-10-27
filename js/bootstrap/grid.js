@@ -28,15 +28,18 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数转化为String，保存到script标签中
      * @param {*} moreProps.classValue 一个col的宽度，例如 col-2，col-3
+     * @param {*} moreProps.createJson 生成对应的json
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let GridDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
+        let createJson = false;
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
@@ -63,7 +66,6 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
                     "classValue" :ortum_component_properties.data.columnsArr[i] && ortum_component_properties.data.columnsArr[i].classValue
                 }
             }
-
             let col=BootStrapAsider.tipAddComponentFn(true,moreProps)
             $(row).append(col)
         }
@@ -74,6 +76,11 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
             $(outerDom).prop('ortum_component_properties',ortum_component_properties)
             $(outerDom).prop('ortum_component_type',['Bootstrap','grid']);
             $(parentDom).append(outerDom);
+        }else if(createJson){//生成json
+            return {
+                "name":ortum_component_properties.data.name,
+                "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+            }
         }else{
             return outerDom
         }
