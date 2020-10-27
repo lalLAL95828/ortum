@@ -230,7 +230,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} e 
      */
     let exportFileListen = function(e){
-        let contentData=document.getElementById('ortum_body').outerHTML;
+       /* let contentData=document.getElementById('ortum_field').outerHTML;
         let urlObject = window.URL || window.webkitURL || window;
         let export_blob = new Blob([contentData]);
         let save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")//参考https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createElementNS
@@ -242,7 +242,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             "click", true, false, window, 0, 0, 0, 0, 0
             , false, false, false, false, 0, null
             );
-        save_link.dispatchEvent(ev);
+        save_link.dispatchEvent(ev);*/
+
+        let saveArrJSON = getPreviewContentJson("id",{id:"ortum_field",HasProperties:true})
+        debugger
+
     }
     /**
      * 功能：监听修改属性
@@ -306,6 +310,37 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
 
     }
 
+    /**
+     * 功能：从json渲染成 dom
+     * @param prevArrJSON dom树
+     * @param parentDom 父级dom
+     * @param way 子级插入父级的方式
+     */
+    let JsonRenderDom = function (prevArrJSON,parentDom,way="append") {
+        let cssDomSet = [];
+        let scriptDomSet = [];
+        for(let item of prevArrJSON){
+            let htmlDom = $(item.html)
+            if(item.children.length){
+                let backDatas =renderJson(item.children,htmlDom,"replace");
+                cssDomSet = cssDomSet.concat(backDatas.css);
+                scriptDomSet = scriptDomSet.concat(backDatas.script);
+            }
+            if(way=="append" && item.html){
+                parentDom.append(htmlDom)
+            }
+            if(way=="replace" && item.html){
+                $(parentDom).find("ortum_children").eq(0).replaceWith(item.html)
+            }
+            item.css && cssDomSet.push(item.css);
+            item.script && scriptDomSet.push(item.script);
+        }
+        return {
+            dom:parentDom,
+            css:cssDomSet,
+            script:scriptDomSet,
+        }
+    };
     /**
      * 功能: 获取win下表单信息
      * @param {*} id 
@@ -395,11 +430,17 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} win
      */
     let getPreviewContentJson = function(mode="id",datas={"win":window}){
-        let parentsJson = {};
+        let parentsJson = [];
         if(datas && datas.parentsJson){
             parentsJson = datas.parentsJson;
         }
+
         !datas.win && (datas.win = window.document);
+        let HasProperties = false;//保存Properties
+        if(datas && datas.HasProperties){
+            HasProperties = true;
+        }
+
         switch (mode) {
             case "id":
                 if(!datas.id){
@@ -421,9 +462,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         clickChangeAttrs:false,
                         bindDropEvent:false,
                         createWaitSpan:false,
+                        HasProperties:HasProperties,
                     });
-
-                    parentsJson[comDom.name] = {
+                    parentsJson.push({
                         "frame":frame,
                         "componentKey":componentKey,
                         "name":comDom.name,
@@ -432,13 +473,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         "css":comDom.css,
                         "script":comDom.script,
                         "children":[],
-                    }
+                    })
+                    let parentsJsonLength = parentsJson.length;
 
                     $(item).find(".ortum_item").each(function(index2,html2){
                         getPreviewContentJson(mode="dom",{
                             "dom":$(html2),
                             "win":datas.win,
-                            "parent":parentsJson[comDom.name],
+                            "parent":parentsJson[parentsJsonLength-1],
                         })
                     })
                 })
@@ -461,6 +503,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     clickChangeAttrs:false,
                     bindDropEvent:false,
                     createWaitSpan:false,
+                    HasProperties:HasProperties,
                 });
 
                 datas.parent.children.push({
@@ -601,6 +644,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         previewTableBlobContent,
         previewTableHtmlContent,
 
+        JsonRenderDom,//dom数生成dom
         getPreviewContentJson,//生成dom树
     }
 })
