@@ -13,6 +13,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             // labelPosition:"rowLeft",//标签位置
             // labelWidth:"",//标签宽度
             labelCSS:"form-check-label",//标签css类,
+            title:"名称",
             inline:true,//单行显示
             items:[
                 {
@@ -44,6 +45,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
             inline:3,//单行显示
+            title:3,
         },
     }
 
@@ -54,6 +56,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数也存在dom中
      * @param {*} moreProps.createJson 生成对应的json
+     * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let CheckboxDom = function(parentDom,moreProps=null){
@@ -61,10 +64,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let generateDom =  null;
         let clickChangeAttrs = true;
         let createJson = false;
+        let HasProperties = false;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
+            moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
@@ -93,7 +99,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             let newDom = $(`
             <div class="form-check ${ortum_component_properties.data.inline?'form-check-inline':''}">
                 <input class="${ortum_component_properties.data.cssClass}" ${choose ? "checked" :""} type="checkbox" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
-                <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.name+"_"+1}">
+                <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.name+"_"+i}">
                     ${ortum_component_properties.data.items[i].label}
                 </label>
             </div>
@@ -115,6 +121,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return {
                 "name":ortum_component_properties.data.name,
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
+                "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined)
             }
         }else{
             return outerDom
@@ -142,11 +150,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return false;
         }
         switch(property){
-            // case "defaultVal":
-            //     $(globalComponent).find('input').removeAttr('checked')
-            //     $(globalComponent).find('input[value='+ val+']').eq(0).attr('checked',true)
-            //     $(globalComponent).find('input[value='+ val+']').eq(0).prop('checked',false)
-            //     break;
             case "verification":
                 //TODO 验证
                 console.log(val)
@@ -161,7 +164,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 break;  
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find('input').eq(0).attr(property,val)
+                    $(globalComponent).find('input').each(function(index){
+                        $(this).attr(property,val)
+                    })
                 }
                 break;
         }

@@ -1,4 +1,31 @@
 /* index.html */
+
+body{
+    background-color: #e1ecf9!important;
+    /*background-color: #e7e8e5!important;*/
+}
+
+/*中间头部*/
+#ortum_table_info .ortum_table_method_col{
+    padding:0;
+    display: flex;
+    align-items: center;
+}
+#ortum_table_info .ortum_table_method{
+    font-weight: 700;
+    color: #007bff;
+    /*color: #20c997;*/
+    font-size: 18px;
+}
+#ortum_table_info .ortum_table_name_col{
+    padding:0 15px 0 0;
+}
+#ortum_table_info .ortum_table_code_col{
+    padding:0 50px 0 0;
+}
+
+
+
 #ortum_components{
     display: flex;
     flex-wrap: wrap;

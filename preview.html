@@ -50,9 +50,9 @@
         $("#ortum_preview_ModalLabel_body").html(prev)
     </script>-->
 
+
     <script>
         let prevArrJSON = window.opener.require("feature").getPreviewContentJson("id",{id:"ortum_field",win:window.opener.document})
-
 
         let prevDom = $('<div id="ortum_field_preview"></div>')
         let cssDomSet = [];
@@ -77,10 +77,10 @@
         }
         renderJson(prevArrJSON,prevDom)
         $("#ortum_preview_ModalLabel_body").html(prevDom)
-        cssDomSet.forEach((index,item)=>{
+        cssDomSet.forEach((item,index)=>{
             $(document.head).append(item)
         })
-        scriptDomSet.forEach((index,item)=>{
+        scriptDomSet.forEach((item,index)=>{
             $(document.body).append(item)
         })
 

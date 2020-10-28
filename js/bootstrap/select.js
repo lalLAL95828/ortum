@@ -16,6 +16,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             useRemote:false,//服务器获取option
             getOptions:null,
             serverUrl:"",//服务器地址
+            title:"",
             options:[
                 {
                     value:"123",
@@ -34,7 +35,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 },
             ]
         },
-        inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS","serverUrl"],//input事件修改值
+        inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS","serverUrl","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition","useRemote"],
         purview:{//属性编辑权限
             id:3,//id
@@ -51,6 +52,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelCSS:3,//标签css类
             useRemote:3,
             serverUrl:3,
+            title:3,
         },
     }
 
@@ -98,18 +100,22 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数也存在dom中
      * @param {*} moreProps.createJson 生成对应的json
+     * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let SelectDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
+
         let createJson = false;
+        let HasProperties = false;
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
+            moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
         }
 
         let outerDom=$(
@@ -147,9 +153,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //生成selectDom
         let selectDom = $(`
             <select class="${ortum_component_properties.data.cssClass}" 
-                id="${ortum_component_properties.data.id}"
-                name="${ortum_component_properties.data.name}"
-                placeholder="${ortum_component_properties.data.placeholder}" 
+            ${ortum_component_properties.data.title ? "id="+ortum_component_properties.data.title : '' } 
+            id="${ortum_component_properties.data.id}" 
+            name="${ortum_component_properties.data.name}" 
+            placeholder="${ortum_component_properties.data.placeholder}">
             </select>
         `)
         
@@ -201,8 +208,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }else if(createJson){//生成json
             return {
                 "name":ortum_component_properties.data.name,
-                "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
-                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "html":outerDom && outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
+                "script":scriptDom && scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }
         }else{
             return outerDom
@@ -466,7 +475,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             })
             //编辑js保存后执行的函数
             Global.ortum_codemirrorJS_save = setSelectOptions;
-            $("#ortum_top_model_xl_content").load("/html/common/codemirror.html",function(){
+            $("#ortum_top_model_xl_content").load("html/common/codemirror.html",function(){
                 $('#ortum_top_model_xl_wait').hide();
             });
             return false;

@@ -15,6 +15,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelName:"名称",//标签名称
             labelPosition:"rowLeft",//标签位置
             labelCSS:"col-form-label col-2",//标签css类
+            title:"",
         },
         purview:{//属性编辑权限{1:不可见,2:仅读,3:可编辑,4:必填}
             id:3,//id
@@ -31,8 +32,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelName:3,//标签名称
             labelPosition:3,//标签位置
             labelCSS:3,//标签css类
+            title:3,
         },
-        inputChange:["id","name","defaultVal","max","min","step","verification","cssClass","labelName","labelCSS"],//input事件修改值
+        inputChange:["id","name","defaultVal","max","min","step","verification","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
         verify:{//编辑属性时的验证
             max:{
@@ -123,6 +125,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数也存在dom中
      * @param {*} moreProps.createJson 生成对应的json
+     * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let RangeInputDom = function(parentDom,moreProps=null){
@@ -131,10 +134,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let clickChangeAttrs = true;
 
         let createJson = false;
+        let HasProperties = false;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
+            moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
         }
 
@@ -172,6 +178,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //生成rangeInputDom
         let rangeInputDom = $(`
             <input type="range" class="${ortum_component_properties.data.cssClass}" 
+            ${ortum_component_properties.data.title ? "id="+ortum_component_properties.data.title : '' } 
             value="${ortum_component_properties.data.defaultVal}"
             style="padding:0" 
             min="${ortum_component_properties.data.min}"
@@ -194,6 +201,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return {
                 "name":ortum_component_properties.data.name,
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
+                "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }
         }else{
             return outerDom

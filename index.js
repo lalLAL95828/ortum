@@ -6,6 +6,26 @@ function findGloabl(){
     })
 }
 
+//getPreviewContentJson函数的返回值 从数组中获取 name和title数组
+function getTitleAndNameFun(arr){
+    let nameArr = [];
+    let titleArr = [];
+    arr.forEach((item,index)=>{
+        nameArr.push(item.name)
+        titleArr.push(item.title)
+
+        if(item.children.length > 0){
+            let backData = getTitleAndNameFun(item.children);
+            nameArr = nameArr.concat(backData.nameArr)
+            titleArr = titleArr.concat(backData.titleArr)
+        }
+    })
+    return {
+        titleArr:titleArr,
+        nameArr:nameArr,
+    }
+}
+
 let showTipSetTime;//定时器
 
 //初始化提示
@@ -28,10 +48,155 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
     //保存
     if($(this).hasClass('icon-baocun')){
-        require(['feature'],function(Feature){
-            let ortumJson = Feature.getPreviewContentJson("id",{id:"ortum_field"})
-            console.log(ortumJson)
+        require(['feature','assist'],function(Feature,Assist){
+            let tableAct = {
+                "newPCTable":{
+                    name:"新增表单",
+                    way:"POST"
+                }
+            }
+            let tableName = $("#ortum_table_name").val().trim();
+            let tableCode = $("#ortum_table_code").val().trim();
+            let actWay = $(".ortum_table_method").eq(0).attr('data-method');
+
+            if(!tableName){
+                Assist.dangerTip("表单名称不可为空")
+                return;
+            }
+            if(!tableCode){
+                Assist.dangerTip("表单编号不可为空")
+                return;
+            }
+
+            let ortumJson = Feature.getPreviewContentJson("id",{id:"ortum_field",HasProperties:true})
+            let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
+            let titleArr = getTitleAndName.titleArr;
+            let nameArr = getTitleAndName.nameArr;
+
+            ortumReq({
+                "url":"/catarc_infoSys/api/form?_ts=1603870623362",
+                "method":tableAct[actWay].way,
+                "header":{
+                    "Content-Type": "application/json; charset=UTF-8",
+                },
+                "data":JSON.stringify({
+                    columnID:nameArr.toString(),
+                    columnName:titleArr.toString(),
+                    contentHtml:JSON.stringify(ortumJson),
+                    dataSourceId:"",
+                    delFlag:"0",
+                    editor:"ortum",
+                    editName:"系统管理员",
+                    editTime:"2020-10-28",
+                    formCode:tableCode,
+                    formName:tableName,
+                    formWrite:"0",
+                    id:"",
+                    version:"1"
+                }),
+                "success":(xhr,e)=>{
+                    console.log("成功")
+                    console.log(xhr)
+                    console.log(e)
+                },
+                "error":(xhr,e)=>{
+                    // require("assist").dangerTip("上传失败！");
+                    console.log("失败")
+                    console.log(xhr)
+                    console.log(e)
+                },
+            })
+
         })
+        //1.提取数据
+        // columnID,
+        // columnName,
+        // contentHtml,
+        // dataSourceId:"",
+        // delFlag:"0",
+        // editName,"系统管理员"
+        // editTime,"2020-10-28"
+        // formCode,
+        // formName:
+        // formWrite:"0"
+        // id:"",
+        // version:"1"
+
+
+
+
+
+
+        //2.分类数据
+
+        //3.验证数据
+
+        //4.保存接口
+
+        //保存接口
+        /*form.on('submit(btnSave_form)', function (data) {
+            // 获取表单数据
+            var d = data.field;
+            var formContent = ADCFormDesignHelper.ParsingForm(ADCFormDesign.getContent());
+            // 判断是编辑还是新增
+            // 设置不同的 HTTP 方法，和提示信息
+            if (d.type === 'add') {
+                var ajaxType = 'POST',
+                    ajaxName = '新增';
+                d.dataSourceId = '';
+                d.delFlag = '0';
+                d.formWrite = '0';
+                d.version = '1';
+            } else if (d.type === 'edit') {
+                var ajaxType = 'PUT',
+                    ajaxName = '编辑';
+                d.version++;
+            }else if (d.type === 'edit_mobile') {
+                var ajaxType = 'PUT',
+                    ajaxName = '移动端编辑';
+                if(layui.jquery('input[name="switch"]').next().hasClass('layui-form-onswitch')){
+                    d.formWrite = '1'
+                }else{
+                    d.formWrite = '0'
+                }
+                d.version++;
+            }
+            var columnIDArray = [],
+                columnNameArray = [];
+            for (var i = 0; i < formContent.fields.length; i++) {
+                var tmp = formContent.fields[i];
+                columnIDArray.push(tmp.name);
+                columnNameArray.push(tmp.title);
+            }
+            d.columnID = columnIDArray.join(',');
+            d.columnName = columnNameArray.join(',');
+            d.type != 'edit_mobile'?d.contentHtml = formContent.content:d.contentHtmlMob = formContent.content;//移动端传contentHtmlMob字段;其它情况传contentHtml
+            d.editTime = new Date().toLocaleString();
+            d.editName = config.getAccount().usname;
+            delete d.type;
+            layer.confirm(d.columnName.split(',').join(' | ') + '<br/>（如果疏漏，请修改后再保存）', {
+                icon: 3,
+                title: '请确认当前已有的控件名称！'
+            }, function (index) {
+                // 发送请求
+                admin.req('/api/form', d, function (data) {
+                    if (data.ok) {
+                        layer.msg(ajaxName + '表单成功！', {
+                            icon: 1
+                        });
+                        panelControl('close');
+                    } else {
+                        return layer.msg(ajaxName + '表单失败：' + data.message, {
+                            icon: 5
+                        });
+                    }
+                }, {
+                    method: ajaxType
+                },ADCFormJS.addApplogFn(d.formName+d.formCode,ajaxName+"表单",""));
+                layer.close(index);
+            });
+        });*/
+
         return;
     }
     //编辑js

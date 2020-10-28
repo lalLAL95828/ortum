@@ -30,11 +30,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             browse:"浏览",//浏览
             multiple:false,//多个文件
             onChange:changeLabelName,//文件改变，修改labelName
+            onChangeUpload:'',//自动上传文件的函数，默认绑定uploadFile
             uploadUrl:"http://localhost:3000/uploadfile",//自动上传的url
             formName:"files",//form的name(上传时候的name)
             automatic:true,//自动上传
+            title:"名称",
         },
-        inputChange:["id","name","accept","verification","cssClass","labelName","formName","uploadUrl"],//input事件修改值
+        inputChange:["id","name","accept","verification","cssClass","labelName","formName","uploadUrl","title"],//input事件修改值
         clickChange:["authority","multiple","automatic"],
         purview:{//属性编辑权限
             id:3,//id
@@ -56,6 +58,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             uploadUrl:3,//自动上传的url
             formName:3,//form的name
             automatic:3,//自动上传
+            title:3,
         },
         verify:{//编辑属性时的验证
             automatic:{
@@ -137,6 +140,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数转化为String，保存到script标签中
      * @param {*} moreProps.createJson 生成对应的json
+     * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let FileDom = function(parentDom,moreProps=null){
@@ -145,11 +149,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let clickChangeAttrs = true;
 
         let createJson = false;
+        let HasProperties = false;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
+            moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
@@ -167,13 +173,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('file'));
-
-
-        //点击事件，修改属性
-        // $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
-
-        // let ortum_component_properties = Assist.deepClone(component_properties);
-        // ortum_component_properties.data.name = Assist.timestampName('file');//设定name
         
         //<button class="btn btn-outline-secondary" type="button">预览</button>
         //<button class="btn btn-outline-secondary" type="button">下载</button>
@@ -184,6 +183,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     <input type="file" class="${ortum_component_properties.data.cssClass}" 
                     name="${ortum_component_properties.data.name}" 
                     ${ortum_component_properties.data.formName ? "data-formname="+ortum_component_properties.data.formName : ""}
+                    ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : ""}
                     ${ortum_component_properties.data.uploadUrl ? "data-uploadurl="+ortum_component_properties.data.uploadUrl : ""}
                     ${ortum_component_properties.data.multiple ? "multiple" : ""}
                     id="${ortum_component_properties.data.id ? ortum_component_properties.data.id : ortum_component_properties.data.name}" 
@@ -227,8 +227,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         scriptDom = $(`
             <script>${scriptStr}<\/script>
         `)
-
-
+        //TODO 以后需要完善成根据设置成不同的 上传函数
+        //给onChangeUpload绑定函数
+        HasProperties && (ortum_component_properties.data.onChangeUpload = uploadFile)
 
         if(!generateDom){
             //绑定文件onchange
@@ -250,8 +251,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }else if(createJson){//生成json
             return {
                 "name":ortum_component_properties.data.name,
-                "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
-                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "html":outerDom && outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
+                "script":scriptDom && scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }
         }else{
             return outerDom

@@ -27,6 +27,7 @@ define(['require'],function(require){
     }
 
 
+
     /**
      * 功能：实现深copy
      * @param {*} obj 
@@ -52,6 +53,43 @@ define(['require'],function(require){
         return obj;
     }
 
+    /**
+     * 功能：实现自定义的JSON.stringify
+     * 特点：实现函数转化成string
+     * // 以后补充对正则和其他对象的转换
+     */
+    let jsonStringify = function(obj){
+        let type = Object.prototype.toString.call(obj)
+        if(type == "[object Object]"){
+            let backObj = {};
+            for(let key in obj){
+                if(obj.hasOwnProperty(key)){
+                    let sonType = Object.prototype.toString.call(obj[key])
+                    if(sonType == "[object Object]"){//是对象，重新调用该函数
+                        backObj[key] = jsonStringify(obj[key])
+                    }else if(sonType == "[object Function]"){
+                        backObj[key] = obj[key].toString().replace(/\n/g,'').replace(/(\s)+/g," ")
+                    }else if(sonType == "[object Array]"){
+                        backObj[key] = jsonStringify(obj[key])
+                    }else{
+                        backObj[key] = obj[key]
+                    }
+                }
+            };
+            return JSON.stringify(backObj);
+        }
+        if(type == "[object Array]"){
+            let backObj = [];
+            for(let val of obj){
+                backObj.push(jsonStringify(val))
+            };
+            return JSON.stringify(backObj);
+        }
+        if(type == "[object Function]"){
+            return obj.toString().replace(/\n/g,'').replace(/(\s)+/g," ")
+        }
+        return obj;
+    };
 
     /**
      * 功能：一个对象转成数组或者一个数组转成对象
@@ -71,6 +109,8 @@ define(['require'],function(require){
 
         return obj;
     }
+
+
 
     /**
      * 功能：通过点击删除 当前选中的组件(删除第一个有ortum_item类的元素)
@@ -216,6 +256,7 @@ define(['require'],function(require){
         deepClone,
         dangerTip,
         infoTip,
+        jsonStringify,
 
         toggleMapArr,
         addClickChoose,

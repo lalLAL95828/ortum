@@ -244,9 +244,38 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             );
         save_link.dispatchEvent(ev);*/
 
+        //TODO 此处完善是否需要保存组件属性HasProperties
         let saveArrJSON = getPreviewContentJson("id",{id:"ortum_field",HasProperties:true})
-        debugger
+        let prevDom = $('<div id="ortum_field_preview"></div>')
+        let datasJson = JsonRenderDom(saveArrJSON,prevDom,"append")
 
+        //TODO 后期补上其他内容,需要引入的js和css
+        let outInner = $(`<div><div id="ortum_css"></div><div id="ortum_html"></div><div id="ortum_script"></div></div>`);
+        //插入css
+        datasJson.css && datasJson.css.forEach((index,item)=>{
+            $(outInner).find("#ortum_css").append($(item))
+        })
+        //插入html
+        $(outInner).find("#ortum_html").append(prevDom)
+        //保存ortum组件属性
+        datasJson.componentSet && $(outInner).find("#ortum_script").append(`<script>window.ortum_componentSet = ${JSON.stringify(datasJson.componentSet)} <\/script>`)
+        //插入script
+        datasJson.script && datasJson.script.forEach((index,item)=>{
+            $(outInner).find("#ortum_script").append($(item))
+        })
+
+        let urlObject = window.URL || window.webkitURL || window;
+        let export_blob = new Blob([outInner[0].outerHTML]);
+        let save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")//参考https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createElementNS
+        save_link.href = urlObject.createObjectURL(export_blob);
+        // urlObject.revokeObjectURL(save_link.href);//一般需要从内存中释放objectURL
+        save_link.download = "表单.html";
+        let ev = document.createEvent("MouseEvents");//原生实现一个点击事件
+        ev.initMouseEvent(
+            "click", true, false, window, 0, 0, 0, 0, 0
+            , false, false, false, false, 0, null
+        );
+        save_link.dispatchEvent(ev);
     }
     /**
      * 功能：监听修改属性
@@ -319,12 +348,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
     let JsonRenderDom = function (prevArrJSON,parentDom,way="append") {
         let cssDomSet = [];
         let scriptDomSet = [];
+        let componentSet = {};//组件集合
         for(let item of prevArrJSON){
             let htmlDom = $(item.html)
             if(item.children.length){
-                let backDatas =renderJson(item.children,htmlDom,"replace");
+                let backDatas =JsonRenderDom(item.children,htmlDom,"replace");
                 cssDomSet = cssDomSet.concat(backDatas.css);
                 scriptDomSet = scriptDomSet.concat(backDatas.script);
+                Object.assign(componentSet,backDatas.componentSet)
             }
             if(way=="append" && item.html){
                 parentDom.append(htmlDom)
@@ -332,13 +363,23 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             if(way=="replace" && item.html){
                 $(parentDom).find("ortum_children").eq(0).replaceWith(item.html)
             }
+
             item.css && cssDomSet.push(item.css);
             item.script && scriptDomSet.push(item.script);
+
+            //将框架，组件类型， name 和 ortum的属性，合并到一个json中
+            componentSet[item.name] = {
+                name:item.name,
+                componentProperties:item.componentProperties,
+                frame:item.frame,
+                componentKey:item.componentKey,
+            }
         }
         return {
             dom:parentDom,
             css:cssDomSet,
             script:scriptDomSet,
+            componentSet:componentSet,
         }
     };
     /**
@@ -467,13 +508,16 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     parentsJson.push({
                         "frame":frame,
                         "componentKey":componentKey,
+                        "title":comDom.title,
                         "name":comDom.name,
                         "html":comDom.html,
                         "attrs":comDom.attrs,
                         "css":comDom.css,
                         "script":comDom.script,
                         "children":[],
+                        "componentProperties":comDom.componentProperties
                     })
+
                     let parentsJsonLength = parentsJson.length;
 
                     $(item).find(".ortum_item").each(function(index2,html2){
@@ -481,7 +525,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                             "dom":$(html2),
                             "win":datas.win,
                             "parent":parentsJson[parentsJsonLength-1],
-                        })
+                        });
                     })
                 })
                 return parentsJson;
@@ -515,6 +559,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     "css":comDom.css,
                     "script":comDom.script,
                     "children":[],
+                    "title":comDom.title,
+                    "componentProperties":comDom.componentProperties
                 });
                 let length = datas.parent.children.length;
                 $(datas.dom).find(".ortum_item").each(function(index2,html2){

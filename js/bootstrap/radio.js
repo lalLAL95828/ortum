@@ -53,6 +53,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.customProps 自定义属性
      * @param {*} moreProps.generateDom 函数也存在dom中
      * @param {*} moreProps.createJson 生成对应的json
+     * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let RadioDom = function(parentDom,moreProps=null){
@@ -61,10 +62,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let clickChangeAttrs = true;
 
         let createJson = false;
+        let HasProperties = false;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
+            moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
         }
 
@@ -115,6 +119,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return {
                 "name":ortum_component_properties.data.name,
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
+                "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }
         }else{
             return outerDom

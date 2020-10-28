@@ -13,14 +13,16 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
                     "classValue":"col",
                 },
             ],
+            title:"名称",
         },
-        inputChange:["id","name","cssClass","columns"],//input事件修改值
+        inputChange:["id","name","cssClass","columns","title"],//input事件修改值
         clickChange:[],
         purview:{//属性编辑权限
             id:3,//id
             name:2,
             cssClass:2,//css类
             columns:3,
+            title:3,
         },
     }
     /**
@@ -29,6 +31,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
      * @param {*} moreProps.generateDom 函数转化为String，保存到script标签中
      * @param {*} moreProps.classValue 一个col的宽度，例如 col-2，col-3
      * @param {*} moreProps.createJson 生成对应的json
+     * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      */
     let GridDom = function(parentDom,moreProps=null){
@@ -36,10 +39,14 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
         let generateDom =  null;
         let clickChangeAttrs = true;
         let createJson = false;
+        let HasProperties = false;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
+            moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
+
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
@@ -80,6 +87,8 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
             return {
                 "name":ortum_component_properties.data.name,
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
+                "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }
         }else{
             return outerDom
