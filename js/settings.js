@@ -134,6 +134,19 @@ define(['assist'],function(Assist){
     //可以创建的组件数组转Json
     menuListDataJSON = Assist.toggleMapArr(menuListsData)
 
+    let ortum_tableAct = {
+        "newPCTable":{
+            name:"新增表单",
+            simpleName: "新增",
+            way:"POST",
+        },
+        "editPCTable":{
+            name:"编辑表单",
+            simpleName:"编辑",
+            way:"PUT",
+        },
+    };
+
     return {
         //可以创建的组件
         menuListsData,

@@ -56,7 +56,7 @@ define(['require'],function(require){
     /**
      * 功能：实现自定义的JSON.stringify
      * 特点：实现函数转化成string
-     * // 以后补充对正则和其他对象的转换
+     * //TODO 以后补充对正则和其他对象的转换
      */
     let jsonStringify = function(obj){
         let type = Object.prototype.toString.call(obj)
@@ -90,6 +90,47 @@ define(['require'],function(require){
         }
         return obj;
     };
+
+    /**
+     * 功能：实现自定义的JSON.parse
+     * 特点：实现函数转化成parse
+     * //TODO 以后补充对正则和其他对象的转换
+     */
+    let jsonParase = function(str){
+        let type = Object.prototype.toString.call(obj)
+        let arrReg = /^(\s)*?[(\.)*](\s)*?$/;
+        let jsonReg = /^(\s)*?{(\.)*}(\s)*?$/;
+        let funReg = /^(\s)*?(function)(\s)/;
+        if(type == "[object String]"){
+            if(str.indexOf(arrReg) != -1){
+                let newArr = JSON.parse(str)
+                return jsonParase(newArr)
+            }else if(str.indexOf(jsonReg) != -1){
+                let jsonObj = JSON.parse(str);
+                return jsonParase(jsonObj)
+            }else if(str.indexOf(funReg) != -1){
+                return eval(str)
+            }else{
+                return str;
+            }
+        }
+        if(type == "[object Object]"){
+            let backObj = {};
+            for(let key in str){
+                if(str.hasOwnProperty(key)){
+                    backObj[key] = jsonParase(str[key])
+                }
+            };
+            return backObj;
+        }
+        if(type == "[object Array]"){
+            let backObj = [];
+            for(let val of obj){
+                backObj.push(jsonParase(val))
+            };
+            return backObj;
+        }
+    }
 
     /**
      * 功能：一个对象转成数组或者一个数组转成对象
@@ -257,6 +298,7 @@ define(['require'],function(require){
         dangerTip,
         infoTip,
         jsonStringify,
+        jsonParase,
 
         toggleMapArr,
         addClickChoose,

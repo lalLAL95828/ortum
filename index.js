@@ -1,10 +1,31 @@
-function findGloabl(){
-    require(['Feature','Global'],function(Feature,Global){
-        console.log(Global.ortumComponents);
-        console.log(Global.ortumField);
-        console.log(Global.ortumItem);
+//获取location信息，决定编辑状态
+$(function(){
+    let search = window.location.search;
+    search = search.replace(/^(\?)/,'');
+    search = search.replace(/(\&)/g,',');
+    let searchArr = [];
+    let searchObj = {};
+
+    searchArr = search.split(",")
+    searchArr.forEach((item)=>{
+        if(item){
+            let name = item.match(/^\s*(\S)*?\s*(?=[=])/)[0];
+            let value = item.match(/(?<=[=])\s*(\S)*?\s*$/)[0];
+            searchObj[name] = value;
+        }
     })
-}
+    //修改表单
+    if(searchObj.method && searchObj.method=="editPCTable" && searchObj.formId){
+        //修改页面样式
+        $("#ortum_table_info .ortum_table_method").eq(0).text("修改").attr("data-method","editPCTable").attr("data-formid",searchObj.formId).css("color","#20c997");
+        $("#ortum_table_act .ortum_tableAct_icon").css("color","#20c997");
+        $("body").attr("style","background-color:#e7e8e5!important")
+    };
+})
+
+
+
+
 
 //getPreviewContentJson函数的返回值 从数组中获取 name和title数组
 function getTitleAndNameFun(arr){
@@ -48,13 +69,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
     //保存
     if($(this).hasClass('icon-baocun')){
-        require(['feature','assist'],function(Feature,Assist){
-            let tableAct = {
-                "newPCTable":{
-                    name:"新增表单",
-                    way:"POST"
-                }
-            }
+        require(['feature','assist','settings'],function(Feature,Assist,Settings){
+
             let tableName = $("#ortum_table_name").val().trim();
             let tableCode = $("#ortum_table_code").val().trim();
             let actWay = $(".ortum_table_method").eq(0).attr('data-method');
@@ -75,7 +91,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 
             ortumReq({
                 "url":"/catarc_infoSys/api/form?_ts=1603870623362",
-                "method":tableAct[actWay].way,
+                "method":Settings.ortum_tableAct[actWay].way,
                 "header":{
                     "Content-Type": "application/json; charset=UTF-8",
                 },

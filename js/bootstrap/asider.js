@@ -27,14 +27,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         if(createWaitSpan){
             col && (
                 $(col).append(`
-                    <div style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
+                    <div data-children="true" style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
                         <span>选择其他组件插入</span>
                     </div>
                 `)
             );
             !col && (
                 col = $(`
-                    <div style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
+                    <div data-children="true" style="display:flex;justify-content: center;align-items: center;height:100%;color:rgba(166,166,166,0.8)">
                         <span>选择其他组件插入</span>
                     </div>
                 `)

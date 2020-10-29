@@ -245,9 +245,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         save_link.dispatchEvent(ev);*/
 
         //TODO 此处完善是否需要保存组件属性HasProperties
-        let saveArrJSON = getPreviewContentJson("id",{id:"ortum_field",HasProperties:true})
+        let saveArrJSON = getFormContentJson("id",{id:"ortum_field",HasProperties:true})
         let prevDom = $('<div id="ortum_field_preview"></div>')
-        let datasJson = JsonRenderDom(saveArrJSON,prevDom,"append")
+        let datasJson = JsonHtmlRenderDom(saveArrJSON,prevDom,"append")
 
         //TODO 后期补上其他内容,需要引入的js和css
         let outInner = $(`<div><div id="ortum_css"></div><div id="ortum_html"></div><div id="ortum_script"></div></div>`);
@@ -340,19 +340,107 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
     }
 
     /**
-     * 功能：从json渲染成 dom
+     * 从json的componentProperties渲染成 dom
+     * @param prevArrJSON
+     * @param parentDom
+     * @param way
+     */
+    let JsonPropsRenderDom = function (prevArrJSON,parentDom,way="append") {
+        switch (way) {
+            case 'append':
+                for(let item of prevArrJSON){
+                    let frame = item.frame;
+                    let componentKey = item.componentKey;
+                    let component_properties = require("assist").jsonParase(item.componentProperties);
+
+                    let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                        customProps:component_properties,
+                    })
+                    $(parentDom).append(appendDom)
+                    if(item.children && item.children.length){
+                        JsonPropsRenderDom(item.children,appendDom,"replace")
+                        for(let item2 of item.children){
+                            JsonPropsRenderDom(item2,)
+                        }
+                    }
+                }
+                break;
+            case "replace":
+                for(let item of prevArrJSON){
+                    let frame = item.frame;
+                    let componentKey = item.componentKey;
+                    let component_properties = JSON.parse(item.componentProperties);
+
+                    let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                        customProps:component_properties,
+                    })
+                    $(parentDom).find("*[data-children=true]").eq(0).replaceWith(appendDom)
+
+                    if(item.children && item.children.length){
+                        JsonPropsRenderDom(item.children,appendDom,"replace")
+                        for(let item2 of item.children){
+                            JsonPropsRenderDom(item2,)
+                        }
+                    }
+                }
+                break;
+        }
+
+
+
+
+
+        // let cssDomSet = [];
+        // let scriptDomSet = [];
+        // let componentSet = {};//组件集合
+        // for(let item of prevArrJSON){
+        //     let htmlDom = $(item.html)
+        //     if(item.children.length){
+        //         let backDatas =JsonHtmlRenderDom(item.children,htmlDom,"replace");
+        //         cssDomSet = cssDomSet.concat(backDatas.css);
+        //         scriptDomSet = scriptDomSet.concat(backDatas.script);
+        //         Object.assign(componentSet,backDatas.componentSet)
+        //     }
+        //     if(way=="append" && item.html){
+        //         parentDom.append(htmlDom)
+        //     }
+        //     if(way=="replace" && item.html){
+        //         $(parentDom).find("ortum_children").eq(0).replaceWith(item.html)
+        //     }
+        //
+        //     item.css && cssDomSet.push(item.css);
+        //     item.script && scriptDomSet.push(item.script);
+        //
+        //     //将框架，组件类型， name 和 ortum的属性，合并到一个json中
+        //     componentSet[item.name] = {
+        //         name:item.name,
+        //         componentProperties:item.componentProperties,
+        //         frame:item.frame,
+        //         componentKey:item.componentKey,
+        //     }
+        // }
+        // return {
+        //     dom:parentDom,
+        //     css:cssDomSet,
+        //     script:scriptDomSet,
+        //     componentSet:componentSet,
+        // }
+    };
+
+    /**
+     * 功能：从json的html渲染成 dom
      * @param prevArrJSON dom树
      * @param parentDom 父级dom
      * @param way 子级插入父级的方式
      */
-    let JsonRenderDom = function (prevArrJSON,parentDom,way="append") {
+    let JsonHtmlRenderDom = function (prevArrJSON,parentDom,way="append") {
         let cssDomSet = [];
         let scriptDomSet = [];
         let componentSet = {};//组件集合
         for(let item of prevArrJSON){
             let htmlDom = $(item.html)
             if(item.children.length){
-                let backDatas =JsonRenderDom(item.children,htmlDom,"replace");
+                let backDatas =JsonHtmlRenderDom(item.children,htmlDom,"replace");
                 cssDomSet = cssDomSet.concat(backDatas.css);
                 scriptDomSet = scriptDomSet.concat(backDatas.script);
                 Object.assign(componentSet,backDatas.componentSet)
@@ -466,11 +554,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         }
     }
     /**
-     * 功能: 获取win下表单信息,生成对应的虚拟dom树
+     * 功能: 获取win下表单信息,生成对应的dom数组
      * @param {*} id
      * @param {*} win
      */
-    let getPreviewContentJson = function(mode="id",datas={"win":window}){
+    let getFormContentJson = function(mode="id",datas={"win":window}){
         let parentsJson = [];
         if(datas && datas.parentsJson){
             parentsJson = datas.parentsJson;
@@ -521,7 +609,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     let parentsJsonLength = parentsJson.length;
 
                     $(item).find(".ortum_item").each(function(index2,html2){
-                        getPreviewContentJson(mode="dom",{
+                        getFormContentJson(mode="dom",{
                             "dom":$(html2),
                             "win":datas.win,
                             "parent":parentsJson[parentsJsonLength-1],
@@ -564,7 +652,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 });
                 let length = datas.parent.children.length;
                 $(datas.dom).find(".ortum_item").each(function(index2,html2){
-                    getPreviewContentJson(mode="dom",{
+                    getFormContentJson(mode="dom",{
                         "dom":$(html2),
                         "win":datas.win,
                         "parent":datas.parent.children[length-1],
@@ -690,7 +778,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         previewTableBlobContent,
         previewTableHtmlContent,
 
-        JsonRenderDom,//dom数生成dom
-        getPreviewContentJson,//生成dom树
+        JsonPropsRenderDom,//props生成dom
+        JsonHtmlRenderDom,//dom数生成dom
+        getFormContentJson,//生成dom数组
     }
 })
