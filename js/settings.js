@@ -156,6 +156,9 @@ define(['assist'],function(Assist){
         contextMenuWidth,
         //组件数组转json
         menuListDataJSON,
+
+        //表单操作
+        ortum_tableAct,
     }
 
 })

@@ -348,10 +348,13 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
     let JsonPropsRenderDom = function (prevArrJSON,parentDom,way="append") {
         switch (way) {
             case 'append':
+                console.log(prevArrJSON)
                 for(let item of prevArrJSON){
+
                     let frame = item.frame;
                     let componentKey = item.componentKey;
                     let component_properties = require("assist").jsonParase(item.componentProperties);
+                    console.log(component_properties)
 
                     let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                         customProps:component_properties,
@@ -359,9 +362,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     $(parentDom).append(appendDom)
                     if(item.children && item.children.length){
                         JsonPropsRenderDom(item.children,appendDom,"replace")
-                        for(let item2 of item.children){
-                            JsonPropsRenderDom(item2,)
-                        }
                     }
                 }
                 break;
@@ -369,7 +369,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 for(let item of prevArrJSON){
                     let frame = item.frame;
                     let componentKey = item.componentKey;
-                    let component_properties = JSON.parse(item.componentProperties);
+                    let component_properties = require("assist").jsonParase(item.componentProperties);
+                    console.log(component_properties)
 
                     let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                         customProps:component_properties,
@@ -613,6 +614,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                             "dom":$(html2),
                             "win":datas.win,
                             "parent":parentsJson[parentsJsonLength-1],
+                            "HasProperties":HasProperties,
                         });
                     })
                 })
@@ -656,6 +658,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         "dom":$(html2),
                         "win":datas.win,
                         "parent":datas.parent.children[length-1],
+                        "HasProperties":HasProperties,
                     })
                 })
                 break;

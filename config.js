@@ -64,8 +64,8 @@ require(['feature','assist'],function(Feature,Assist){
                     let response = JSON.parse(xhr.response)
                     if(response.ok){
                         let tableContent = JSON.parse(response.data.contentHtml);
-                        console.log(tableContent)
-                        console.log(JSON.parse(tableContent[0].componentProperties))
+                        // console.log(tableContent)
+                        // console.log(JSON.parse(tableContent[0].componentProperties))
 
                         $('#ortum_field').removeClass("ortum_field_originState").html('');
 

@@ -60,8 +60,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
-
-
         let outerDom=$(
             `
             <div class="form-group ortum_item row" 

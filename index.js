@@ -84,7 +84,10 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 return;
             }
 
-            let ortumJson = Feature.getPreviewContentJson("id",{id:"ortum_field",HasProperties:true})
+            let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true})
+
+            console.log(ortumJson)
+
             let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;

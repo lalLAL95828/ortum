@@ -97,18 +97,19 @@ define(['require'],function(require){
      * //TODO 以后补充对正则和其他对象的转换
      */
     let jsonParase = function(str){
-        let type = Object.prototype.toString.call(obj)
-        let arrReg = /^(\s)*?[(\.)*](\s)*?$/;
-        let jsonReg = /^(\s)*?{(\.)*}(\s)*?$/;
-        let funReg = /^(\s)*?(function)(\s)/;
+        let type = Object.prototype.toString.call(str)
+        let arrReg = /^(\s)*?\[([\s\S])*\](\s)*?$/;
+        let jsonReg = /^(\s)*?\{([\s\S])*\}(\s)*?$/;
+        let funReg = /^(\s)*?function/;
+
         if(type == "[object String]"){
-            if(str.indexOf(arrReg) != -1){
+            if(arrReg.test(str)){
                 let newArr = JSON.parse(str)
                 return jsonParase(newArr)
-            }else if(str.indexOf(jsonReg) != -1){
+            }else if(jsonReg.test(str)){
                 let jsonObj = JSON.parse(str);
                 return jsonParase(jsonObj)
-            }else if(str.indexOf(funReg) != -1){
+            }else if(funReg.test(str)){
                 return eval(str)
             }else{
                 return str;
@@ -125,11 +126,12 @@ define(['require'],function(require){
         }
         if(type == "[object Array]"){
             let backObj = [];
-            for(let val of obj){
+            for(let val of str){
                 backObj.push(jsonParase(val))
             };
             return backObj;
         }
+        return str
     }
 
     /**
