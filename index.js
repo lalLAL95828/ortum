@@ -86,13 +86,13 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
     //保存
     if($(this).hasClass('icon-baocun')){
+
         require(['feature','assist','settings'],function(Feature,Assist,Settings){
             let tableName = $("#ortum_table_name").val().trim();
             let tableCode = $("#ortum_table_code").val().trim();
             let actWay = $(".ortum_table_method").eq(0).attr('data-method') || "newPCTable";
             let formId = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-formid") || '';
             let formVersion = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version") || 1
-
             if(!tableName){
                 Assist.dangerTip("表单名称不可为空")
                 return;
@@ -125,7 +125,6 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 ajaxJsom.formWrite = '0';
             }
 
-
             ortumReq({
                 "url":"/catarc_infoSys/api/form?_ts=1603870623362",
                 "method":Settings.ortum_tableAct[actWay].way,
@@ -138,6 +137,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     console.log(e)
                     if(xhr.status == 200){
                         let response = JSON.parse(xhr.response);
+                        console.log(response)
                         response.ok && Assist.infoTip("保存成功")
                         !response.ok && Assist.dangerTip(response.message)
                     }else{

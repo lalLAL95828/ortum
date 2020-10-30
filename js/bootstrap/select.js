@@ -170,7 +170,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             }
             if(!generateDom){
                 //返回TODO
-                let optionArr =ortum_component_properties.data.customGetOptions(evenProperties.data.name,ortumReq)
+                let optionArr =ortum_component_properties.data.customGetOptions(ortum_component_properties.data.name,ortumReq)
                 if(optionArr && Array.isArray(optionArr)){//存在返回数组
                     //插入selectDom中
                 }

@@ -46,20 +46,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
                     if(val*1 <= oldData.min*1){
                         $(e.target).addClass('is-invalid');
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最大范围不能小于等于最小范围')
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最大范围不能小于等于最小范围');
                         $(e.target).val(oldData.max*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('max',oldData.max*1)
+                        $(globalComponent).find('input.form-control-range').eq(0).attr('max',oldData.max*1);
                         return true;
-                    }
+                    };
                     if(val*1 < oldData.defaultVal*1){
-                        $(e.target).addClass('is-invalid')
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最大范围不能小于默认值')
+                        $(e.target).addClass('is-invalid');
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最大范围不能小于默认值');
                         $(e.target).val(oldData.max*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('max',oldData.max*1)
+                        $(globalComponent).find('input.form-control-range').eq(0).attr('max',oldData.max*1);
                         return true;
-                    }
+                    };
 
-                    $(e.target).removeClass('is-invalid')
+                    $(e.target).removeClass('is-invalid');
                 },
             },
             min:{
@@ -71,20 +71,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
                     if(val*1 >= oldData.max*1){
                         $(e.target).addClass('is-invalid');
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最小范围不能大于等于最大范围')
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最小范围不能大于等于最大范围');
                         $(e.target).val(oldData.min*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('min',oldData.min*1)
+                        $(globalComponent).find('input.form-control-range').eq(0).attr('min',oldData.min*1);
                         return true;
-                    }
+                    };
                     if(val*1 > oldData.defaultVal*1){
-                        $(e.target).addClass('is-invalid')
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最小范围不能大于默认值')
+                        $(e.target).addClass('is-invalid');
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('最小范围不能大于默认值');
                         $(e.target).val(oldData.min*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('min',oldData.min*1)
+                        $(globalComponent).find('input.form-control-range').eq(0).attr('min',oldData.min*1);
                         return true;
-                    }
+                    };
 
-                    $(e.target).removeClass('is-invalid')
+                    $(e.target).removeClass('is-invalid');
                 },
             },
             defaultVal:{
@@ -96,24 +96,24 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
                     if(val*1 > oldData.max*1){
                         $(e.target).addClass('is-invalid');
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('默认值不能大于最大值')
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('默认值不能大于最大值');
                         $(e.target).val(oldData.defaultVal);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('value',oldData.defaultVal*1)
-                        $(globalComponent).find('input.form-control-range').eq(0).val(oldData.defaultVal*1)
+                        $(globalComponent).find('input.form-control-range').eq(0).attr('value',oldData.defaultVal*1);
+                        $(globalComponent).find('input.form-control-range').eq(0).val(oldData.defaultVal*1);
                         return true;
-                    }
+                    };
                     if(val*1 < oldData.min){
-                        $(e.target).addClass('is-invalid')
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('默认值不能小于最小值')
+                        $(e.target).addClass('is-invalid');
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('默认值不能小于最小值');
                         $(e.target).val(oldData.defaultVal*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('value',oldData.defaultVal*1)
-                        $(globalComponent).find('input.form-control-range').eq(0).val(oldData.defaultVal*1)
+                        $(globalComponent).find('input.form-control-range').eq(0).attr('value',oldData.defaultVal*1);
+                        $(globalComponent).find('input.form-control-range').eq(0).val(oldData.defaultVal*1);
                         return true;
-                    }
+                    };
 
                     $(globalComponent).find('input.form-control-range').eq(0).val(val);
 
-                    $(e.target).removeClass('is-invalid')
+                    $(e.target).removeClass('is-invalid');
                 },
             }
         }

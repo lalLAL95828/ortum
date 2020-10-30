@@ -63,21 +63,21 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         verify:{//编辑属性时的验证
             automatic:{
                 click:function(globalComponent,e,val,checked){
-                    //获取要编辑的组件的属性
+                    /*获取要编辑的组件的属性*/
                     let ortum_component_properties = $(globalComponent).prop('ortum_component_properties');
-                    //修改前的值
+                    /*修改前的值*/
                     let oldData = ortum_component_properties.data;
 
                     if(checked && !oldData.formName){
-                        $(e.target).addClass('is-invalid');
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('自动上传，formName的值不能为空')
-                        $(e.target).prop('checked',false)
+                        $(e.target).addClass('is-invalid');;
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('自动上传，formName的值不能为空');
+                        $(e.target).prop('checked',false);
                         return true;
                     }
                     if(checked && !oldData.uploadUrl){
                         $(e.target).addClass('is-invalid');
-                        $(e.target).parent().find('.invalid-feedback').eq(0).text('自动上传，uploadUrl的值不能为空')
-                        $(e.target).prop('checked',false)
+                        $(e.target).parent().find('.invalid-feedback').eq(0).text('自动上传，uploadUrl的值不能为空');
+                        $(e.target).prop('checked',false);
                         return true;
                     }
                     $(e.target).removeClass('is-invalid')
@@ -116,16 +116,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 alert("上传失败！");
             },
             progress:(xhr,e)=>{
-                let pro = e.loaded/e.total * 100
-
-                $(itemParents).find(".progress-bar").eq(0).css("width", pro+"%")
-                $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", pro)
+                let pro = e.loaded/e.total * 100;
+                $(itemParents).find(".progress-bar").eq(0).css("width", pro+"%");
+                $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", pro);
             },
             final:(xhr,e)=>{
                 setTimeout(function(){
-                    $(itemParents).find(".progress").eq(0).css("display","none")
-                    $(itemParents).find(".progress-bar").eq(0).css("width","0%")
-                    $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", 0)
+                    $(itemParents).find(".progress").eq(0).css("display","none");
+                    $(itemParents).find(".progress-bar").eq(0).css("width","0%");
+                    $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", 0);
                 },200)
             }
         });
