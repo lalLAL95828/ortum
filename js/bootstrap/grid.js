@@ -79,9 +79,9 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
 
         outerDom.append(row);
 
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','grid']);
         if(parentDom){
-            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['Bootstrap','grid']);
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
             return {

@@ -111,9 +111,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //插入dom
         $(outerDom).append(textareaDom)
 
+
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','textarea']);
         if(parentDom){
-            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['Bootstrap','textarea']);
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
             return {

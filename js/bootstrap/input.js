@@ -112,9 +112,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         //插入dom
         $(outerDom).append(inputDom)
 
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','input']);
         if(parentDom){
-            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['Bootstrap','input']);
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
             return {

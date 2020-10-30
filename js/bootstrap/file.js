@@ -3,12 +3,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * 监听文件变化，并且实时上传
      */
     let changeLabelName = function(e){
-        let filelists = $(this).prop('files')
+        let filelists = $(this).prop('files');
         let names = [];
         for(let file of filelists){
-            names.push(file.name)
+            names.push(file.name);
         }
-        $(this).next("label").text(names)
+        $(this).next("label").text(names);
     }
 
     let component_properties = {
@@ -89,17 +89,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * 监听文件变化，并且实时上传
      */
     let uploadFile = function(e){
-        // let globalComponent =Global.ortum_edit_component.comObj;
-        // let evenProperties = $(globalComponent).prop('ortum_component_properties');
-
         let formName = $(this).attr("data-formname");
         let uploadUrl = $(this).attr("data-uploadurl");
         let itemParents = $(this).parents(".ortum_item").eq(0);
         let filelists = $(this).prop('files');
-        //发送到后端
+        /*发送到后端*/
         let fd = new FormData();
         let L = filelists.length;
-        if(!L)return;//为空不上传
+        /*为空不上传*/
+        if(!L)return;
 
         for(let i=0;i<L;i++){
             fd.append(formName, filelists[i]);
@@ -110,11 +108,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             "method":"POST",
             "data":fd,
             "success":(xhr,e)=>{
-                // require("assist").infoTip("上传成功！");
+                /*require("assist").infoTip("上传成功！");*/
                 alert("上传成功！");
             },
             "error":(xhr,e)=>{
-                // require("assist").dangerTip("上传失败！");
+                /*require("assist").dangerTip("上传失败！");*/
                 alert("上传失败！");
             },
             progress:(xhr,e)=>{
@@ -130,7 +128,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", 0)
                 },200)
             }
-        })
+        });
     }
 
     /**
@@ -244,9 +242,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //插入script
         generateDom && scriptDom && !createJson && $(outerDom).append(scriptDom)
 
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','file']);
         if(parentDom){
-            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['Bootstrap','file']);
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
             return {

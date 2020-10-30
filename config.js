@@ -62,11 +62,14 @@ require(['feature','assist'],function(Feature,Assist){
             "success":(xhr,e)=>{
                 if(xhr.status == 200 && xhr.response){
                     let response = JSON.parse(xhr.response)
+                    console.log(response)
                     if(response.ok){
                         let tableContent = JSON.parse(response.data.contentHtml);
+                        $("#ortum_table_name").val(response.data.formName);
+                        $("#ortum_table_code").val(response.data.formCode);
+                        $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",response.data.version)
                         // console.log(tableContent)
                         // console.log(JSON.parse(tableContent[0].componentProperties))
-
                         $('#ortum_field').removeClass("ortum_field_originState").html('');
 
                         Feature.JsonPropsRenderDom(tableContent,$("#ortum_field"),"append")

@@ -9,9 +9,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelCSS:"ortum_bootstrap_label_labelCSS",//css类
             labelName:"名称",//标签名称
             title:"名称",
+            bindComponentName:"",//关联组件
         },
         inputChange:["id","name","verification","labelCSS","labelName","cssClass","title"],//input事件修改值
-        clickChange:["authority",],
+        clickChange:["authority"],
         purview:{//属性编辑权限
             id:3,//id
             name:3,
@@ -21,6 +22,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelCSS:3,//css类
             labelName:3,//标签名称
             title:3,
+            bindComponentName:3,
         },
     }
 
@@ -73,9 +75,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             </div>
         `))
 
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','label']);
         if(parentDom){
-            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['Bootstrap','label']);
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
             return {
@@ -177,7 +179,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let val=$(that).val();
         let checked=$(that).prop('checked');
 
-
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -198,7 +199,42 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 break;
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('input').eq(0).attr(property,val)
+                    $(globalComponent).find('label').eq(0).attr(property,val)
+                }
+                break;
+        }
+    }
+
+    /**
+     * 功能：change事件
+     * @param {*} property
+     * @param {*} val
+     * @param {*} e
+     */
+    let changeSetProperties = function(property,that,e){
+        let val=$(that).val();
+        let checked=$(that).prop('checked');
+
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        //判断值是否合理
+        let vertifyPause = evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]["change"] && evenProperties.verify[property]["change"](globalComponent,e,val);
+        if(vertifyPause){
+            return false;
+        }
+
+        switch(property){
+            case "authority":
+                //TODO 权限
+                console.log(val)
+                break;
+            default:
+                if(evenProperties.clickChange.indexOf(property) != -1){
+                    $(globalComponent).find('label').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -209,7 +245,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         inputSetProperties,
         blurSetProperties,
-        // changeSetProperties,
+        changeSetProperties,
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,

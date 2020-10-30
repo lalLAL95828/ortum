@@ -1,9 +1,26 @@
 /* index.html */
 
-body{
+/*body样式*/
+.body_bgc_newPC{
     background-color: #e1ecf9!important;
-    /*background-color: #e7e8e5!important;*/
 }
+.body_bgc_editPC{
+    background-color: #e7e8e5!important;
+}
+
+/*主题样式*/
+.ortum_newPC_color{
+    color:#007bff;
+}
+.ortum_editPC_color{
+    color:#20c997;
+}
+
+/*切换为新增按钮的样式*/
+.ortum_form_switch{
+    display: none;
+}
+
 
 /*中间头部*/
 #ortum_table_info .ortum_table_method_col{
@@ -13,8 +30,7 @@ body{
 }
 #ortum_table_info .ortum_table_method{
     font-weight: 700;
-    color: #007bff;
-    /*color: #20c997;*/
+
     font-size: 18px;
 }
 #ortum_table_info .ortum_table_name_col{
@@ -65,8 +81,6 @@ body{
 #ortum_table_act .ortum_tableAct_icon{
     margin: 0 5px;
     font-size: 20px;
-    color: #007bff;
-
 }
 #ortum_table_act .ortum_tableAct_icon:hover{
     cursor: pointer;

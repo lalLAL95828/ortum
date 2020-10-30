@@ -201,9 +201,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //插入script
         generateDom && scriptDom && !createJson && $(outerDom).append(scriptDom)
 
+
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','select']);
         if(parentDom){
-            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['Bootstrap','select']);
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
             return {

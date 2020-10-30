@@ -17,15 +17,30 @@ $(function(){
     //修改表单
     if(searchObj.method && searchObj.method=="editPCTable" && searchObj.formId){
         //修改页面样式
-        $("#ortum_table_info .ortum_table_method").eq(0).text("修改").attr("data-method","editPCTable").attr("data-formid",searchObj.formId).css("color","#20c997");
-        $("#ortum_table_act .ortum_tableAct_icon").css("color","#20c997");
-        $("body").attr("style","background-color:#e7e8e5!important")
+        $("#ortum_table_info .ortum_table_method").eq(0).text("修改").attr("data-method","editPCTable").attr("data-formid",searchObj.formId)
+            .removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
+        $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
+        $("body").removeClass("body_bgc_newPC").addClass("body_bgc_editPC");
+
+        //切换新增
+        $(".ortum_form_switch").show();
+        $(".ortum_form_switch").off("click.switch").on('click.switch',function (e) {
+            let sureSwitch = confirm("确定切换成新表单,并使用当前表单的内容吗？");
+            if(sureSwitch){
+                $("#ortum_table_name").val('');
+                $("#ortum_table_code").val('');
+                $("#ortum_table_info .ortum_table_method").eq(0).text("新增").attr("data-method","newPCTable").removeAttr("data-formid")
+                    .removeClass("data-version")
+                    .removeClass("ortum_editPC_color")
+                    .addClass("ortum_newPC_color");
+                $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_editPC_color").addClass("ortum_newPC_color");
+                $("body").removeClass("body_bgc_editPC").addClass("body_bgc_newPC");
+                $(this).hide().off("click.switch");
+            }
+        })
     };
+
 })
-
-
-
-
 
 //getPreviewContentJson函数的返回值 从数组中获取 name和title数组
 function getTitleAndNameFun(arr){
@@ -70,10 +85,11 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     //保存
     if($(this).hasClass('icon-baocun')){
         require(['feature','assist','settings'],function(Feature,Assist,Settings){
-
             let tableName = $("#ortum_table_name").val().trim();
             let tableCode = $("#ortum_table_code").val().trim();
-            let actWay = $(".ortum_table_method").eq(0).attr('data-method');
+            let actWay = $(".ortum_table_method").eq(0).attr('data-method') || "newPCTable";
+            let formId = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-formid") || '';
+            let formVersion = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version") || 1
 
             if(!tableName){
                 Assist.dangerTip("表单名称不可为空")
@@ -83,14 +99,30 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 Assist.dangerTip("表单编号不可为空")
                 return;
             }
-
             let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true})
-
-            console.log(ortumJson)
 
             let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
+
+            let ajaxJsom = {
+                columnID:nameArr.toString(),
+                columnName:titleArr.toString(),
+                contentHtml:JSON.stringify(ortumJson),
+                editor:"ortum",
+                // editName:"系统管理员",
+                editTime:new Date().toLocaleString(),
+                formCode:tableCode,
+                formName:tableName,
+                id:formId,
+                version:formVersion*1,
+            }
+            if(actWay == "newPCTable"){
+                ajaxJsom.dataSourceId = '';
+                ajaxJsom.delFlag = '0';
+                ajaxJsom.formWrite = '0';
+            }
+
 
             ortumReq({
                 "url":"/catarc_infoSys/api/form?_ts=1603870623362",
@@ -98,29 +130,20 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 "header":{
                     "Content-Type": "application/json; charset=UTF-8",
                 },
-                "data":JSON.stringify({
-                    columnID:nameArr.toString(),
-                    columnName:titleArr.toString(),
-                    contentHtml:JSON.stringify(ortumJson),
-                    dataSourceId:"",
-                    delFlag:"0",
-                    editor:"ortum",
-                    editName:"系统管理员",
-                    editTime:"2020-10-28",
-                    formCode:tableCode,
-                    formName:tableName,
-                    formWrite:"0",
-                    id:"",
-                    version:"1"
-                }),
+                "data":JSON.stringify(ajaxJsom),
                 "success":(xhr,e)=>{
-                    console.log("成功")
                     console.log(xhr)
                     console.log(e)
+                    if(xhr.status == 200){
+                        let response = JSON.parse(xhr.response);
+                        response.ok && Assist.infoTip("保存成功")
+                        !response.ok && Assist.dangerTip(response.message)
+                    }else{
+                        Assist.dangerTip("保存失败，状态码为"+xhr.status)
+                    }
                 },
                 "error":(xhr,e)=>{
-                    // require("assist").dangerTip("上传失败！");
-                    console.log("失败")
+                    Assist.dangerTip("网络异常，保存失败");
                     console.log(xhr)
                     console.log(e)
                 },

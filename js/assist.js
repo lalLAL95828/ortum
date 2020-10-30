@@ -110,7 +110,7 @@ define(['require'],function(require){
                 let jsonObj = JSON.parse(str);
                 return jsonParase(jsonObj)
             }else if(funReg.test(str)){
-                return eval(str)
+                return Function('return ' + str)()
             }else{
                 return str;
             }

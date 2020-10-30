@@ -348,13 +348,10 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
     let JsonPropsRenderDom = function (prevArrJSON,parentDom,way="append") {
         switch (way) {
             case 'append':
-                console.log(prevArrJSON)
                 for(let item of prevArrJSON){
-
                     let frame = item.frame;
                     let componentKey = item.componentKey;
                     let component_properties = require("assist").jsonParase(item.componentProperties);
-                    console.log(component_properties)
 
                     let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                         customProps:component_properties,
@@ -370,7 +367,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     let frame = item.frame;
                     let componentKey = item.componentKey;
                     let component_properties = require("assist").jsonParase(item.componentProperties);
-                    console.log(component_properties)
 
                     let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                         customProps:component_properties,

@@ -39,9 +39,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         verify:{//编辑属性时的验证
             max:{
                 blur:function(globalComponent,e,val){
-                    //获取要编辑的组件的属性
+                    /*获取要编辑的组件的属性*/
                     let ortum_component_properties = $(globalComponent).prop('ortum_component_properties');
-                    //修改前的值
+                    /*修改前的值*/
                     let oldData = ortum_component_properties.data;
 
                     if(val*1 <= oldData.min*1){
@@ -64,9 +64,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             },
             min:{
                 blur:function(globalComponent,e,val){
-                    //获取要编辑的组件的属性
+                    /*获取要编辑的组件的属性*/
                     let ortum_component_properties = $(globalComponent).prop('ortum_component_properties');
-                    //修改前的值
+                    /*修改前的值*/
                     let oldData = ortum_component_properties.data;
 
                     if(val*1 >= oldData.max*1){
@@ -89,9 +89,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             },
             defaultVal:{
                 blur:function(globalComponent,e,val){
-                    //获取要编辑的组件的属性
+                    /*获取要编辑的组件的属性*/
                     let ortum_component_properties = $(globalComponent).prop('ortum_component_properties');
-                    //修改前的值
+                    /*修改前的值*/
                     let oldData = ortum_component_properties.data;
 
                     if(val*1 > oldData.max*1){
@@ -193,9 +193,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //插入dom
         $(outerDom).append(rangeInputDom)
 
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','rangeInput']);
         if(parentDom){
-            $(outerDom).prop('ortum_component_properties',ortum_component_properties)
-            $(outerDom).prop('ortum_component_type',['Bootstrap','rangeInput']);
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
             return {

@@ -193,6 +193,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 keyDownEvent = require('BootStrapSelect').keyDownSetProperties;
                 keyUpEvent = require('BootStrapSelect').keyUpSetProperties;
                 break;
+            case "label":
+                inputEvent = require('BootStrapLabel').inputSetProperties;
+                blurEvent = require('BootStrapLabel').blurSetProperties;
+                changeEvent = require('BootStrapLabel').changeSetProperties;
+                clickEvent = require('BootStrapLabel').clickSetProperties;
+                keyDownEvent = require('BootStrapLabel').keyDownSetProperties;
+                keyUpEvent = require('BootStrapLabel').keyUpSetProperties;
+                break;
             default:
                 break;
         }
