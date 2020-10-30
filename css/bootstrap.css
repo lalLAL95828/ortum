@@ -3,6 +3,10 @@
     padding-bottom:0!important;
     /* padding-bottom:0.8rem!important; */
 }
+.col-form-label{
+    padding-right:0!important;
+    padding-left:0!important;
+}
 
 /* grid柵格 */
 .ortum_boot_col_waitInsert{
@@ -20,6 +24,10 @@
     display: block;
     font-size: 25px;
 }
+.ortum_boot_col_default{
+    padding-left:0!important;
+    padding-right:0!important;
+}
 
 /* input */
 .ortum_boot_input_label_Right{
@@ -27,6 +35,10 @@
     display: block;
 }
 /* rangeInput */
+.form-control-rangeInput{
+    padding: 0!important;
+    min-height: calc(1.5em + .75rem + 2px);
+}
 .ortum_boot_rangeInput_label_Right{
     text-align: end;
     display: block;
@@ -107,5 +119,4 @@ option:disabled{
     align-items: center;
     height: 100%;
     width: 100%;
-    padding:0 10px;
 }

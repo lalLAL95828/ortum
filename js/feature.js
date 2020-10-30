@@ -766,6 +766,42 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             })
         }
         return backArr;
+    };
+
+    /**
+     * 功能：绑定拖拽事件到ortum_Item
+     * @param {*} ele 
+     */
+    let bindDropEventToOrtumItem = function(ele){
+        $(ele).on('dragover.firstbind',function(e){
+            return false;
+        })
+        $(ele).on('drop.firstbind',function(e){
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            if(!componentKey){//不存在对应key
+                return false;
+            }
+
+            if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
+                Assist.dangerTip();
+                return false;
+            }
+
+            //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
+            let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+            let parentsItemLength = $(this).parents(".ortum_item").length;
+            if(parentsItemLength){
+                $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+            }else{
+                $(this).before(createDom)
+            }
+            
+            //把拖拽对象制空
+            Global.ortumNowDragObj = null;
+
+            return false;
+        })
     }
 
     return {
@@ -788,5 +824,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         JsonPropsRenderDom,//props生成dom
         JsonHtmlRenderDom,//dom数生成dom
         getFormContentJson,//生成dom数组
+
+        bindDropEventToOrtumItem,//ortum_item的拖拽事件
     }
 })

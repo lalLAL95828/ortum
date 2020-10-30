@@ -84,6 +84,33 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
         })
         return;
     }
+    //新建
+    if($(this).hasClass('icon-xinjian')){
+        window.open("index.html")
+        return;
+    }
+    //清空
+    if($(this).hasClass('icon-qingkong')){
+        require(['feature','global'],function(Feature,Global){
+            if(!confirm("确定清空吗？")){
+                return;
+            }
+            Global.ortum_edit_component = null;
+            $('#ortum_collapseOne .form-group').show();
+            $('#ortum_collapseOne input').each(function(){
+                if($(this).attr("type")!="checkbox" && $(this).attr("type")!="radio"){
+                    $(this).val('');
+                }
+            })
+            $('#ortum_collapseOne textarea').val('');
+            $('#ortum_collapseOne input[type=radio]').removeProp("checked");
+            $('#ortum_collapseOne input[type=checkbox]').removeProp("checked");
+            $('#ortum_collapseOne select').val('');
+            $("#ortum_field").empty().addClass("ortum_field_originState").html("<div class='originState'>组件拖拽</div>");
+        })
+        return;
+    }
+
     //保存
     if($(this).hasClass('icon-baocun')){
 
@@ -152,95 +179,6 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             })
 
         })
-        //1.提取数据
-        // columnID,
-        // columnName,
-        // contentHtml,
-        // dataSourceId:"",
-        // delFlag:"0",
-        // editName,"系统管理员"
-        // editTime,"2020-10-28"
-        // formCode,
-        // formName:
-        // formWrite:"0"
-        // id:"",
-        // version:"1"
-
-
-
-
-
-
-        //2.分类数据
-
-        //3.验证数据
-
-        //4.保存接口
-
-        //保存接口
-        /*form.on('submit(btnSave_form)', function (data) {
-            // 获取表单数据
-            var d = data.field;
-            var formContent = ADCFormDesignHelper.ParsingForm(ADCFormDesign.getContent());
-            // 判断是编辑还是新增
-            // 设置不同的 HTTP 方法，和提示信息
-            if (d.type === 'add') {
-                var ajaxType = 'POST',
-                    ajaxName = '新增';
-                d.dataSourceId = '';
-                d.delFlag = '0';
-                d.formWrite = '0';
-                d.version = '1';
-            } else if (d.type === 'edit') {
-                var ajaxType = 'PUT',
-                    ajaxName = '编辑';
-                d.version++;
-            }else if (d.type === 'edit_mobile') {
-                var ajaxType = 'PUT',
-                    ajaxName = '移动端编辑';
-                if(layui.jquery('input[name="switch"]').next().hasClass('layui-form-onswitch')){
-                    d.formWrite = '1'
-                }else{
-                    d.formWrite = '0'
-                }
-                d.version++;
-            }
-            var columnIDArray = [],
-                columnNameArray = [];
-            for (var i = 0; i < formContent.fields.length; i++) {
-                var tmp = formContent.fields[i];
-                columnIDArray.push(tmp.name);
-                columnNameArray.push(tmp.title);
-            }
-            d.columnID = columnIDArray.join(',');
-            d.columnName = columnNameArray.join(',');
-            d.type != 'edit_mobile'?d.contentHtml = formContent.content:d.contentHtmlMob = formContent.content;//移动端传contentHtmlMob字段;其它情况传contentHtml
-            d.editTime = new Date().toLocaleString();
-            d.editName = config.getAccount().usname;
-            delete d.type;
-            layer.confirm(d.columnName.split(',').join(' | ') + '<br/>（如果疏漏，请修改后再保存）', {
-                icon: 3,
-                title: '请确认当前已有的控件名称！'
-            }, function (index) {
-                // 发送请求
-                admin.req('/api/form', d, function (data) {
-                    if (data.ok) {
-                        layer.msg(ajaxName + '表单成功！', {
-                            icon: 1
-                        });
-                        panelControl('close');
-                    } else {
-                        return layer.msg(ajaxName + '表单失败：' + data.message, {
-                            icon: 5
-                        });
-                    }
-                }, {
-                    method: ajaxType
-                },ADCFormJS.addApplogFn(d.formName+d.formCode,ajaxName+"表单",""));
-                layer.close(index);
-            });
-        });*/
-
         return;
     }
     //编辑js

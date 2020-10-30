@@ -10,7 +10,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             verification:"",//校验
             authority:"3",//权限
             // placeholder:"请输入",
-            cssClass:"form-control-range col-10",//css类
+            cssClass:"form-control-rangeInput col",//css类
             hideLabel:false,//是否隐藏标签
             labelName:"名称",//标签名称
             labelPosition:"rowLeft",//标签位置
@@ -48,14 +48,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(e.target).addClass('is-invalid');
                         $(e.target).parent().find('.invalid-feedback').eq(0).text('最大范围不能小于等于最小范围');
                         $(e.target).val(oldData.max*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('max',oldData.max*1);
+                        $(globalComponent).find('input').eq(0).attr('max',oldData.max*1);
                         return true;
                     };
                     if(val*1 < oldData.defaultVal*1){
                         $(e.target).addClass('is-invalid');
                         $(e.target).parent().find('.invalid-feedback').eq(0).text('最大范围不能小于默认值');
                         $(e.target).val(oldData.max*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('max',oldData.max*1);
+                        $(globalComponent).find('input').eq(0).attr('max',oldData.max*1);
                         return true;
                     };
 
@@ -73,14 +73,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(e.target).addClass('is-invalid');
                         $(e.target).parent().find('.invalid-feedback').eq(0).text('最小范围不能大于等于最大范围');
                         $(e.target).val(oldData.min*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('min',oldData.min*1);
+                        $(globalComponent).find('input').eq(0).attr('min',oldData.min*1);
                         return true;
                     };
                     if(val*1 > oldData.defaultVal*1){
                         $(e.target).addClass('is-invalid');
                         $(e.target).parent().find('.invalid-feedback').eq(0).text('最小范围不能大于默认值');
                         $(e.target).val(oldData.min*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('min',oldData.min*1);
+                        $(globalComponent).find('input').eq(0).attr('min',oldData.min*1);
                         return true;
                     };
 
@@ -98,20 +98,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(e.target).addClass('is-invalid');
                         $(e.target).parent().find('.invalid-feedback').eq(0).text('默认值不能大于最大值');
                         $(e.target).val(oldData.defaultVal);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('value',oldData.defaultVal*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).val(oldData.defaultVal*1);
+                        $(globalComponent).find('input').eq(0).attr('value',oldData.defaultVal*1);
+                        $(globalComponent).find('input').eq(0).val(oldData.defaultVal*1);
                         return true;
                     };
                     if(val*1 < oldData.min){
                         $(e.target).addClass('is-invalid');
                         $(e.target).parent().find('.invalid-feedback').eq(0).text('默认值不能小于最小值');
                         $(e.target).val(oldData.defaultVal*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).attr('value',oldData.defaultVal*1);
-                        $(globalComponent).find('input.form-control-range').eq(0).val(oldData.defaultVal*1);
+                        $(globalComponent).find('input').eq(0).attr('value',oldData.defaultVal*1);
+                        $(globalComponent).find('input').eq(0).val(oldData.defaultVal*1);
                         return true;
                     };
 
-                    $(globalComponent).find('input.form-control-range').eq(0).val(val);
+                    $(globalComponent).find('input').eq(0).val(val);
 
                     $(e.target).removeClass('is-invalid');
                 },
@@ -127,11 +127,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.createJson 生成对应的json
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
+     * @param {*} moreProps.dropAddComponent 拖拽添加组件
      */
     let RangeInputDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
+        let dropAddComponent = true;
 
         let createJson = false;
         let HasProperties = false;
@@ -142,6 +144,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
+            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
         }
 
         let outerDom=$(
@@ -153,6 +156,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         );
         //点击事件，修改属性
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        //拖拽事件
+        dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name
@@ -180,7 +185,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             <input type="range" class="${ortum_component_properties.data.cssClass}" 
             ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
             value="${ortum_component_properties.data.defaultVal}"
-            style="padding:0" 
             min="${ortum_component_properties.data.min}"
             step="${ortum_component_properties.data.step}"
             max="${ortum_component_properties.data.max}" name="${ortum_component_properties.data.name}">
@@ -234,15 +238,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         switch(property){
             case "defaultVal":
-                $(globalComponent).find('input.form-control-range').eq(0).attr('value',val)
-                $(globalComponent).find('input.form-control-range').eq(0).val(val)
+                $(globalComponent).find('input').eq(0).attr('value',val)
+                $(globalComponent).find('input').eq(0).val(val)
             case "verification":
                 //TODO 验证
                 console.log(val)
                 break;
             case "cssClass":
-                // $(globalComponent).find('input.form-control-range').eq(0).addClass(val)
-                $(globalComponent).find('input.form-control-range').eq(0).attr('class',evenProperties.cssClass+" " + val)
+                // $(globalComponent).find('input').eq(0).addClass(val)
+                $(globalComponent).find('input').eq(0).attr('class',evenProperties.cssClass+" " + val)
                 break; 
             case "labelName":
                 $(globalComponent).find('label').eq(0).text(val)
@@ -253,7 +257,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 break;  
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find('input.form-control-range').eq(0).attr(property,val)
+                    $(globalComponent).find('input').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -300,13 +304,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     let clickSetProperties = function(property,that,e){
         let val=$(that).val();
         let checked=$(that).prop('checked');
+        
 
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
-        
+
         //判断值是否合理
         let vertifyPause = evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]["click"] && evenProperties.verify[property]["click"](globalComponent,e,val);
         if(vertifyPause){
@@ -319,7 +324,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 console.log(val)
                 break;
             case "hideLabel":
-                if(val){
+                if(checked){
                     $(globalComponent).find('label').eq(0).addClass('ortum_display_NONE');
                 }else{
                     $(globalComponent).find('label').eq(0).removeClass('ortum_display_NONE');
@@ -335,7 +340,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
                             return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('input.form-control-range').eq(0).removeClass(function (index, className) {
+                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
                         $(globalComponent).find('label').eq(0).removeClass('ortum_boot_rangeInput_label_Right')
@@ -345,7 +350,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $(globalComponent).find('label').eq(0).removeClass(function (index, className) { 
                             return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
-                        $(globalComponent).find('input.form-control-range').eq(0).removeClass(function (index, className) {
+                        $(globalComponent).find('input').eq(0).removeClass(function (index, className) {
                             return (className.match(/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
                         });
                         $(globalComponent).find('label').eq(0).addClass('ortum_boot_rangeInput_label_Right')
@@ -356,25 +361,25 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         $('#ortum_property_labelCSS').val(evenLabelCss + ' col-form-label col-2')
                         $(globalComponent).addClass('row');
                         $(globalComponent).find('label').eq(0).addClass('col-form-label col-2')
-                        $(globalComponent).find('input.form-control-range').eq(0).addClass('col');
+                        $(globalComponent).find('input').eq(0).addClass('col');
                         $(globalComponent).find('label').eq(0).removeClass('ortum_boot_rangeInput_label_Right')
                         break;
                     // case "rowRight":
                     //     $(globalComponent).addClass('row');
                     //     $(globalComponent).find('label').eq(0).addClass('col-form-label').addClass('col-2')
-                    //     $(globalComponent).find('input.form-control-range').eq(0).addClass('col')
+                    //     $(globalComponent).find('input').eq(0).addClass('col')
                     //     break;
                     default:
                         break;
                 }
-                $('#ortum_property_cssClass').val($(globalComponent).find('input.form-control-range').eq(0).attr("class"))
+                $('#ortum_property_cssClass').val($(globalComponent).find('input').eq(0).attr("class"))
                 $('#ortum_property_labelCSS').val($(globalComponent).find('label').eq(0).attr("class"))
-                evenProperties.data.cssClass = $(globalComponent).find('input.form-control-range').eq(0).attr("class")
+                evenProperties.data.cssClass = $(globalComponent).find('input').eq(0).attr("class")
                 evenProperties.data.labelCSS = $(globalComponent).find('label').eq(0).attr("class")
                 break;    
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('input.form-control-range').eq(0).attr(property,val)
+                    $(globalComponent).find('input').eq(0).attr(property,val)
                 }
                 break;
         }

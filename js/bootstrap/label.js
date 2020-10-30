@@ -36,11 +36,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.createJson 生成对应的json
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
+     * @param {*} moreProps.dropAddComponent 拖拽添加组件
      */
     let LabelDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
+        let dropAddComponent = true;
 
         let createJson = false;
         let HasProperties = false;
@@ -51,6 +53,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
+            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
         }
 
         let outerDom=$(
@@ -63,6 +66,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         );
         //点击事件，修改属性
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        //拖拽事件
+        dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name

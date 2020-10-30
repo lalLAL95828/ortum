@@ -134,7 +134,6 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createLabelDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                console.log()
                 return BootStrapLabel.LabelDom(parentDom,moreProps)
                 break;
             default:

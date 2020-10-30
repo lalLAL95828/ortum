@@ -22,7 +22,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     
                 </div>
             `);
-            bindDropEvent && bindFeatureToBootStarapCol(col);//绑定拖拽事件
+            bindDropEvent && bindDropEventToBootstrapGrid(col);//绑定拖拽事件
         }
         if(createWaitSpan){
             col && (
@@ -59,7 +59,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
      * grid的拖拽事件
      * @param {*} ele 
      */
-    let bindFeatureToBootStarapCol = function(ele){
+    let bindDropEventToBootstrapGrid = function(ele){
         $(ele).on('dragover.firstbind',function(e){
             return false;
         })
@@ -69,32 +69,45 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             if(!componentKey){//不存在对应key
                 return false;
             }
-            if(componentKey == "gridDom"){//如果拖拽上來的是grid,则不进行创建
-                return false;
-            }
+            
 
             if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
                 Assist.dangerTip();
                 return false;
             }
 
-            if($(this).hasClass('ortum_boot_col_waitInsert')){
-                $(this).removeClass('ortum_boot_col_waitInsert')
-                this.innerHTML = "";
+            if(componentKey == "gridDom"){//如果拖拽上來的是grid,则不进行创建
+                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                let parentsItemLength = $(this).parents(".ortum_item").length;
+                if(parentsItemLength){
+                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+                }else{
+                    $(this).before(createDom)
+                }
+                //把拖拽对象制空
+                Global.ortumNowDragObj = null;
+                return false;
             }else{
-                //TODO 确定是否替换
+
+                if($(this).hasClass('ortum_boot_col_waitInsert')){
+                    $(this).removeClass('ortum_boot_col_waitInsert')
+                    this.innerHTML = "";
+                }else{
+                    //TODO 确定是否替换
+                    return false;
+                }
+
+                //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
+                require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
+                            
+                //把拖拽对象制空
+                Global.ortumNowDragObj = null;
+
                 return false;
             }
 
-            //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-            require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
             
-            //把拖拽对象制空
-            Global.ortumNowDragObj = null;
-
-            return false;
         })
-
 
         //右键事件
         // ele.oncontextmenu = function(e){
@@ -106,7 +119,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         //     return false
         // }
     }
-
     /**
      * 设置组件属性
      * @param {*} properies 
@@ -251,7 +263,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
 
     return {
         tipAddComponentFn,
-        bindFeatureToBootStarapCol,
+        bindDropEventToBootstrapGrid,
         setProperties,
     };
 })

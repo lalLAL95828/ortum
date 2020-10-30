@@ -151,8 +151,6 @@ define(['require'],function(require){
         return obj;
     }
 
-
-
     /**
      * 功能：通过点击删除 当前选中的组件(删除第一个有ortum_item类的元素)
      * @param {*} e
