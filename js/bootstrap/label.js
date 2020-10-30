@@ -8,11 +8,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             cssClass:"ortum_bootstrap_label_cssClass",
             labelCSS:"ortum_bootstrap_label_labelCSS",//css类
             labelName:"名称",//标签名称
-            title:"名称",
-            bindComponentName:"",//关联组件
+            title:"",
+            bindComponentName:"",//关联组件，label的权限由绑定组件一致
         },
         inputChange:["id","name","verification","labelCSS","labelName","cssClass","title"],//input事件修改值
         clickChange:["authority"],
+        changeChange:[],
         purview:{//属性编辑权限
             id:3,//id
             name:3,
@@ -71,6 +72,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             <div class="${ortum_component_properties.data.cssClass}">
                 <label class="${ortum_component_properties.data.labelCSS}" 
                 ${ortum_component_properties.data.name ? "name="+ortum_component_properties.data.name : '' }
+                ${ortum_component_properties.data.bindComponentName ? "data_ortumbindcomponentname="+ortum_component_properties.data.bindComponentName : '' } 
                 ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }>${ortum_component_properties.data.labelName}</label>
             </div>
         `))
@@ -83,6 +85,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return {
                 "name":ortum_component_properties.data.name,
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "bindComponentName":ortum_component_properties.data.bindComponentName,
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }
@@ -114,8 +117,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         if(vertifyPause){
             return false;
         }
-        //更新到dom属性上
-        // evenProperties.data[property] = val;
         switch(property){
             case "verification":
                 //TODO 验证
@@ -179,6 +180,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let val=$(that).val();
         let checked=$(that).prop('checked');
 
+
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -212,8 +214,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} e
      */
     let changeSetProperties = function(property,that,e){
-        let val=$(that).val();
-        let checked=$(that).prop('checked');
+        let val= $(that).val();
+        let checked= $(that).prop('checked');
 
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
@@ -226,17 +228,35 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         if(vertifyPause){
             return false;
         }
-
         switch(property){
-            case "authority":
-                //TODO 权限
-                console.log(val)
-                break;
+            case "bindComponentName":
+                evenProperties.data[property] = val;
+                val && $(globalComponent).find('label').eq(0).attr("data_ortumbindcomponentname",val);
+                !val && $(globalComponent).find('label').eq(0).removeAttr("data_ortumbindcomponentname");
+                break
             default:
-                if(evenProperties.clickChange.indexOf(property) != -1){
+                if(evenProperties.changeChange.indexOf(property) != -1){
                     $(globalComponent).find('label').eq(0).attr(property,val)
                 }
                 break;
+        }
+    }
+    /**
+     * 功能：参数设置显示之前的操作
+     */
+    let beforeSetPrperies = function () {
+        //设置关联组件选项
+        let optionArr = require('feature').getFormComponentsProps(null,"name");
+        $("#ortum_property_bindComponentName").html('')
+        if(optionArr.length){
+            $("#ortum_property_bindComponentName").append(`<option value="" selected>请选择</option>`)
+            optionArr.forEach((item)=>{
+                $("#ortum_property_bindComponentName").append(`
+                    <option value="${item.text}">${item.title}</option>
+                `)
+            })
+        }else{
+            $("#ortum_property_bindComponentName").append(`<option value="" disabled>暂无组件可选</option>`)
         }
     }
 
@@ -249,6 +269,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
-
+        beforeSetPrperies,
     }
 })

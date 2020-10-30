@@ -312,6 +312,16 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 Global.ortum_edit_component.blurEvent(nameValArr[nameValArr.length-1],$(this),e);
             }
         })
+        //select的change事件
+        $('#ortum_collapseOne select').on('change',function(e){
+            let nameVal = $(this).attr('name')
+            if(nameVal){
+                let nameValArr = nameVal.split('_') || [];
+                nameValArr.length && Global.ortum_edit_component &&
+                Global.ortum_edit_component.changeEvent &&
+                Global.ortum_edit_component.changeEvent(nameValArr[nameValArr.length-1],$(this),e);
+            }
+        })
     }
 
     /**
@@ -382,11 +392,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 }
                 break;
         }
-
-
-
-
-
         // let cssDomSet = [];
         // let scriptDomSet = [];
         // let componentSet = {};//组件集合
@@ -423,7 +428,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         //     componentSet:componentSet,
         // }
     };
-
     /**
      * 功能：从json的html渲染成 dom
      * @param prevArrJSON dom树
@@ -467,14 +471,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             componentSet:componentSet,
         }
     };
+
     /**
-     * 功能: 获取win下表单信息
+     * 功能: 获取win下表单信息,生成dom节点
      * @param {*} id 
      * @param {*} win 
      */
-    let getPreviewContent =function(mode="id",datas={"win":window}){
+    let getFormContentHtml =function(mode="id",datas={"win":window}){
         !datas.win && (datas.win = window.document);
-
         switch (mode) {
             case "id":
                 if(!datas.id){
@@ -496,7 +500,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     }
                     //组件为bootstrap_grid时，特殊处理
                     if(frame == "Bootstrap" && componentKey == "gridDom"){
-                        let bootstrapGridSonArr = getPreviewContent(mode="dom",{dom:$(item),win:datas.win})
+                        let bootstrapGridSonArr = getFormContentHtml(mode="dom",{dom:$(item),win:datas.win})
                         appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                             customProps:$(item).prop('ortum_component_properties'),
                             generateDom:true,
@@ -600,6 +604,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         "css":comDom.css,
                         "script":comDom.script,
                         "children":[],
+                        "bindComponentName":comDom.bindComponentName,
                         "componentProperties":comDom.componentProperties
                     })
 
@@ -646,6 +651,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     "script":comDom.script,
                     "children":[],
                     "title":comDom.title,
+                    "bindComponentName":comDom.bindComponentName,
                     "componentProperties":comDom.componentProperties
                 });
                 let length = datas.parent.children.length;
@@ -701,7 +707,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             <div id="ortum_preview_ModalLabel_body"></div>
             
             <script>
-                let prev = window.opener.require("feature").getPreviewContent("id",{id:"ortum_field",win:window.opener.document})
+                let prev = window.opener.require("feature").getFormContentHtml("id",{id:"ortum_field",win:window.opener.document})
                 $("#ortum_preview_ModalLabel_body").html(prev)
             <\/script>
         </body>
@@ -722,41 +728,43 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
     }
 
     /**
-     * 功能: 找到表单中所有的组件的id和name
+     * 功能: 找到表单中有prop的组件信息
+     * @param dom 查找的dom范围
+     * @param props 包含的prop
+     * @param exclude 排除的名称
+     * @returns {[]}
      */
-    let getComponentsPropsHint = function(){
-        let backArr = []
-        $("#ortum_body").find("input").each(function(index,item){
-            if($(item).prop("id")){
-                backArr.push({
-                    id:"id_"+$(item).prop("id"),
-                    text:$(item).prop("id"),
-                    type:"id",
-                    className:"ortum_hint",
-                    render:function(ele,self,data){
-                        var dom = $(`
-                        <span>${data.text}</span><span style="float:right; margin-left:30px">${data.type}</span>
-                        `)
-                        $(ele).html(dom)
+    let getFormComponentsProps = function(ajaxDom,props=["id","name"],exclude={}){
+        let backArr = [];
+        let dom = ajaxDom || $("#ortum_body");
+        if(Array.isArray(props)){
+            for(let propName of props){
+                $(dom).find("input,select,textarea").each(function(index,item){
+                    let parentProp = $(item).parents(".ortum_item").eq(0).prop('ortum_component_properties');
+                    if($(item).prop(propName)){
+                        backArr.push({
+                            id:propName+ "_"+$(item).prop(propName),
+                            text:$(item).prop(propName),
+                            title: parentProp.data.title|| parentProp.data.labelName,
+                            type:propName,
+                        })
                     }
                 })
             }
-            if($(item).prop("name")){
-                backArr.push({
-                    id:"name_"+$(item).prop("name"),
-                    text:$(item).prop("name"),
-                    type:"name",
-                    className:"ortum_hint",
-                    render:function(ele,self,data){
-                        var dom = $(`
-                        <span>${data.text}</span><span style="float:right; margin-left:30px">${data.type}</span>
-                        `)
-                        $(ele).html(dom)
-                    }
-                })
-            }
-            
-        })
+        }else{
+            let propName = props.toString();
+            $(dom).find("input,select,textarea").each(function(index,item){
+                let parentProp = $(item).parents(".ortum_item").eq(0).prop('ortum_component_properties');
+                if($(item).prop(propName)){
+                    backArr.push({
+                        id:propName+ "_"+$(item).prop(propName),
+                        text:$(item).prop(propName),
+                        title: parentProp.data.title|| parentProp.data.labelName,
+                        type:propName,
+                    })
+                }
+            })
+        }
         return backArr;
     }
 
@@ -771,9 +779,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         exportFileListen,
         setEditPropertiesPurview,
 
-        getComponentsPropsHint,
+        getFormComponentsProps,
 
-        getPreviewContent,//预览
+        getFormContentHtml,//预览
         previewTableBlobContent,
         previewTableHtmlContent,
 

@@ -153,7 +153,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //生成selectDom
         let selectDom = $(`
             <select class="${ortum_component_properties.data.cssClass}" 
-            ${ortum_component_properties.data.title ? "id="+ortum_component_properties.data.title : '' } 
+            ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
             id="${ortum_component_properties.data.id}" 
             name="${ortum_component_properties.data.name}" 
             placeholder="${ortum_component_properties.data.placeholder}">

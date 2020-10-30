@@ -10,7 +10,6 @@ require.config({
         "createDom":"js/createDom",
         "settings":"js/settings",
         "feature":"js/feature",
-        
 
         "BootStrapAsider":"js/bootstrap/asider",
         "BootStrapInput":"js/bootstrap/input",

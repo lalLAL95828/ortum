@@ -178,7 +178,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //生成rangeInputDom
         let rangeInputDom = $(`
             <input type="range" class="${ortum_component_properties.data.cssClass}" 
-            ${ortum_component_properties.data.title ? "id="+ortum_component_properties.data.title : '' } 
+            ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
             value="${ortum_component_properties.data.defaultVal}"
             style="padding:0" 
             min="${ortum_component_properties.data.min}"

@@ -42,18 +42,20 @@ $(function(){
 
 })
 
-//getPreviewContentJson函数的返回值 从数组中获取 name和title数组
+//getFormContentJson函数的返回值 从数组中获取 name和title数组
 function getTitleAndNameFun(arr){
     let nameArr = [];
     let titleArr = [];
     arr.forEach((item,index)=>{
-        nameArr.push(item.name)
-        titleArr.push(item.title)
+        if(!item.bindComponentName){//该组件没有绑定组件
+            nameArr.push(item.name)
+            titleArr.push(item.title)
 
-        if(item.children.length > 0){
-            let backData = getTitleAndNameFun(item.children);
-            nameArr = nameArr.concat(backData.nameArr)
-            titleArr = titleArr.concat(backData.titleArr)
+            if(item.children.length > 0){
+                let backData = getTitleAndNameFun(item.children);
+                nameArr = nameArr.concat(backData.nameArr)
+                titleArr = titleArr.concat(backData.titleArr)
+            }
         }
     })
     return {

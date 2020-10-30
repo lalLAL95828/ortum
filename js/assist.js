@@ -26,8 +26,6 @@ define(['require'],function(require){
         },time)
     }
 
-
-
     /**
      * 功能：实现深copy
      * @param {*} obj 

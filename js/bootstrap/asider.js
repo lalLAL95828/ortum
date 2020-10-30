@@ -119,6 +119,9 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let clickEvent =null;
         let keyDownEvent =null;
         let keyUpEvent =null;
+
+        //设置参数配置的函数
+        let beforeSetPrperies = null;
         switch(type){
             case "grid":
                 inputEvent = require('BootStrapGrid').inputSetProperties;
@@ -200,6 +203,8 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 clickEvent = require('BootStrapLabel').clickSetProperties;
                 keyDownEvent = require('BootStrapLabel').keyDownSetProperties;
                 keyUpEvent = require('BootStrapLabel').keyUpSetProperties;
+                beforeSetPrperies = require('BootStrapLabel').beforeSetPrperies;
+
                 break;
             default:
                 break;
@@ -208,7 +213,10 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         //获取组件的属性
         let data = properies.data;
         let purview = properies.purview;
-        
+
+        //参数配置 显示之前的处理
+        beforeSetPrperies && beforeSetPrperies();
+
         $('#ortum_collapseOne .form-group').hide();//隐藏所有属性
         for(let key in data){
             //设置编辑属性权限
@@ -224,7 +232,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     $('#ortum_property_'+key).val(data[key])
                     break
             }
-            // console.log(key)
         }
         //绑定正在编辑的对象到global对象下
         Global.ortum_edit_component={
@@ -239,6 +246,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             keyUpEvent:keyUpEvent,
             comObj:that,
         }
+
     }
 
     return {

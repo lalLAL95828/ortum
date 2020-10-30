@@ -82,7 +82,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         $(outerDom).append($(`
             <div class="custom-control custom-switch">
                 <input type="checkbox" class="${ortum_component_properties.data.cssClass}" 
-                ${ortum_component_properties.data.title ? "id="+ortum_component_properties.data.title : '' } 
+                ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
                 name="${ortum_component_properties.data.name}" 
                 ${ortum_component_properties.data.checked ? "checked" :""}
                 ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } >

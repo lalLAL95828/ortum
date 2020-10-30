@@ -95,7 +95,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //生成inputDom
         let textareaDom = $(`
             <textarea 
-            ${ortum_component_properties.data.title ? "id="+ortum_component_properties.data.title : '' } 
+            ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
             ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
             ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
             name="${ortum_component_properties.data.name}" 
