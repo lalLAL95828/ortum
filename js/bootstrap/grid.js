@@ -4,10 +4,16 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
             id:"",//id
             name:'',//name
             cssClass:"row",//css类
-            columns:2,//多少列
+            columns:4,//多少列
             columnsArr:[//
                 {
+                    "classValue":"col-2",
+                },
+                {
                     "classValue":"col",
+                },
+                {
+                    "classValue":"col-2",
                 },
                 {
                     "classValue":"col",

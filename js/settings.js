@@ -54,14 +54,14 @@ define(['assist'],function(Assist){
             "Bootstrap":null,
         },
     },*/
-    /*{
+    {
         key:"dateDom",
         name:"日期选择器",
         createFn:"createDateDom",
         children:{
             "Bootstrap":null,
         },
-    },*/
+    },
     /*{
         key:"scoreDom",
         name:"评分",

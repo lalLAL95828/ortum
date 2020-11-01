@@ -203,6 +203,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         `))
         //插入select
         $(outerDom).append(selectDom)
+
         //插入script
         generateDom && scriptDom && !createJson && $(outerDom).append(scriptDom)
 

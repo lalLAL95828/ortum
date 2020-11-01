@@ -182,7 +182,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         $(outerDom).append($(`
             <div class="input-group">
                 <div class="custom-file">
-                    <input type="file" class="${ortum_component_properties.data.cssClass}" 
+                    <input type="file" class="${ortum_component_properties.data.cssClass}" required
                     name="${ortum_component_properties.data.name}" 
                     ${ortum_component_properties.data.formName ? "data-formname="+ortum_component_properties.data.formName : ""}
                     ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : ""}
@@ -201,6 +201,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             <div class="progress" style="height: 5px;margin-top:5px;display:none">
                 <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+            
         `))
 
         //scriptDom

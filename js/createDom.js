@@ -6,9 +6,10 @@ define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio",
 "BootStrapSwitch",
 "BootStrapSelect",
 "BootStrapLabel",
+"BootStrapDate",
 ],
 function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
-    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel){
+    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel,BootStrapDate){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -127,6 +128,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
 
         }
     }
+    
     /**
      * 创建label
      * @param {*} type
@@ -135,6 +137,19 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         switch(type){
             case 'Bootstrap':
                 return BootStrapLabel.LabelDom(parentDom,moreProps)
+                break;
+            default:
+
+        }
+    }
+    /**
+     * 创建label
+     * @param {*} type
+     */
+    let createDateDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootStrapDate.DateDom(parentDom,moreProps)
                 break;
             default:
 
@@ -152,6 +167,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     createSwitchDom.ortum_Bootstrap = true;
     createSelectDom.ortum_Bootstrap = true;
     createLabelDom.ortum_Bootstrap = true;
+    createDateDom.ortum_Bootstrap = true;
     return {
         createGridDom,
         createInputDom,
@@ -163,5 +179,6 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         createSwitchDom,
         createSelectDom,
         createLabelDom,
+        createDateDom,
     }
 })

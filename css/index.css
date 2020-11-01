@@ -184,6 +184,19 @@
     background-repeat: no-repeat; */
     
 }
+.selectedShadow #ortum_shadow .ortum_shadow_editJs{
+    position: absolute;
+    bottom: 0px;
+    right: 36px;
+    display: block;
+    color: #007bff;
+    font-size: 25px;
+    /* background-image: url(/image/delete.png);
+    background-size: contain;
+    background-position: bottom;
+    background-repeat: no-repeat; */
+    
+}
 
 
 .ortum_tip{

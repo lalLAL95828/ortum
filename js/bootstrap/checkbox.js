@@ -118,6 +118,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             $(outerDom).append(newDom)
         }
 
+
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','checkbox']);
         if(parentDom){

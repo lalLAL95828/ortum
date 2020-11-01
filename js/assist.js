@@ -180,6 +180,37 @@ define(['require'],function(require){
 
 
     /**
+     * 功能：编辑组件的js
+     * @param {*} e
+     */
+    let ortumComponentSetJs = function(e){
+
+        let editOrtumItem = $(this).parents('.ortum_item').eq(0);
+        debugger
+
+        /* let delOrtumItem = $(this).parents('.ortum_item').eq(0)
+        let nextOrtumItem = delOrtumItem.parent()
+        
+        require('global').ortum_edit_component = null;//清空正在编辑的组件
+        
+
+        //还原编辑组件属性的表单状态
+        resetSetPropertyCom()
+
+        delOrtumItem.remove();
+        //删除后的下一步处理方式
+        if(nextOrtumItem){
+            //bootstrap的栅格col
+            if($(nextOrtumItem).hasClass('ortum_boot_col_default')){
+                $(nextOrtumItem).addClass('ortum_boot_col_waitInsert')
+                $(nextOrtumItem).append(require('BootStrapAsider').tipAddComponentFn(false))//增加提示语
+            };
+        } */
+        return false;
+    }
+
+
+    /**
      * 功能：选中当前正在编辑的组件，进行属性编辑
      * @param {*} e
      */
@@ -224,11 +255,17 @@ define(['require'],function(require){
         shadowDiv.append(`
             <span class="iconfont icon-shanchu  ortum_shadow_deleteImg"  title="删除"></span>
         `)
+        shadowDiv.append(`
+            <span class="iconfont icon-js  ortum_shadow_editJs"  title="编辑js"></span>
+        `)
 
         $(this).append(shadowDiv)
 
         //删除按钮绑定事件
         $("#ortum_shadow .ortum_shadow_deleteImg").off('click.delete').on('click.delete',deleteComponent);
+        //编辑js按钮绑定事件
+        $("#ortum_shadow .ortum_shadow_editJs").off('click.editjs').on('click.editjs',ortumComponentSetJs);
+
         //radio的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_radio')){
             $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',require('BootStrapRadio').showRadioItems);
@@ -245,6 +282,7 @@ define(['require'],function(require){
         if($(this).hasClass('ortum_bootstrap_select')){
             $("#ortum_shadow .ortum_shadow_bootstrapSelect_settings").off('click.setting').on('click.setting',require('BootStrapSelect').showSelectOptions);
         }
+
         
         let properiesObj = $(this).prop('ortum_component_properties')
         let properiesType = $(this).prop('ortum_component_type');

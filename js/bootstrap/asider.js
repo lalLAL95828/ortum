@@ -260,10 +260,70 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         }
 
     }
+    /**
+     * 获取id下所有的表单元素的值
+     * @param {*} properies 
+     */
+    let getDomContextFormData = function(domId){
+        let formData = {}
+        let form = document.getElementById(domId);  
+        let elements = new Array();  
+        let inputElements = form.getElementsByTagName('input');  
+        let selectElements = form.getElementsByTagName('select');  
+        let textareaElements = form.getElementsByTagName('textarea');
+
+        Array.prototype.forEach.call(inputElements,(item)=>{
+            if(!item.name)return;//不存在name，不进行赋值
+            for(let dataKey in item.dataset){
+                if(item.dataset.hasOwnProperty(dataKey)){
+                    formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                }
+            }
+            let type = item.type.toLowerCase();
+            switch (type){
+                case "radio":
+                    item.checked && (formData[item.name] = item.value);
+                    break;
+                case "checkbox":
+                    if(item.name && item.name.indexOf("switch") != -1){
+                        item.checked && (formData[item.name] = true);
+                        !item.checked && (formData[item.name] = false);
+                    }else{
+                        item.checked && (formData[item.name] ? formData[item.name].push(item.value) : formData[item.name]=[item.value]);
+                    }
+                    break;
+                default:
+                    formData[item.name] = item.value;
+                    break;
+            }
+        })
+
+        Array.prototype.forEach.call(selectElements,(item)=>{
+            if(!item.name)return;//不存在name，不进行赋值
+            for(let dataKey in item.dataset){
+                if(item.dataset.hasOwnProperty(dataKey)){
+                    formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                }
+            }
+            formData[item.name] = item.value;
+        })
+        Array.prototype.forEach.call(textareaElements,(item)=>{
+            if(!item.name)return;//不存在name，不进行赋值
+            for(let dataKey in item.dataset){
+                if(item.dataset.hasOwnProperty(dataKey)){
+                    formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                }
+            }
+            formData[item.name] = item.value;
+        })
+
+        return formData;
+    }
 
     return {
         tipAddComponentFn,
         bindDropEventToBootstrapGrid,
         setProperties,
+        getDomContextFormData,
     };
 })

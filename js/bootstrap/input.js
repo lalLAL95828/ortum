@@ -5,7 +5,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             name:'',//name
             defaultVal:"",//默认值
             verification:"",//校验
-            authority:"3",//权限
+            authority:"edit",//权限
             placeholder:"请输入",
             cssClass:"form-control col",//css类
             hideLabel:false,//是否隐藏标签
@@ -14,6 +14,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             labelPosition:"rowLeft",//标签位置
             // labelWidth:"",//标签宽度
             labelCSS:"col-form-label col-2",//标签css类
+            onBefore:"",
+            onAfter:"",
+
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -22,7 +25,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             name:2,
             defaultVal:3,
             verification:3,
-            authority:1,//权限
+            authority:3,//权限
             placeholder:3,
             cssClass:3,//css类
             hideLabel:3,//是否隐藏标签
@@ -107,7 +110,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
             name="${ortum_component_properties.data.name}" 
             class="${ortum_component_properties.data.cssClass}" 
-            placeholder="${ortum_component_properties.data.placeholder}"/>
+            placeholder="${ortum_component_properties.data.placeholder}"/>   
         `)
 
         //插入label
@@ -116,6 +119,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         `))
         //插入dom
         $(outerDom).append(inputDom)
+        // $(outerDom).append(`<div class="invalid-feedback">请填写</div>`)
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','input']);
@@ -250,8 +254,28 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         // evenProperties.data[property] = val;
         switch(property){
             case "authority":
-                //TODO 权限
-                console.log(val)
+                if(val=="hide"){//不可见
+                    $(globalComponent).hide();
+                    $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).hide();
+                }
+                if(val=="edit"){//可编辑
+                    $(globalComponent).show();
+                    $(globalComponent).find("input").removeAttr("readonly");
+                    $(globalComponent).find("input").removeAttr("disabled");
+                    $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
+                }
+                if(val=="readonly"){//只读可点击
+                    $(globalComponent).show();
+                    $(globalComponent).find("input").attr("readonly","readonly");
+                    $(globalComponent).find("input").removeAttr("disabled");
+                    $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
+                }
+                if(val=="disabled"){//只读且无法点击
+                    $(globalComponent).show();
+                    $(globalComponent).find("input").attr("readonly","readonly");
+                    $(globalComponent).find("input").attr("disabled","disabled");
+                    $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
+                }
                 break;
             case "hideLabel":
                 if(checked){
@@ -316,6 +340,12 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                 break;
         }
     }
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(){
+        
+    }
 
 
     return {
@@ -327,6 +357,8 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+        ortumComponentSetJs,
 
     }
 })

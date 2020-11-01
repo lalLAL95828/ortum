@@ -77,7 +77,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             <div class="${ortum_component_properties.data.cssClass}">
                 <label class="${ortum_component_properties.data.labelCSS}" 
                 ${ortum_component_properties.data.name ? "name="+ortum_component_properties.data.name : '' }
-                ${ortum_component_properties.data.bindComponentName ? "data_ortumbindcomponentname="+ortum_component_properties.data.bindComponentName : '' } 
+                ${ortum_component_properties.data.bindComponentName ? "ortum_bindcomponentname="+ortum_component_properties.data.bindComponentName : '' } 
                 ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }>${ortum_component_properties.data.labelName}</label>
             </div>
         `))
@@ -236,8 +236,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         switch(property){
             case "bindComponentName":
                 evenProperties.data[property] = val;
-                val && $(globalComponent).find('label').eq(0).attr("data_ortumbindcomponentname",val);
-                !val && $(globalComponent).find('label').eq(0).removeAttr("data_ortumbindcomponentname");
+                val && $(globalComponent).find('label').eq(0).attr("ortum_bindcomponentname",val);
+                !val && $(globalComponent).find('label').eq(0).removeAttr("ortum_bindcomponentname");
                 break
             default:
                 if(evenProperties.changeChange.indexOf(property) != -1){
