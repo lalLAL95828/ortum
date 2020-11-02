@@ -7,9 +7,10 @@ define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio",
 "BootStrapSelect",
 "BootStrapLabel",
 "BootStrapDate",
+"BootStrapTable", "BootStrapButton",
 ],
 function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
-    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel,BootStrapDate){
+    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel,BootStrapDate,BootStrapTable,BootStrapButton){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -156,6 +157,34 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         }
     }
 
+    /**
+     * 创建table
+     * @param {*} type
+     */
+    let createTableDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootStrapTable.TableDom(parentDom,moreProps)
+                break;
+            default:
+
+        }
+    }
+
+    /**
+     * 创建table
+     * @param {*} type
+     */
+    let createButtonDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootStrapButton.ButtonDom(parentDom,moreProps)
+                break;
+            default:
+
+        }
+    }
+
     //设置对应Bootstrap框架 生成组件的函数是否开启
     createGridDom.ortum_Bootstrap = true;
     createInputDom.ortum_Bootstrap = true;
@@ -168,6 +197,8 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     createSelectDom.ortum_Bootstrap = true;
     createLabelDom.ortum_Bootstrap = true;
     createDateDom.ortum_Bootstrap = true;
+    createTableDom.ortum_Bootstrap = true;
+    createButtonDom.ortum_Bootstrap = true;
     return {
         createGridDom,
         createInputDom,
@@ -180,5 +211,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         createSelectDom,
         createLabelDom,
         createDateDom,
+        createTableDom,
+        createButtonDom,
     }
 })

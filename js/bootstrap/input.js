@@ -8,7 +8,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             authority:"edit",//权限
             placeholder:"请输入",
             cssClass:"form-control col",//css类
-            hideLabel:false,//是否隐藏标签
+            hideLabel:true,//是否隐藏标签
             labelName:"名称",//标签名称
             title:"名称",//设置dom的title属性，一般与labelName一致
             labelPosition:"rowLeft",//标签位置
@@ -88,18 +88,18 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         //控制标签
         if(ortum_component_properties.data.hideLabel){
-            // ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_display_NONE") : '';
-        }else{
-            switch(ortum_component_properties.data.labelPosition){
-                case "topLeft":case "topRight":
-                    $(outerDom).removeClass('row');
-                    break;
-                case "rowLeft":
-                    $(outerDom).addClass('row');
-                    break;
-                default:
-                    break;
-            }
+            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= " ortum_display_NONE") : '';
+        }
+
+        switch(ortum_component_properties.data.labelPosition){
+            case "topLeft":case "topRight":
+                $(outerDom).removeClass('row');
+                break;
+            case "rowLeft":
+                $(outerDom).addClass('row');
+                break;
+            default:
+                break;
         }
 
         //生成inputDom

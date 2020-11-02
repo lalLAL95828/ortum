@@ -142,3 +142,58 @@ input::-webkit-calendar-picker-indicator{
     opacity:0;
     box-sizing: border-box;
 }
+/* table */
+.ortum_bootstrap_table{
+    width: 100%;
+    text-align: center;
+}
+.ortum_bootstrap_table tr{
+    padding: .25rem 0;
+}
+.ortum_bootstrap_thead{
+    font-weight: 700;
+}
+.ortum_bootstrap_thead tr td:last-of-type{
+    position: relative;
+}
+
+.ortum_bootstrap_tbody tr:nth-of-type(2n-1){
+    background-color: #eeeeee;
+}
+.ortum_bootstrap_tbody tr td:last-of-type{
+    position: relative;
+}
+
+.ortum_bootstrap_th{
+    border:1px solid gray;
+}
+.ortum_bootstrap_td{
+    border:1px solid gray;
+}
+.ortum_table_addline{
+    /*position: absolute;*/
+    /*right: -1.6rem;*/
+    /*top:0;*/
+    color: #666666;
+    font-size: 1.5rem!important;
+    cursor: pointer;
+    display: none;
+}
+.ortum_bootstrap_tbody tr:nth-of-type(1) .ortum_table_addline{
+    display: inline;
+}
+
+.ortum_table_delline{
+    color: #666666;
+    font-size: 1.5rem!important;
+    cursor: pointer;
+}
+.ortum_bootstrap_tbody tr:nth-of-type(1) .ortum_table_delline{
+    display: none;
+}
+
+/* button */
+.ortum_bootstrap_button{
+    marigin:auto;
+    text-align: center;
+}

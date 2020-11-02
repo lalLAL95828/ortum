@@ -27,8 +27,6 @@ define([],function(){
     // }
 
 
-
-
     return{
         ortumField:ortum_field,
         ortumComponents:ortum_components,

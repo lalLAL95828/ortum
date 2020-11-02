@@ -11,6 +11,8 @@ require.config({
         "settings":"js/settings",
         "feature":"js/feature",
 
+
+        "BootStrapButton":"js/bootstrap/button",
         "BootStrapAsider":"js/bootstrap/asider",
         "BootStrapInput":"js/bootstrap/input",
         "BootStrapGrid":"js/bootstrap/grid",
@@ -23,6 +25,8 @@ require.config({
         "BootStrapSelect":"js/bootstrap/select",
         "BootStrapLabel":"js/bootstrap/label",
         "BootStrapDate":"js/bootstrap/date",
+        "BootStrapTable":"js/bootstrap/table",
+
         "CSS":"lib/css.min",
 
         "setCodemirror":"js/setCodemirror",

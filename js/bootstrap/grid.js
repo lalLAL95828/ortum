@@ -80,7 +80,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
                 }
             }
             let col=BootStrapAsider.tipAddComponentFn(true,moreProps)
-            $(row).append(col)
+            $(row).append(col);
         }
 
         outerDom.append(row);

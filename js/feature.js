@@ -603,13 +603,20 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         "attrs":comDom.attrs,
                         "css":comDom.css,
                         "script":comDom.script,
-                        "children":[],
+                        "children":comDom.children || [],
                         "bindComponentName":comDom.bindComponentName,
-                        "componentProperties":comDom.componentProperties
+                        "componentProperties":comDom.componentProperties,
+                        //table独有
+                        "ortum_table_add_context":comDom.ortum_table_add_context,
                     })
 
-                    let parentsJsonLength = parentsJson.length;
 
+
+                    //如果是Bootstrap_tableDom 不在向下寻找ortum_item;
+                    if(frame == "Bootstrap" && componentKey == "tableDom"){
+                        return true;
+                    }
+                    let parentsJsonLength = parentsJson.length;
                     $(item).find(".ortum_item").each(function(index2,html2){
                         getFormContentJson(mode="dom",{
                             "dom":$(html2),
@@ -652,7 +659,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     "children":[],
                     "title":comDom.title,
                     "bindComponentName":comDom.bindComponentName,
-                    "componentProperties":comDom.componentProperties
+                    "componentProperties":comDom.componentProperties,
+
+                    "ortum_table_add_context":comDom.ortum_table_add_context,
                 });
                 let length = datas.parent.children.length;
                 $(datas.dom).find(".ortum_item").each(function(index2,html2){

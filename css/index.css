@@ -165,8 +165,8 @@
     width: 100%;
     height: 100%;
     left:0;
-    top: 0;
-    /* top: 100px; */
+    /*top: 0;*/
+    top: 500px;
     border:1px dotted gray;
     z-index: 100;
     background-color: rgba(236, 245, 255, 0.5);
@@ -198,10 +198,10 @@
     
 }
 
-
 .ortum_tip{
     position: absolute;
-    bottom:10px;
+    top:0px;
+    bottom: 0px;
     left: 0;
     right: 0;
     width: 300px;
@@ -212,7 +212,6 @@
 .ortum_tip .alert{
     display: none;
 }
-
 
 /* 设置diaplay为none的类 */
 .ortum_display_NONE{

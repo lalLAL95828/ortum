@@ -62,6 +62,14 @@ define(['assist'],function(Assist){
             "Bootstrap":null,
         },
     },
+    {
+        key:"buttonDom",
+        name:"按钮",
+        createFn:"createButtonDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
     /*{
         key:"scoreDom",
         name:"评分",
@@ -106,6 +114,14 @@ define(['assist'],function(Assist){
         key:"fileDom",
         name:"文件上传",
         createFn:"createFileDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
+        key:"tableDom",
+        name:"表格",
+        createFn:"createTableDom",
         children:{
             "Bootstrap":null,
         },
