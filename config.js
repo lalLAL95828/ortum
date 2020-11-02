@@ -13,6 +13,8 @@ require.config({
 
 
         "BootStrapButton":"js/bootstrap/button",
+        "BootStrapIconButton":"js/bootstrap/IconButton",
+        "BootStrapButtonGroup":"js/bootstrap/buttonGroup",
         "BootStrapAsider":"js/bootstrap/asider",
         "BootStrapInput":"js/bootstrap/input",
         "BootStrapGrid":"js/bootstrap/grid",

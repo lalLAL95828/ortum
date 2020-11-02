@@ -301,7 +301,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let clickEvent =null;
         let keyDownEvent =null;
         let keyUpEvent =null;
-
         //设置参数配置的函数
         let beforeSetPrperies = null;
         switch(type){
@@ -387,6 +386,33 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 keyUpEvent = require('BootStrapLabel').keyUpSetProperties;
                 beforeSetPrperies = require('BootStrapLabel').beforeSetPrperies;
 
+                break;
+            case "iconButton":
+                inputEvent = require('BootStrapIconButton').inputSetProperties;
+                blurEvent = require('BootStrapIconButton').blurSetProperties;
+                changeEvent = require('BootStrapIconButton').changeSetProperties;
+                clickEvent = require('BootStrapIconButton').clickSetProperties;
+                keyDownEvent = require('BootStrapIconButton').keyDownSetProperties;
+                keyUpEvent = require('BootStrapIconButton').keyUpSetProperties;
+                beforeSetPrperies = require('BootStrapIconButton').beforeSetPrperies;
+                break;
+            case "button":
+                inputEvent = require('BootStrapButton').inputSetProperties;
+                blurEvent = require('BootStrapButton').blurSetProperties;
+                changeEvent = require('BootStrapButton').changeSetProperties;
+                clickEvent = require('BootStrapButton').clickSetProperties;
+                keyDownEvent = require('BootStrapButton').keyDownSetProperties;
+                keyUpEvent = require('BootStrapButton').keyUpSetProperties;
+                beforeSetPrperies = require('BootStrapButton').beforeSetPrperies;
+                break;
+            case "buttonGroup":
+                inputEvent = require('BootStrapButtonGroup').inputSetProperties;
+                blurEvent = require('BootStrapButtonGroup').blurSetProperties;
+                changeEvent = require('BootStrapButtonGroup').changeSetProperties;
+                clickEvent = require('BootStrapButtonGroup').clickSetProperties;
+                keyDownEvent = require('BootStrapButtonGroup').keyDownSetProperties;
+                keyUpEvent = require('BootStrapButtonGroup').keyUpSetProperties;
+                beforeSetPrperies = require('BootStrapButtonGroup').beforeSetPrperies;
                 break;
             default:
                 break;

@@ -134,7 +134,14 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                 {
 
                     "frame":"Bootstrap",
-                    "componentKey":"buttonDom",
+                    "componentKey":"buttonGroupDom",
+                    "children":[{
+                        "frame":"Bootstrap",
+                        "componentKey":"buttonGroupDom",
+                    },{
+                        "frame":"Bootstrap",
+                        "componentKey":"buttonGroupDom",
+                    }]
                 },
             ],
             title:"",//设置dom的title属性，一般与labelName一致

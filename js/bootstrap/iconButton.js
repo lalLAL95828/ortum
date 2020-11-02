@@ -5,11 +5,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             name:'',//name
             verification:"",//校验
             authority:"edit",//权限
-            cssClass:"btn btn-primary",
+            cssClass:"iconfont ortum_iconButton",
             title:"",
-            defaultVal:"按钮",
+            iconName:"icon-shanchu",
         },
-        inputChange:["id","name","verification","cssClass","title","defaultVal"],//input事件修改值
+        inputChange:["id","name","verification","cssClass","title","iconName"],//input事件修改值
         clickChange:["authority"],
         changeChange:[],
         purview:{//属性编辑权限
@@ -18,10 +18,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             cssClass:3,
             verification:3,
             authority:3,//权限
-            // labelCSS:3,//css类
-            // labelName:3,//标签名称
             title:3,
-            defaultVal:3,
+            iconName:3,
         },
     }
 
@@ -36,7 +34,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      */
-    let ButtonDom = function(parentDom,moreProps=null){
+    let IconButtonDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
@@ -56,8 +54,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let outerDom=$(
             `
-            <div class="ortum_item ortum_bootstrap_button" data-frame="Bootstrap" 
-            data-componentKey="buttonDom">
+            <div class="ortum_item ortum_bootstrap_iconButton" data-frame="Bootstrap" 
+            data-componentKey="iconButtonDom">
                
             </div>
             `
@@ -69,19 +67,19 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('button'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('iconButton'));
 
-        let btn = $(`
-            <button type="button" class="${ortum_component_properties.data.cssClass}" 
-            name=${ortum_component_properties.data.name} 
-            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }>
-                    ${ortum_component_properties.data.defaultVal}
-            </button>
+        let spanBtn = $(`
+            <span class="${ortum_component_properties.data.cssClass} ${ortum_component_properties.data.iconName}" 
+            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
+            name="${ortum_component_properties.data.name}" 
+            ></span>
         `);
-        $(outerDom).append(btn)
+        $(outerDom).append(spanBtn)
+
 
         //dom绑定property
-        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','button']);
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','iconButton']);
 
         if(parentDom){
             $(parentDom).append(outerDom);
@@ -89,13 +87,16 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return {
                 "name":ortum_component_properties.data.name,
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "bindComponentName":ortum_component_properties.data.bindComponentName,
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }
         }else{
             return outerDom
         }
+
     };
+
 
     /**
      * 功能：input事件，在这个事件上重置组件属性
@@ -121,19 +122,21 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //更新到dom属性上
         // evenProperties.data[property] = val;
         switch(property){
-            case "defaultVal":
-                $(globalComponent).find('.btn').eq(0).text(val)
-                break;
             case "verification":
                 //TODO 验证
                 console.log(val)
                 break;
             case "cssClass":
-                $(globalComponent).find('.btn').eq(0).attr('class',val)
-                break; 
+                let iconName =  evenProperties.data.iconName;
+                $(globalComponent).find('.iconfont').eq(0).attr('class',val).addClass(iconName).addClass("iconfont");
+                break;
+            case "iconName":
+                let cssClass = evenProperties.data.cssClass;
+                $(globalComponent).find('.iconfont').eq(0).attr("class",cssClass+" "+ val).addClass("iconfont")
+                break;
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find('.btn').eq(0).attr(property,val)
+                    $(globalComponent).find('.iconfont').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -210,20 +213,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 }
                 if(val=="readonly"){//只读可点击
                     $(globalComponent).show();
-                    $(globalComponent).find(".btn").attr("readonly","readonly");
-                    $(globalComponent).find(".btn").removeAttr("disabled");
+                    $(globalComponent).find(".iconfont").attr("readonly","readonly");
+                    $(globalComponent).find(".iconfont").removeAttr("disabled");
                     $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
                 }
                 if(val=="disabled"){//只读且无法点击
                     $(globalComponent).show();
-                    $(globalComponent).find(".btn").attr("readonly","readonly");
-                    $(globalComponent).find(".btn").attr("disabled","disabled");
+                    $(globalComponent).find(".iconfont").attr("readonly","readonly");
+                    $(globalComponent).find(".iconfont").attr("disabled","disabled");
                     $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
                 }
                 break;
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('.btn').eq(0).attr(property,val)
+                    $(globalComponent).find('.iconfont').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -236,14 +239,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     }
 
     return {
-        ButtonDom,
+        IconButtonDom,
 
         inputSetProperties,
         blurSetProperties,
-        // changeSetProperties,
         clickSetProperties,
-        // keyDownSetProperties,
-        // keyUpSetProperties,
 
         ortumComponentSetJs,
     }

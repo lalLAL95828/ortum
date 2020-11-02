@@ -70,6 +70,22 @@ define(['assist'],function(Assist){
             "Bootstrap":null,
         },
     },
+    {
+        key:"iconButtonDom",
+        name:"图标按钮",
+        createFn:"createIconButtonDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
+        key:"buttonGroupDom",
+        name:"按钮组",
+        createFn:"createButtonGroupDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
     /*{
         key:"scoreDom",
         name:"评分",

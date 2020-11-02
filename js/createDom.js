@@ -7,10 +7,12 @@ define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio",
 "BootStrapSelect",
 "BootStrapLabel",
 "BootStrapDate",
-"BootStrapTable", "BootStrapButton",
+"BootStrapTable", "BootStrapButton","BootStrapButtonGroup",
+"BootStrapIconButton",
 ],
 function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
-    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel,BootStrapDate,BootStrapTable,BootStrapButton){
+    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel,BootStrapDate,BootStrapTable,BootStrapButton,BootStrapButtonGroup,
+    BootStrapIconButton){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -172,7 +174,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     }
 
     /**
-     * 创建table
+     * 创建按钮
      * @param {*} type
      */
     let createButtonDom = function(parentDom,type,moreProps=null){
@@ -182,6 +184,31 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
                 break;
             default:
 
+        }
+    }
+    /**
+     * 创建图标按钮
+     * @param {*} type
+     */
+    let createIconButtonDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootStrapIconButton.IconButtonDom(parentDom,moreProps)
+                break;
+            default:
+        }
+    }
+
+    /**
+     * 创建按钮组
+     * @param {*} type
+     */
+    let createButtonGroupDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootStrapButtonGroup.ButtonGroupDom(parentDom,moreProps)
+                break;
+            default:
         }
     }
 
@@ -199,6 +226,8 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     createDateDom.ortum_Bootstrap = true;
     createTableDom.ortum_Bootstrap = true;
     createButtonDom.ortum_Bootstrap = true;
+    createButtonGroupDom.ortum_Bootstrap = true;
+    createIconButtonDom.ortum_Bootstrap = true;
     return {
         createGridDom,
         createInputDom,
@@ -213,5 +242,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         createDateDom,
         createTableDom,
         createButtonDom,
+        createButtonGroupDom,
+        createIconButtonDom,
     }
 })

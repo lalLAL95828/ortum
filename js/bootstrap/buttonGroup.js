@@ -1,15 +1,14 @@
-define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","createDom","global","settings"],function(require,Assist,CreateDom,Global,Settings){
     let component_properties = {
         data:{
             id:"",//id
             name:'',//name
             verification:"",//校验
             authority:"edit",//权限
-            cssClass:"btn btn-primary",
+            cssClass:"ortum_bootstrap_buttonGroup_div",
             title:"",
-            defaultVal:"按钮",
         },
-        inputChange:["id","name","verification","cssClass","title","defaultVal"],//input事件修改值
+        inputChange:["id","name","verification","cssClass","title"],//input事件修改值
         clickChange:["authority"],
         changeChange:[],
         purview:{//属性编辑权限
@@ -18,11 +17,51 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             cssClass:3,
             verification:3,
             authority:3,//权限
-            // labelCSS:3,//css类
-            // labelName:3,//标签名称
             title:3,
-            defaultVal:3,
         },
+    }
+
+    /**
+     * grid的拖拽事件
+     * @param {*} ele 
+     */
+    let bindDropEventToButtonGroup = function(ele){
+        $(ele).on('dragover.firstbind',function(e){
+            return false;
+        })
+        $(ele).on('drop.firstbind',function(e){
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            if(!componentKey){//不存在对应key
+                return false;
+            }
+            
+            if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
+                Assist.dangerTip();
+                return false;
+            }
+
+            if(componentKey == "buttonDom" || componentKey == "iconButtonDom"){//如果拖拽上來的是grid,则不进行创建
+                //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
+                let btnDom =require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                $(this).append(btnDom);
+                //把拖拽对象制空
+                Global.ortumNowDragObj = null;
+
+                return false;
+            }else{
+                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                let parentsItemLength = $(this).parents(".ortum_item").length;
+                if(parentsItemLength){
+                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+                }else{
+                    $(this).before(createDom)
+                }
+                //把拖拽对象制空
+                Global.ortumNowDragObj = null;
+                return false;
+            }
+        })
     }
 
     /**
@@ -36,7 +75,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      */
-    let ButtonDom = function(parentDom,moreProps=null){
+    let ButtonGroupDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
@@ -56,8 +95,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let outerDom=$(
             `
-            <div class="ortum_item ortum_bootstrap_button" data-frame="Bootstrap" 
-            data-componentKey="buttonDom">
+            <div class="ortum_item ortum_bootstrap_buttonGroup" data-frame="Bootstrap" 
+            data-componentKey="buttonGroupDom">
                
             </div>
             `
@@ -66,22 +105,27 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
         //拖拽事件
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
+        
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('button'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('buttonGroup'));
 
-        let btn = $(`
-            <button type="button" class="${ortum_component_properties.data.cssClass}" 
-            name=${ortum_component_properties.data.name} 
-            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }>
-                    ${ortum_component_properties.data.defaultVal}
-            </button>
+        let divGroup = $(`
+            <div ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
+            name="${ortum_component_properties.data.name}" 
+            class="${ortum_component_properties.data.cssClass}" >
+
+            </div>
         `);
-        $(outerDom).append(btn)
+        //拖拽组件
+        dropAddComponent !== false && bindDropEventToButtonGroup(divGroup);
+        dropAddComponent !== false && $(divGroup).addClass("ortum_bootstrap_buttonGroup_drop_div");
+
+        $(outerDom).append(divGroup)
 
         //dom绑定property
-        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','button']);
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','buttonGroup']);
 
         if(parentDom){
             $(parentDom).append(outerDom);
@@ -129,7 +173,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 console.log(val)
                 break;
             case "cssClass":
-                $(globalComponent).find('.btn').eq(0).attr('class',val)
+                $(globalComponent).find('.btn').eq(0).attr('class',val).addClass("ortum_bootstrap_buttonGroup_drop_div")
                 break; 
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
@@ -236,7 +280,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     }
 
     return {
-        ButtonDom,
+        ButtonGroupDom,
 
         inputSetProperties,
         blurSetProperties,

@@ -194,6 +194,28 @@ input::-webkit-calendar-picker-indicator{
 
 /* button */
 .ortum_bootstrap_button{
-    marigin:auto;
+    margin:auto;
     text-align: center;
+}
+
+/* iconButton */
+.ortum_bootstrap_iconButton{
+    margin:auto;
+    text-align: center;
+}
+.ortum_iconButton{
+    color: #666666;
+    font-size: 1.5rem!important;
+    cursor: pointer;
+}
+/* buttonGroup */
+.ortum_bootstrap_buttonGroup_div{
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    min-height: calc(1.5em + .75rem + 2px);
+    box-sizing: border-box;
+}
+.ortum_bootstrap_buttonGroup_drop_div{
+    background-color: #dddddd;
 }
