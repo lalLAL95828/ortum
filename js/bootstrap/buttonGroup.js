@@ -75,6 +75,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.childrenSlot 按钮插槽个数
      */
     let ButtonGroupDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -82,6 +83,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
+
+        let childrenSlot= 0;//按钮插槽个数
+
 
         let createJson = false;
         let HasProperties = false;
@@ -93,6 +97,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
+            moreProps.childrenSlot !== null && moreProps.childrenSlot !== undefined && (childrenSlot =moreProps.childrenSlot);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
         }
 
@@ -126,6 +131,14 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         dropAddComponent !== false && bindDropEventToButtonGroup(divGroup);
         dropAddComponent !== false && $(divGroup).addClass("ortum_bootstrap_buttonGroup_drop_div");
         createJson && $(divGroup).addClass("ortum_append");//添加组件
+
+        if(childrenSlot && /(^[1-9]\d*$)/.test(childrenSlot)){//需要建立按钮插槽
+            let slotNum = childrenSlot;
+            while (slotNum>0){
+                $(divGroup).append(`<ortum_children></ortum_children>`)
+                slotNum--;
+            };
+        };
 
         $(outerDom).append(divGroup)
 

@@ -66,23 +66,35 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             ${trCssClass ? "class="+trCssClass : '' } 
             ></tr>
         `)
-        $(trInfo).prop("ortum_tbodyTr_info",tdInfo)
+        
 
         if(Assist.getDetailType(tdInfo) == "Array"){
             tdInfo.forEach(function(item,index){
                 let tdDom = $(`
                     <td class="${tdCssClass} ortum_boot_td_waitInsert"></td>
                 `);
-
-                bindDropEvent && bindDropEventToBootstrapTable(tdDom);//绑定拖拽事件
+                //绑定拖拽事件
+                bindDropEvent && bindDropEventToBootstrapTable(tdDom,item);
 
                 if(createWaitSpan && item.frame && item.componentKey && require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn]){
-                    let createDom = require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,{
-                        customProps:item.customProps,
-                        customName:moreProps.tableName+"_" + index + "_" + order,//1代表行号
-                    });
+                    //创建组件的属性
+                    let createComponentProp = Object.assign({
+                        customName:moreProps.tableName+"_" + index + "_" + order,//order代表行号
+                    },item);
+                    
+                    let createDom = require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createComponentProp);
+                    //TODO 此处需要优化，暂时只支持一级children
+                    //存在children
+                    if(Array.isArray(item.children)){
+                        item.children.forEach(function(itemSon,indexSon){
+                            let createSonDom = require('createDom')[Settings.menuListDataJSON[itemSon.componentKey].createFn](null,itemSon.frame,Object.assign({
+                                "customName":moreProps.tableName+"_" + index + "_" + indexSon +"_"+ order,//1代表行号
+                            },itemSon));
+                            $(createDom).find("ortum_children").eq(0).replaceWith(createSonDom);
+                        });
+                    };
                     //当是按钮组的时候
-                    if(item.frame=="Bootstrap" && item.componentKey=="buttonGroupDom" && item.children){
+                   /*  if(item.frame=="Bootstrap" && item.componentKey=="buttonGroupDom" && item.children){
                         item.children.forEach(function(itemSon,indexSon){
                             let createSonDom = require('createDom')[Settings.menuListDataJSON[itemSon.componentKey].createFn](null,itemSon.frame,{
                                 "iconName":itemSon.moreProps.iconName,
@@ -90,7 +102,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                             });
                             $(createDom).find(".ortum_append").append(createSonDom);
                         });
-                    }
+                    } */
                     tdDom && (
                         $(tdDom).append(createDom)
                     );
@@ -116,7 +128,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             //点击新增时
             if(canSelfAdd){
                 $(trInfo).find(".icon-jiahao").eq(0).off("click.addline").on("click.addline",function(){
-                    let tdInfoArr = $(this).parents("table").eq(0).find("tbody > tr:first-of-type").prop("ortum_tbodyTr_info");
+                    let tdInfoArr = $(this).parents("table").eq(0).find("tbody").prop("ortum_tbodyTds_info");
                     let order = $(this).parents("table").eq(0).find("tbody > tr").length;
                     moreProps.order = order+1;
                     let newtr = tableTbodyAddLine(tdInfoArr,moreProps);
@@ -136,7 +148,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
      * 给ele添加拖拽事件
      * @param ele
      */
-    let bindDropEventToBootstrapTable = function(ele){
+    let bindDropEventToBootstrapTable = function(ele,item){
         $(ele).on('dragover.firstbind',function(e){
             return false;
         })
@@ -173,7 +185,11 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 }
 
                 //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-                require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
+                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                $(this).append(createDom);
+                //将绑定的组件属性，绑定到td上
+                // $(this).prop("ortum_dropComponent_prop",$(createDom).prop("ortum_component_properties"))
+                item.customProps = $(createDom).prop("ortum_component_properties");
 
                 //把拖拽对象制空
                 Global.ortumNowDragObj = null;

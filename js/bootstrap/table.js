@@ -25,64 +25,39 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
             rows:1,//多少行
             theadColumnsArr:[
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>序号</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>设备编码</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>设备名称</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>规格型号</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>不含税价格（元）</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>数量</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>单位</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>开始使用日期</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>使用状况</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>预计处置价格（元）</span>",
                 },
                 {
-
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>备注</span>",
                 },
                 {
-                    frame:"Bootstrap",
-                    componentKey:"spanDom",
                     html:"<span>操作</span>",
                 },
             ],
@@ -138,12 +113,14 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                     "children":[{
                         "frame":"Bootstrap",
                         "componentKey":"iconButtonDom",
-                        "moreProps":{"iconName":"icon-jiahao"},
+                        "iconName":"icon-jiahao",
                     },{
                         "frame":"Bootstrap",
                         "componentKey":"iconButtonDom",
-                        "moreProps":{"iconName":"icon-shanchu"},
-                    }]
+                        "iconName":"icon-shanchu",
+                    }],
+                    "childrenSlot":2,
+                   
                 },
             ],
             title:"",//设置dom的title属性，一般与labelName一致
@@ -247,6 +224,9 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
             tableName:ortum_component_properties.data.name,
         };
         Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tdMoreProps,moreProps);
+        //将tr的所有td信息存放在tbody上
+        !createJson && $(tbodyDom).prop("ortum_tbodyTds_info",ortum_component_properties.data.tbodyColumnsArr)
+        //创建tbody的tr
         for(let j=0;j<ortum_component_properties.data.rows;j++){
             tdMoreProps.order=j+1;
             let tbodyTrObj =BootStrapAsider.tableTbodyAddLine(ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
@@ -282,23 +262,24 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','table']);
 
-        //script标签
+        //script字符串
         let scriptStr = '';
+        let scriptDom = ""
         let addlineTrInfo = '';
+        //创建children
+        let children = [];
         if(createJson){
-            addlineTrInfo = BootStrapAsider.tableTbodyAddLine([{},{},{},{},{},{},{},{},{},{},{},{
-                children:[{},{}]
-            }],tdMoreProps);
+            //创建tbody的tr模板
+            addlineTrInfo = BootStrapAsider.tableTbodyAddLine(ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
 
             scriptStr = `
                 let tableName = "${ortum_component_properties.data.name}";
             `;
             ortum_component_properties.data.canSelfAdd && (scriptStr+=`
-                $("table[name="+ tableName +"]").find(".icon-jiahao").eq(0).off("click.addline").on("click.addline",function(){
-                    let tdInfoArr = $(this).parents("table").eq(0).find("tbody > tr:first-of-type").prop("ortum_tbodyTr_info");
-                    let addlineTr = $(this).parents("table").eq(0).find("tbody").eq(0).prop("ortum_table_add_context");
+                $("table[name="+ tableName +"]").on("click.addline",".icon-jiahao",function(){
+                    let tdInfoArr = $(this).parents("table").eq(0).find("tbody").prop("ortum_tbodyTds_info");
+                    let addlineTr = $(this).parents("table").eq(0).find("tbody").prop("ortum_tbodyTr_info");
                     let bodyTrLength = $(this).parents("table").eq(0).find("tbody > tr").length;
-                    
                     let nextTr = $(addlineTr);
                     function ortum_BootstraptableDom_addLine(arr,trDom){
                         arr.forEach(function(item){ 
@@ -322,44 +303,42 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                 $("table[name="+ tableName +"]").on("click.delete",".icon-shanchu",function(){
                     $(this).parents("tr").eq(0).remove();
                 });
-            `)
-        }
+            `);
 
-        //创建children
-        let children = [];
-        if(createJson){
+            //创建td中组件的json信息
             ortum_component_properties.data.tbodyColumnsArr.forEach(function(item,index){
-                let comDom = require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,{
-                    customProps:item.customProps,
-                    createJson:true,//生成对应的json
-                    generateDom:true,
-                    clickChangeAttrs:false,
-                    bindDropEvent:false,
-                    createWaitSpan:false,
+                
+                //创建组件的属性
+                let createDomProp = Object.assign({
                     HasProperties:HasProperties,
                     customName:ortum_component_properties.data.name+"_"+index + "_" + 1,//1代表第一行
-                });
+                },moreProps);
+                
+                Object.assign(createDomProp,item);
+                createDomProp.customProps = item.customProps;
+                let comDom = require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
 
-                children.push({
+                children.push(Object.assign({
                     "frame":item.frame,
                     "componentKey":item.componentKey,
-                    "title":comDom.title,
-                    "name":comDom.name,
-                    "html":comDom.html,
-                    "attrs":comDom.attrs,
-                    "css":comDom.css,
-                    "script":comDom.script,
                     "children":[],
-                    "bindComponentName":comDom.bindComponentName,
-                    "componentProperties":comDom.componentProperties,
-                });
+                },comDom));
                 let childrenLength = children.length;
-                //如果是按钮组
+                //TODO 如果是按钮组
                 if(item.children && item.children.length && item.frame=="Bootstrap" && item.componentKey =="buttonGroupDom"){
                     let buttonGroupHtml = $(children[childrenLength-1].html);
                     item.children.forEach(function (itemSon,indexSon) {
-                        $(buttonGroupHtml).find(".ortum_append").eq(0).append(`<ortum_children></ortum_children>`)
-                        let comSonDom = require("createDom")[Settings.menuListDataJSON[itemSon.componentKey].createFn](null,itemSon.frame,{
+                        // $(buttonGroupHtml).find(".ortum_append").eq(0).append(`<ortum_children></ortum_children>`)
+                        //创建组件的属性
+                        let createSonDomProp = Object.assign({
+                            HasProperties:HasProperties,
+                            customName:ortum_component_properties.data.name+"_"+ index + "_" + indexSon +"_"+ 1,
+                        },moreProps);
+                        Object.assign(createSonDomProp,itemSon);
+                        createSonDomProp.customProps = itemSon.customProps;
+                        let comSonDom = require("createDom")[Settings.menuListDataJSON[itemSon.componentKey].createFn](null,itemSon.frame,createSonDomProp);
+
+                        /* let comSonDom = require("createDom")[Settings.menuListDataJSON[itemSon.componentKey].createFn](null,itemSon.frame,{
                             customProps:itemSon.customProps,
                             createJson:true,//生成对应的json
                             generateDom:true,
@@ -369,28 +348,21 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                             HasProperties:HasProperties,
                             iconName:itemSon.moreProps.iconName,
                             customName:ortum_component_properties.data.name+"_"+ index + "_" + indexSon +"_"+ 1,
-                        });
-                        children[childrenLength-1].children.push({
+                        }); */
+                        children[childrenLength-1].children.push(Object.assign({
                             "frame":itemSon.frame,
                             "componentKey":itemSon.componentKey,
-                            "title":comSonDom.title,
-                            "name":comSonDom.name,
-                            "html":comSonDom.html,
-                            "attrs":comSonDom.attrs,
-                            "css":comSonDom.css,
-                            "script":comSonDom.script,
                             "children":[],
-                            "bindComponentName":comSonDom.bindComponentName,
-                            "componentProperties":comSonDom.componentProperties,
-                        })
+                        },comSonDom))
                     });
                     children[childrenLength-1].html = buttonGroupHtml[0].outerHTML;
                 }
-            })
+            });
+
+            scriptStr && (scriptDom = $(`<script>${scriptStr}</script>`));
         }
 
-        let scriptDom = $(`<script>${scriptStr}</script>`);
-
+        //创建的对象返回
         if(parentDom){
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
@@ -398,7 +370,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                 "name":ortum_component_properties.data.name,
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
-                "ortum_table_add_context":addlineTrInfo[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "ortum_tbodyTr_info":addlineTrInfo[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "children":children,
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),

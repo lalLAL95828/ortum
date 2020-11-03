@@ -142,8 +142,8 @@
                     parentDom.append(htmlDom);
                     //特殊处理
                     if(item.frame == "Bootstrap" && item.componentKey == "tableDom"){
-                        $(htmlDom).find("tbody > tr:first-of-type").prop("ortum_tbodyTr_info",item.children)
-                        $(htmlDom).find("tbody").eq(0).prop("ortum_table_add_context",item.ortum_table_add_context)
+                        $(htmlDom).find("tbody").eq(0).prop("ortum_tbodyTds_info",item.children);//tr中组件的信息
+                        $(htmlDom).find("tbody").eq(0).prop("ortum_tbodyTr_info",item.ortum_tbodyTr_info);//tr信息
                     }
                 }
                 if(way=="replace" && item.html){

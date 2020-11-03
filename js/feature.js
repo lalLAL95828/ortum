@@ -594,7 +594,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         createWaitSpan:false,
                         HasProperties:HasProperties,
                     });
-                    parentsJson.push({
+                    /* parentsJson.push({
                         "frame":frame,
                         "componentKey":componentKey,
                         "title":comDom.title,
@@ -606,11 +606,13 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         "children":comDom.children || [],
                         "bindComponentName":comDom.bindComponentName,
                         "componentProperties":comDom.componentProperties,
-                        //table独有
                         "ortum_table_add_context":comDom.ortum_table_add_context,
-                    })
-
-
+                    }); */
+                    parentsJson.push(Object.assign({
+                        "frame":frame,
+                        "children":[],
+                        "componentKey":componentKey,
+                    },comDom));
 
                     //如果是Bootstrap_tableDom 不在向下寻找ortum_item;
                     if(frame == "Bootstrap" && componentKey == "tableDom"){
@@ -648,7 +650,13 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     HasProperties:HasProperties,
                 });
 
-                datas.parent.children.push({
+                datas.parent.children.push(Object.assign({
+                    "frame":frame,
+                    "children":[],
+                    "componentKey":componentKey,
+                },comDom));
+
+                /* datas.parent.children.push({
                     "frame":frame,
                     "componentKey":componentKey,
                     "name":comDom.name,
@@ -660,9 +668,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     "title":comDom.title,
                     "bindComponentName":comDom.bindComponentName,
                     "componentProperties":comDom.componentProperties,
-
                     "ortum_table_add_context":comDom.ortum_table_add_context,
-                });
+                }); */
                 let length = datas.parent.children.length;
                 $(datas.dom).find(".ortum_item").each(function(index2,html2){
                     getFormContentJson(mode="dom",{
@@ -831,7 +838,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         previewTableHtmlContent,
 
         JsonPropsRenderDom,//props生成dom
-        JsonHtmlRenderDom,//dom数生成dom
+        JsonHtmlRenderDom,//dom数组生成dom
         getFormContentJson,//生成dom数组
 
         bindDropEventToOrtumItem,//ortum_item的拖拽事件
