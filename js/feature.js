@@ -450,7 +450,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 parentDom.append(htmlDom)
             }
             if(way=="replace" && item.html){
-                $(parentDom).find("ortum_children").eq(0).replaceWith(item.html)
+                $(parentDom).find("ortum_children").eq(0).replaceWith(htmlDom)
             }
 
             item.css && cssDomSet.push(item.css);

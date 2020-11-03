@@ -71,6 +71,14 @@ define(['assist'],function(Assist){
         },
     },
     {
+        key:"pDom",
+        name:"p标签",
+        createFn:"createPDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
         key:"iconButtonDom",
         name:"图标按钮",
         createFn:"createIconButtonDom",

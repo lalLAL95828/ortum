@@ -48,12 +48,27 @@ function getTitleAndNameFun(arr){
     let titleArr = [];
     arr.forEach((item,index)=>{
         if(!item.bindComponentName){//该组件没有绑定组件
-            nameArr.push(item.name)
-            titleArr.push(item.title)
-            if(item.children.length > 0){
-                let backData = getTitleAndNameFun(item.children);
-                nameArr = nameArr.concat(backData.nameArr)
-                titleArr = titleArr.concat(backData.titleArr)
+            if(item.name.indexOf("grid") !== -1){
+                if(item.children.length > 0){
+                    let backData = getTitleAndNameFun(item.children);
+                    nameArr = nameArr.concat(backData.nameArr)
+                    titleArr = titleArr.concat(backData.titleArr)
+                }
+            }else if(item.name.indexOf("table") !== -1){
+                if(item.children.length){
+                    item.children.forEach(function(item2,index){
+                        nameArr.push(item.name+"_"+ index);
+                        titleArr.push(item.title+"_" + index);
+                    })
+                }
+            }else{
+                nameArr.push(item.name)
+                titleArr.push(item.title)
+                if(item.children.length){
+                    let backData = getTitleAndNameFun(item.children);
+                    nameArr = nameArr.concat(backData.nameArr)
+                    titleArr = titleArr.concat(backData.titleArr)
+                }
             }
         }
     })
@@ -93,14 +108,14 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
         require(['feature','global'],function(Feature,Global){
             if(!confirm("确定清空吗？")){
                 return;
-            }
+            };
             Global.ortum_edit_component = null;
             $('#ortum_collapseOne .form-group').show();
             $('#ortum_collapseOne input').each(function(){
                 if($(this).attr("type")!="checkbox" && $(this).attr("type")!="radio"){
                     $(this).val('');
                 }
-            })
+            });
             $('#ortum_collapseOne textarea').val('');
             $('#ortum_collapseOne input[type=radio]').removeProp("checked");
             $('#ortum_collapseOne input[type=checkbox]').removeProp("checked");
@@ -112,13 +127,12 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 
     //保存
     if($(this).hasClass('icon-baocun')){
-
         require(['feature','assist','settings'],function(Feature,Assist,Settings){
             let tableName = $("#ortum_table_name").val().trim();
             let tableCode = $("#ortum_table_code").val().trim();
             let actWay = $(".ortum_table_method").eq(0).attr('data-method') || "newPCTable";
             let formId = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-formid") || '';
-            let formVersion = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version") || 1;
+            let formVersion = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version") || 0;
 
             //获取localstore中的信息
             let CATARC_INFO_SYS = window.localStorage.getItem("CATARC_INFO_SYS");
@@ -135,9 +149,10 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 // alert('表单编号不可为空');
                 return;
             }
-            let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true})
+            let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true});
 
             let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
+
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
 
@@ -151,7 +166,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 formCode:tableCode,
                 formName:tableName,
                 id:formId,
-                version:formVersion*1,
+                version:formVersion*1 + 1,
             }
             if(actWay == "newPCTable"){
                 ajaxJsom.dataSourceId = '';

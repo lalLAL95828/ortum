@@ -13,6 +13,7 @@ require.config({
 
 
         "BootStrapButton":"js/bootstrap/button",
+        "BootStrapP":"js/bootstrap/p",
         "BootStrapIconButton":"js/bootstrap/IconButton",
         "BootStrapButtonGroup":"js/bootstrap/buttonGroup",
         "BootStrapAsider":"js/bootstrap/asider",
@@ -68,7 +69,6 @@ require(['feature','assist'],function(Feature,Assist){
             "success":(xhr,e)=>{
                 if(xhr.status == 200 && xhr.response){
                     let response = JSON.parse(xhr.response)
-                    console.log(response)
                     if(response.ok){
                         let tableContent = JSON.parse(response.data.contentHtml);
                         $("#ortum_table_name").val(response.data.formName);

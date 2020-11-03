@@ -304,8 +304,13 @@ define(['require'],function(require){
      * 功能：创建组件的name时间戳
      * @param {*} e
      */
-    let timestampName = function(type){
-        return type+"_"+(new Date().getTime());
+    let timestampName = function(type,UUID=true){
+        let uuidCode = (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        if(UUID){
+            return type+"_"+(new Date().getTime() + uuidCode);
+        }else{
+            return type+"_"+(new Date().getTime());
+        }
     }
 
     /**

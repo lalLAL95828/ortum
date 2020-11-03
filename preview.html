@@ -123,6 +123,7 @@
 
     <script>
         let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document})
+        console.log(prevArrJSON)
 
         let prevDom = $('<div id="ortum_field_preview"></div>');
 
@@ -133,10 +134,10 @@
         //从json渲染成dom
         function renderJson(prevArrJSON,parentDom,way="append") {
             for(let item of prevArrJSON){
-                let htmlDom = $(item.html)
+                let htmlDom = $(item.html);
                 if(item.children.length){
-                    renderJson(item.children,htmlDom,"replace")
-                }
+                    renderJson(item.children,htmlDom,"replace");
+                };
                 if(way=="append" && item.html){
                     parentDom.append(htmlDom);
                     //特殊处理
@@ -146,8 +147,9 @@
                     }
                 }
                 if(way=="replace" && item.html){
-                    $(parentDom).find("ortum_children").eq(0).replaceWith(item.html)
-
+                    if(parentDom.find("ortum_children").length){
+                        parentDom.find("ortum_children").eq(0).replaceWith(htmlDom)
+                    }
                 }
                 item.css && cssDomSet.push(item.css);
                 item.script && scriptDomSet.push(item.script);

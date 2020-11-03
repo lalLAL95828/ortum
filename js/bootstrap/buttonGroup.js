@@ -5,7 +5,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             name:'',//name
             verification:"",//校验
             authority:"edit",//权限
-            cssClass:"ortum_bootstrap_buttonGroup_div",
+            cssClass:"ortum_bootstrap_buttonGroup_div ortum_append",
             title:"",
         },
         inputChange:["id","name","verification","cssClass","title"],//input事件修改值
@@ -74,12 +74,14 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
+     * @param {*} moreProps.customName 自定义name
      */
     let ButtonGroupDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
+        let customName = '';//自定义name
 
         let createJson = false;
         let HasProperties = false;
@@ -90,6 +92,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
+            moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
         }
 
@@ -109,6 +112,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name
+        customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('buttonGroup'));
 
         let divGroup = $(`
@@ -121,6 +125,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         //拖拽组件
         dropAddComponent !== false && bindDropEventToButtonGroup(divGroup);
         dropAddComponent !== false && $(divGroup).addClass("ortum_bootstrap_buttonGroup_drop_div");
+        createJson && $(divGroup).addClass("ortum_append");//添加组件
 
         $(outerDom).append(divGroup)
 

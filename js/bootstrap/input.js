@@ -47,12 +47,14 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
+     * @param {*} moreProps.customName 自定义name
      */
     let InputDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
+        let customName = '';//自定义name
 
         let createJson = false;
         let HasProperties = false;
@@ -62,10 +64,10 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
+            moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
         }
-
         let outerDom=$(
             `
             <div class="form-group ortum_item row" 
@@ -84,12 +86,13 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let ortum_component_properties = (customProps ? customProps : Assist.deepClone(component_properties));
 
         //设定name
+        customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('input'));
 
         //控制标签
         if(ortum_component_properties.data.hideLabel){
-            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= " ortum_display_NONE") : '';
-        }
+            (ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") == -1) ? (ortum_component_properties.data.labelCSS+= " ortum_display_NONE") : '';
+        };
 
         switch(ortum_component_properties.data.labelPosition){
             case "topLeft":case "topRight":

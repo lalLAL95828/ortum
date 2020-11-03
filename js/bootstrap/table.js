@@ -137,10 +137,12 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                     "componentKey":"buttonGroupDom",
                     "children":[{
                         "frame":"Bootstrap",
-                        "componentKey":"buttonGroupDom",
+                        "componentKey":"iconButtonDom",
+                        "moreProps":{"iconName":"icon-jiahao"},
                     },{
                         "frame":"Bootstrap",
-                        "componentKey":"buttonGroupDom",
+                        "componentKey":"iconButtonDom",
+                        "moreProps":{"iconName":"icon-shanchu"},
                     }]
                 },
             ],
@@ -200,7 +202,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
-        }
+        };
 
         let outerDom=$(
             `
@@ -242,13 +244,14 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
         let tdMoreProps = {
             trCssClass:ortum_component_properties.data.tbodyTrCssClass,
             tdCssClass:ortum_component_properties.data.tdCssClass,
+            tableName:ortum_component_properties.data.name,
         };
         Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tdMoreProps,moreProps);
         for(let j=0;j<ortum_component_properties.data.rows;j++){
             tdMoreProps.order=j+1;
             let tbodyTrObj =BootStrapAsider.tableTbodyAddLine(ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
             $(tbodyDom).append(tbodyTrObj);
-        }
+        };
 
         //【thead】
         let theadDom = $(`
@@ -283,7 +286,9 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
         let scriptStr = '';
         let addlineTrInfo = '';
         if(createJson){
-            addlineTrInfo = BootStrapAsider.tableTbodyAddLine([{},{},{},{},{},{},{},{},{},{},{},{}],tdMoreProps);
+            addlineTrInfo = BootStrapAsider.tableTbodyAddLine([{},{},{},{},{},{},{},{},{},{},{},{
+                children:[{},{}]
+            }],tdMoreProps);
 
             scriptStr = `
                 let tableName = "${ortum_component_properties.data.name}";
@@ -292,16 +297,30 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                 $("table[name="+ tableName +"]").find(".icon-jiahao").eq(0).off("click.addline").on("click.addline",function(){
                     let tdInfoArr = $(this).parents("table").eq(0).find("tbody > tr:first-of-type").prop("ortum_tbodyTr_info");
                     let addlineTr = $(this).parents("table").eq(0).find("tbody").eq(0).prop("ortum_table_add_context");
+                    let bodyTrLength = $(this).parents("table").eq(0).find("tbody > tr").length;
+                    
                     let nextTr = $(addlineTr);
-                    tdInfoArr.forEach(function(item){ 
-                        $(nextTr).find("ortum_children").eq(0).replaceWith(item.html)
-                    });
+                    function ortum_BootstraptableDom_addLine(arr,trDom){
+                        arr.forEach(function(item){ 
+                            let nextHtml = $(item.html);
+                            nextHtml.find("*[name]").each(function(index2,item2){
+                                let nameValArr = $(item2).attr("name") && $(item2).attr("name").split("_");
+                                if(nameValArr && nameValArr.length && nameValArr[0] == "table"){
+                                    nameValArr[nameValArr.length -1] = bodyTrLength+1;
+                                };
+                                $(item2).attr("name",nameValArr.join("_"));
+                            });
+                            if(item.children && item.children.length){
+                                ortum_BootstraptableDom_addLine(item.children,nextHtml);
+                            };
+                            $(trDom).find("ortum_children").eq(0).replaceWith(nextHtml); 
+                        });
+                    };
+                    ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
                     $(this).parents("table").eq(0).find("tbody").eq(0).append(nextTr);
                 });
                 $("table[name="+ tableName +"]").on("click.delete",".icon-shanchu",function(){
                     $(this).parents("tr").eq(0).remove();
-                    console.log($(this).parents("tr").eq(0));
-                    debugger;
                 });
             `)
         }
@@ -318,7 +337,9 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                     bindDropEvent:false,
                     createWaitSpan:false,
                     HasProperties:HasProperties,
+                    customName:ortum_component_properties.data.name+"_"+index + "_" + 1,//1代表第一行
                 });
+
                 children.push({
                     "frame":item.frame,
                     "componentKey":item.componentKey,
@@ -331,7 +352,40 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                     "children":[],
                     "bindComponentName":comDom.bindComponentName,
                     "componentProperties":comDom.componentProperties,
-                })
+                });
+                let childrenLength = children.length;
+                //如果是按钮组
+                if(item.children && item.children.length && item.frame=="Bootstrap" && item.componentKey =="buttonGroupDom"){
+                    let buttonGroupHtml = $(children[childrenLength-1].html);
+                    item.children.forEach(function (itemSon,indexSon) {
+                        $(buttonGroupHtml).find(".ortum_append").eq(0).append(`<ortum_children></ortum_children>`)
+                        let comSonDom = require("createDom")[Settings.menuListDataJSON[itemSon.componentKey].createFn](null,itemSon.frame,{
+                            customProps:itemSon.customProps,
+                            createJson:true,//生成对应的json
+                            generateDom:true,
+                            clickChangeAttrs:false,
+                            bindDropEvent:false,
+                            createWaitSpan:false,
+                            HasProperties:HasProperties,
+                            iconName:itemSon.moreProps.iconName,
+                            customName:ortum_component_properties.data.name+"_"+ index + "_" + indexSon +"_"+ 1,
+                        });
+                        children[childrenLength-1].children.push({
+                            "frame":itemSon.frame,
+                            "componentKey":itemSon.componentKey,
+                            "title":comSonDom.title,
+                            "name":comSonDom.name,
+                            "html":comSonDom.html,
+                            "attrs":comSonDom.attrs,
+                            "css":comSonDom.css,
+                            "script":comSonDom.script,
+                            "children":[],
+                            "bindComponentName":comSonDom.bindComponentName,
+                            "componentProperties":comSonDom.componentProperties,
+                        })
+                    });
+                    children[childrenLength-1].html = buttonGroupHtml[0].outerHTML;
+                }
             })
         }
 
@@ -345,7 +399,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'],fu
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "ortum_table_add_context":addlineTrInfo[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
-                "script":scriptDom,
+                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "children":children,
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
             }

@@ -170,7 +170,7 @@ input::-webkit-calendar-picker-indicator{
 .ortum_bootstrap_td{
     border:1px solid gray;
 }
-.ortum_table_addline{
+.icon-jiahao{
     /*position: absolute;*/
     /*right: -1.6rem;*/
     /*top:0;*/
@@ -179,16 +179,16 @@ input::-webkit-calendar-picker-indicator{
     cursor: pointer;
     display: none;
 }
-.ortum_bootstrap_tbody tr:nth-of-type(1) .ortum_table_addline{
+.ortum_bootstrap_tbody tr:nth-of-type(1) .icon-jiahao{
     display: inline;
 }
 
-.ortum_table_delline{
+.icon-shanchu{
     color: #666666;
     font-size: 1.5rem!important;
     cursor: pointer;
 }
-.ortum_bootstrap_tbody tr:nth-of-type(1) .ortum_table_delline{
+.ortum_bootstrap_tbody tr:nth-of-type(1) .icon-shanchu{
     display: none;
 }
 
@@ -218,4 +218,13 @@ input::-webkit-calendar-picker-indicator{
 }
 .ortum_bootstrap_buttonGroup_drop_div{
     background-color: #dddddd;
+}
+/* p */
+.ortum_bootstrap_pDom{
+    text-align: center;
+    padding: 5px 0;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+    background-color: white;
 }

@@ -50,7 +50,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let bindDropEvent = true;//绑定拖拽事件
         let createWaitSpan = true;//提示插入
         let createJson = false;
-        let order = 1;
+        let order = 1;//行号
 
         if(Assist.getDetailType(moreProps) == "Object"){
             (moreProps.trCssClass !== undefined && moreProps.trCssClass !== null) && (trCssClass = moreProps.trCssClass);
@@ -79,7 +79,18 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 if(createWaitSpan && item.frame && item.componentKey && require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn]){
                     let createDom = require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,{
                         customProps:item.customProps,
+                        customName:moreProps.tableName+"_" + index + "_" + order,//1代表行号
                     });
+                    //当是按钮组的时候
+                    if(item.frame=="Bootstrap" && item.componentKey=="buttonGroupDom" && item.children){
+                        item.children.forEach(function(itemSon,indexSon){
+                            let createSonDom = require('createDom')[Settings.menuListDataJSON[itemSon.componentKey].createFn](null,itemSon.frame,{
+                                "iconName":itemSon.moreProps.iconName,
+                                "customName":moreProps.tableName+"_" + index + "_" + indexSon +"_"+ order,//1代表行号
+                            });
+                            $(createDom).find(".ortum_append").append(createSonDom);
+                        });
+                    }
                     tdDom && (
                         $(tdDom).append(createDom)
                     );
@@ -413,6 +424,15 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 keyDownEvent = require('BootStrapButtonGroup').keyDownSetProperties;
                 keyUpEvent = require('BootStrapButtonGroup').keyUpSetProperties;
                 beforeSetPrperies = require('BootStrapButtonGroup').beforeSetPrperies;
+                break;
+            case "p":
+                inputEvent = require('BootStrapP').inputSetProperties;
+                blurEvent = require('BootStrapP').blurSetProperties;
+                changeEvent = require('BootStrapP').changeSetProperties;
+                clickEvent = require('BootStrapP').clickSetProperties;
+                keyDownEvent = require('BootStrapP').keyDownSetProperties;
+                keyUpEvent = require('BootStrapP').keyUpSetProperties;
+                beforeSetPrperies = require('BootStrapP').beforeSetPrperies;
                 break;
             default:
                 break;
