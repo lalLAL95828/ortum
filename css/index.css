@@ -166,7 +166,7 @@
     height: 100%;
     left:0;
     /*top: 0;*/
-    top: 500px;
+    top: 200px;
     border:1px dotted gray;
     z-index: 100;
     background-color: rgba(236, 245, 255, 0.5);
