@@ -123,10 +123,8 @@
 
     <script>
         let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document})
-        console.log(prevArrJSON)
 
         let prevDom = $('<div id="ortum_field_preview"></div>');
-
 
         let cssDomSet = [];
         let scriptDomSet = [];
@@ -134,34 +132,43 @@
         //从json渲染成dom
         function renderJson(prevArrJSON,parentDom,way="append") {
             for(let item of prevArrJSON){
-                let htmlDom = $(item.html);
-                if(item.children.length){
-                    renderJson(item.children,htmlDom,"replace");
+                let domItem = item;
+                let htmlDom;
+                if(item.childrenType == "choose" && item.chooseFun){
+                    (typeof item.chooseFun !=="function") && (item.chooseFun = Function('return ' + item.chooseFun)());
+                    domItem = item.chooseFun(parentDom);
+                }
+                htmlDom = $(domItem.html);
+                if(domItem.children && domItem.children.length){
+                    renderJson(domItem.children,htmlDom,"replace");
                 };
-                if(way=="append" && item.html){
-                    parentDom.append(htmlDom);
-                    //特殊处理
-                    if(item.frame == "Bootstrap" && item.componentKey == "tableDom"){
-                        $(htmlDom).prop("ortum_tbodyTds_info",item.children);//tr中组件的信息
-                        $(htmlDom).prop("ortum_tbodyTr_info",item.ortum_tbodyTr_info);//tr信息
-                    }
+                //特殊处理Bootstrap_tableDom
+                if(domItem.frame == "Bootstrap" && domItem.componentKey == "tableDom"){
+                    $(htmlDom).prop("ortum_tbodyTds_info",domItem.children);//tr中组件的信息
+                    $(htmlDom).prop("ortum_tbodyTr_info",domItem.ortum_tbodyTr_info);//tr信息
                 }
-                if(way=="replace" && item.html){
-                    if(parentDom.find("ortum_children").length){
-                        parentDom.find("ortum_children").eq(0).replaceWith(htmlDom)
-                    }
-                }
-                item.css && cssDomSet.push(item.css);
-                item.script && scriptDomSet.push(item.script);
+                switch (way) {
+                    case "replace":
+                        if(parentDom.find("ortum_children").length){
+                            parentDom.find("ortum_children").eq(0).replaceWith(htmlDom);
+                        };
+                        break;
+                    default:
+                        parentDom.append(htmlDom);
+                        break;
+                };
+                domItem.css && cssDomSet.push(domItem.css);
+                domItem.script && scriptDomSet.push(domItem.script);
             }
         }
-        renderJson(prevArrJSON,prevDom)
-        $("#ortum_preview_ModalLabel_body").html(prevDom)
+        renderJson(prevArrJSON,prevDom);
+
+        $("#ortum_preview_ModalLabel_body").html(prevDom);
         cssDomSet.forEach((item,index)=>{
-            $(document.head).append(item)
+            $(document.head).append(item);
         })
         scriptDomSet.forEach((item,index)=>{
-            $(document.body).append(item)
+            $(document.body).append(item);
         })
 
     </script>

@@ -30,8 +30,8 @@ define([
 ],
 
 function(CodeMirror){
-    //初始化
-    let init = function(){
+    //初始化编辑js
+    let initJs = function(){
         const option = {
             // value: "function myScript(){return 100;}",
             mode:  "javascript",
@@ -61,7 +61,7 @@ function(CodeMirror){
         // myCodeMirror.setSize("100%","300px");
         // myCodeMirror.setValue("function myScript(){return 100;}");
 
-        myCodeMirror.refresh()
+        myCodeMirror.refresh();
 
         //显示提示  
         myCodeMirror.on("inputRead", () => {
@@ -85,6 +85,6 @@ function(CodeMirror){
     
 
     return {
-        init:init,
+        initJs:initJs,
     }
 })

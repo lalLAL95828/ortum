@@ -85,7 +85,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         //控制标签
         if(ortum_component_properties.data.hideLabel){
-            // ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_display_NONE") : '';
+            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= " ortum_display_NONE") : '';
         }else{
             switch(ortum_component_properties.data.labelPosition){
                 case "topLeft":case "topRight":

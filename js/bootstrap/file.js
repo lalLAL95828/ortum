@@ -140,12 +140,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
+     * @param {*} moreProps.customName 自定义name
      */
     let FileDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
+        let customName = '';//自定义name
 
         let createJson = false;
         let HasProperties = false;
@@ -155,6 +157,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
+            moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
         }
@@ -174,6 +177,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name
+        customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('file'));
         
         //<button class="btn btn-outline-secondary" type="button">预览</button>

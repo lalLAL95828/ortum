@@ -78,11 +78,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             moreProps.createWaitSpan !== undefined && moreProps.createWaitSpan !== null && (createWaitSpan = moreProps.createWaitSpan);
             moreProps.createJson !== undefined && moreProps.createJson !== null && (createJson = moreProps.createJson);
         };
-        let trInfo = $(`
-            <tr 
-            ${trCssClass ? "class="+trCssClass : '' } 
-            ></tr>
-        `);
+        let trInfo = $(`<tr ${trCssClass ? "class="+trCssClass : '' } ></tr>`);
 
         if(Assist.getDetailType(tdInfo) == "Array"){
             tdInfo.forEach(function(item,index){
@@ -114,7 +110,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                                 });
                                 tableActAddLine(createDom,tbodyDom,moreProps);
                                 tdDom && (
-                                    $(tdDom).html(createDom).attr("data-type","actAdd")
+                                    tdDom.html(createDom).attr("data-type","act")
                                 );
                             }else{
                                 createDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,{
@@ -123,7 +119,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                                 });
                                 tableActDelLine(createDom,moreProps);
                                 tdDom && (
-                                    $(tdDom).html(createDom).attr("data-type","actDel")
+                                    tdDom.html(createDom).attr("data-type","act")
                                 );
                             }
                             break;
@@ -140,12 +136,10 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     //绑定组件属性
                     item.customProps = $(createDom).prop("ortum_component_properties");
                     //当是按钮组的时候
-                    tdDom && (
-                        $(tdDom).append(createDom)
-                    );
+                    tdDom && (tdDom.append(createDom));
                 }else if(createWaitSpan){
                     tdDom && (
-                        $(tdDom).append(`
+                        tdDom.append(`
                             <span>插入其他组件</span>
                         `)
                     )
@@ -153,7 +147,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     switch (item.type) {
                         case "order":
                             tdDom && (
-                                $(tdDom).append(`
+                                tdDom.append(`
                                     <ortum_children></ortum_children>
                                 `).attr("data-type","order")
                             );
@@ -161,35 +155,32 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                         case "act":
                             if(tbodyTrNum==0){
                                 tdDom && (
-                                    $(tdDom).append(`
+                                    tdDom.append(`
                                         <ortum_children></ortum_children>
-                                    `).attr("data-type","acTAdd")
+                                    `).attr("data-type","act")
                                 );
 
                             }else{
                                 tdDom && (
-                                    $(tdDom).append(`
+                                    tdDom.append(`
                                         <ortum_children></ortum_children>
-                                    `).attr("data-type","actDel")
+                                    `).attr("data-type","act")
                                 );
                             }
                             break;
                         default:
                             tdDom && (
-                                $(tdDom).append(`
+                                tdDom.append(`
                                     <ortum_children></ortum_children>
                                 `)
                             );
                             break;
                     }
                 }
-                $(trInfo).append(tdDom);
+                trInfo.append(tdDom);
             });
-
         }
-
         return trInfo;
-
     };
 
     /**
@@ -269,6 +260,8 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 //将绑定的组件属性，绑定到td上
                 // $(this).prop("ortum_dropComponent_prop",$(createDom).prop("ortum_component_properties"))
                 item.customProps = $(createDom).prop("ortum_component_properties");
+                item.frame =Global.ortum_createDom_frame;
+                item.componentKey =componentKey;
 
                 //把拖拽对象制空
                 Global.ortumNowDragObj = null;

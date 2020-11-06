@@ -8,7 +8,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             authority:"3",//权限
             placeholder:"请输入",
             cssClass:"custom-select col",//css类
-            hideLabel:false,//是否隐藏标签
+            hideLabel:true,//是否隐藏标签
             labelName:"名称",//标签名称
             labelPosition:"rowLeft",//标签位置
             // labelWidth:"",//标签宽度
@@ -142,7 +142,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         
         //控制标签
         if(ortum_component_properties.data.hideLabel){
-            //ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= "ortum_display_NONE") : '';
+            ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") ==-1 ? (ortum_component_properties.data.labelCSS+= " ortum_display_NONE") : '';
         }else{
             switch(ortum_component_properties.data.labelPosition){
                 case "topLeft":case "topRight":

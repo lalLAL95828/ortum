@@ -251,6 +251,12 @@ define(['require'],function(require){
                 <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapSelect_settings" title="设置"></span>
              `)
         }
+        //bootstrap_table
+        if($(this).hasClass('ortum_bootstrap_table')){
+            shadowDiv.append(`
+                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapTable_settings" title="设置"></span>
+             `)
+        }
 
         shadowDiv.append(`
             <span class="iconfont icon-shanchu  ortum_shadow_deleteImg"  title="删除"></span>
@@ -282,8 +288,11 @@ define(['require'],function(require){
         if($(this).hasClass('ortum_bootstrap_select')){
             $("#ortum_shadow .ortum_shadow_bootstrapSelect_settings").off('click.setting').on('click.setting',require('BootStrapSelect').showSelectOptions);
         }
+        //table的设置按钮绑定事件
+        if($(this).hasClass('ortum_bootstrap_table')){
+            $("#ortum_shadow .ortum_shadow_bootstrapTable_settings").off('click.setting').on('click.setting',require('BootStrapTable').setTableColumns);
+        }
 
-        
         let properiesObj = $(this).prop('ortum_component_properties')
         let properiesType = $(this).prop('ortum_component_type');
 

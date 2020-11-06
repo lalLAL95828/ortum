@@ -346,7 +346,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             default:
                 break
         }
-
     }
 
     /**
@@ -356,7 +355,47 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param way
      */
     let JsonPropsRenderDom = function (prevArrJSON,parentDom,way="append") {
-        switch (way) {
+        for(let item of prevArrJSON){
+            let domItem = item;
+            /*if(item.childrenType == "choose"){
+                (typeof item.chooseFun !=="function") && (item.chooseFun = Function('return ' + item.chooseFun)());
+                domItem = item.chooseFun(parentDom);
+            };*/
+            let frame = domItem.frame;
+            let componentKey = domItem.componentKey;
+            let component_properties = require("assist").jsonParase(domItem.componentProperties);
+
+            let appendDom;
+            if(frame && componentKey){
+                appendDom= CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                    customProps:component_properties,
+                });
+            }else if(domItem.html){
+                appendDom= domItem.html;
+            }else{
+                console.error("缺少渲染节点");
+            }
+
+            switch (way) {
+                case 'append':
+                    $(parentDom).append(appendDom);
+                    break;
+                case "replace":
+                    $(parentDom).find("*[data-children=true]").eq(0).replaceWith(appendDom);
+                    break;
+            };
+
+            //如果是bootstrap的grid，不处理其children
+            if(frame == "Bootstrap" && componentKey=="tableDom"){
+                return true;
+            };
+
+            if(domItem.children && domItem.children.length){
+                JsonPropsRenderDom(domItem.children,appendDom,"replace")
+            };
+        }
+
+        /*switch (way) {
             case 'append':
                 for(let item of prevArrJSON){
                     let frame = item.frame;
@@ -391,42 +430,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     }
                 }
                 break;
-        }
-        // let cssDomSet = [];
-        // let scriptDomSet = [];
-        // let componentSet = {};//组件集合
-        // for(let item of prevArrJSON){
-        //     let htmlDom = $(item.html)
-        //     if(item.children.length){
-        //         let backDatas =JsonHtmlRenderDom(item.children,htmlDom,"replace");
-        //         cssDomSet = cssDomSet.concat(backDatas.css);
-        //         scriptDomSet = scriptDomSet.concat(backDatas.script);
-        //         Object.assign(componentSet,backDatas.componentSet)
-        //     }
-        //     if(way=="append" && item.html){
-        //         parentDom.append(htmlDom)
-        //     }
-        //     if(way=="replace" && item.html){
-        //         $(parentDom).find("ortum_children").eq(0).replaceWith(item.html)
-        //     }
-        //
-        //     item.css && cssDomSet.push(item.css);
-        //     item.script && scriptDomSet.push(item.script);
-        //
-        //     //将框架，组件类型， name 和 ortum的属性，合并到一个json中
-        //     componentSet[item.name] = {
-        //         name:item.name,
-        //         componentProperties:item.componentProperties,
-        //         frame:item.frame,
-        //         componentKey:item.componentKey,
-        //     }
-        // }
-        // return {
-        //     dom:parentDom,
-        //     css:cssDomSet,
-        //     script:scriptDomSet,
-        //     componentSet:componentSet,
-        // }
+        }*/
+
     };
     /**
      * 功能：从json的html渲染成 dom
@@ -439,30 +444,36 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         let scriptDomSet = [];
         let componentSet = {};//组件集合
         for(let item of prevArrJSON){
-            let htmlDom = $(item.html)
-            if(item.children.length){
-                let backDatas =JsonHtmlRenderDom(item.children,htmlDom,"replace");
+            let domItem = item;
+            if(item.childrenType == "choose" && item.chooseFun){
+                (typeof item.chooseFun !=="function") && (item.chooseFun = Function('return ' + item.chooseFun)());
+                domItem = item.chooseFun(parentDom);
+            };
+            let htmlDom = $(domItem.html);
+            if(domItem.children.length){
+                let backDatas =JsonHtmlRenderDom(domItem.children,htmlDom,"replace");
                 cssDomSet = cssDomSet.concat(backDatas.css);
                 scriptDomSet = scriptDomSet.concat(backDatas.script);
                 Object.assign(componentSet,backDatas.componentSet)
-            }
-            if(way=="append" && item.html){
-                parentDom.append(htmlDom)
-            }
-            if(way=="replace" && item.html){
-                $(parentDom).find("ortum_children").eq(0).replaceWith(htmlDom)
-            }
+            };
+            if(way=="append" && domItem.html){
+                parentDom.append(htmlDom);
+            };
+            if(way=="replace" && domItem.html){
+                $(parentDom).find("ortum_children").eq(0).replaceWith(htmlDom);
+            };
 
-            item.css && cssDomSet.push(item.css);
-            item.script && scriptDomSet.push(item.script);
+            domItem.css && cssDomSet.push(domItem.css);
+            domItem.script && scriptDomSet.push(domItem.script);
 
             //将框架，组件类型， name 和 ortum的属性，合并到一个json中
-            componentSet[item.name] = {
-                name:item.name,
-                componentProperties:item.componentProperties,
-                frame:item.frame,
-                componentKey:item.componentKey,
-            }
+            componentSet[domItem.name] = {
+                name:domItem.name,
+                componentProperties:domItem.componentProperties,
+                frame:domItem.frame,
+                componentKey:domItem.componentKey,
+                html:domItem.html,
+            };
         }
         return {
             dom:parentDom,
@@ -594,20 +605,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         createWaitSpan:false,
                         HasProperties:HasProperties,
                     });
-                    /* parentsJson.push({
-                        "frame":frame,
-                        "componentKey":componentKey,
-                        "title":comDom.title,
-                        "name":comDom.name,
-                        "html":comDom.html,
-                        "attrs":comDom.attrs,
-                        "css":comDom.css,
-                        "script":comDom.script,
-                        "children":comDom.children || [],
-                        "bindComponentName":comDom.bindComponentName,
-                        "componentProperties":comDom.componentProperties,
-                        "ortum_table_add_context":comDom.ortum_table_add_context,
-                    }); */
                     parentsJson.push(Object.assign({
                         "frame":frame,
                         "children":[],
@@ -617,7 +614,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     //如果是Bootstrap_tableDom 不在向下寻找ortum_item;
                     if(frame == "Bootstrap" && componentKey == "tableDom"){
                         return true;
-                    }
+                    };
                     let parentsJsonLength = parentsJson.length;
                     $(item).find(".ortum_item").each(function(index2,html2){
                         getFormContentJson(mode="dom",{
