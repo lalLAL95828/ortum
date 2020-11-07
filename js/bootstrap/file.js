@@ -60,6 +60,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             automatic:3,//自动上传
             title:3,
         },
+        dataShowType:{
+            multiple:'switch',
+            automatic:"switch",
+            authority:"checkbox",
+        },
         verify:{//编辑属性时的验证
             automatic:{
                 click:function(globalComponent,e,val,checked){
@@ -141,6 +146,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      */
     let FileDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -151,6 +157,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let createJson = false;
         let HasProperties = false;
+        let ortumChildren = null;
+        
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -160,6 +168,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
+            moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
         }
 
         let outerDom=$(
@@ -262,6 +271,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "script":scriptDom && scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
+                "ortumChildren":ortumChildren,
             }
         }else{
             return outerDom

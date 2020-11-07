@@ -12,17 +12,15 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             labelName:"名称",//标签名称
             title:"名称",//设置dom的title属性，一般与labelName一致
             labelPosition:"rowLeft",//标签位置
-            // labelWidth:"",//标签宽度
             labelCSS:"col-form-label col-2",//标签css类
-            onBefore:"",
-            onAfter:"",
-
+            onBefore:"",//渲染之前的回调
+            onAfter:"",//渲染之后的回调
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
         purview:{//属性编辑权限
             id:3,//id
-            name:2,
+            name:3,
             defaultVal:3,
             verification:3,
             authority:3,//权限
@@ -31,9 +29,13 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             hideLabel:3,//是否隐藏标签
             labelName:3,//标签名称
             labelPosition:3,//标签位置
-            // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
             title:3,
+        },
+        dataShowType:{
+            hideLabel:'switch',
+            authority:"checkbox",
+            labelPosition:"checkbox",
         },
     }
 
@@ -48,6 +50,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      */
     let InputDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -58,6 +61,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         let createJson = false;
         let HasProperties = false;
+        let ortumChildren = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -67,6 +71,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
+            moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
         }
         let outerDom=$(
             `
@@ -134,6 +139,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
+                "ortumChildren":ortumChildren,
             }
         }else{
             return outerDom
@@ -180,9 +186,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             case "labelName":
                 $(globalComponent).find('label').eq(0).text(val)
                 break; 
-            // case "labelWidth":
-            //     $(globalComponent).find('label').eq(0).attr('width',val)
-            //     break; 
             case "labelCSS":
                 // $(globalComponent).find('label').eq(0).addClass(val)
                 $(globalComponent).find('label').eq(0).attr('class',val)

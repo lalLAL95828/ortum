@@ -156,25 +156,43 @@ define(['require'],function(require){
      * @param {*} e
      */
     let deleteComponent = function(e){
-
         let delOrtumItem = $(this).parents('.ortum_item').eq(0)
         let nextOrtumItem = delOrtumItem.parent()
+        let parentOrtumItem = delOrtumItem.parent(".ortum_item");
         
         require('global').ortum_edit_component = null;//清空正在编辑的组件
         
-
         //还原编辑组件属性的表单状态
-        resetSetPropertyCom()
+        resetSetPropertyCom();
 
         delOrtumItem.remove();
         //删除后的下一步处理方式
-        if(nextOrtumItem){
+        if(nextOrtumItem.length){
             //bootstrap的栅格col
             if($(nextOrtumItem).hasClass('ortum_boot_col_default')){
                 $(nextOrtumItem).addClass('ortum_boot_col_waitInsert')
                 $(nextOrtumItem).append(require('BootStrapAsider').tipAddComponentFn(false))//增加提示语
             };
+            //bootstrap的td
+            if($(nextOrtumItem).hasClass('ortum_bootstrap_td')){
+                $(nextOrtumItem).addClass('ortum_boot_td_waitInsert');
+                $(nextOrtumItem).append(require('BootStrapAsider').tableTdAddTip())//增加提示语
+                let tdItem = $(nextOrtumItem).prop("ortum_tableTd_item");
+                //去除item的组件属性
+                delete tdItem.frame;
+                delete tdItem.componentKey;
+                delete tdItem.type;
+                delete tdItem.customProps;
+            };
+        };
+
+        if(parentOrtumItem.length){
+            //bootstrap的栅格buttonGroup
+            if(parentOrtumItem.eq(0).hasClass('ortum_bootstrap_buttonGroup')){
+                parentOrtumItem.prop("ortum_component_properties").data.childrenSlot--;
+            };
         }
+
         return false;
     }
 

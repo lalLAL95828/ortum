@@ -110,8 +110,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             name:2,//name
             title:3,//设置dom的title属性，一般与labelName一致
 
-
-
             verification:3,//校验
             authority:3,//权限
             cssClass:3,//table 的 css类
@@ -125,6 +123,11 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             showThead:3,
             showTbody:3,
         },
+        dataShowType:{
+            showThead:'switch',
+            showTbody:'switch',
+            authority:"checkbox",
+        },
     }
 
     /**
@@ -137,15 +140,19 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
+     * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
+     * @param {*} moreProps.customName 自定义name
      */
     let TableDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
+        let customName = '';//自定义name
 
         let createJson = false;
         let HasProperties = false;
+        let ortumChildren = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -154,6 +161,8 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
+            moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
+            moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
         };
 
         let outerDom=$(
@@ -173,6 +182,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         let ortum_component_properties = (customProps ? customProps : Assist.deepClone(component_properties));
 
         //设定name
+        customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
 
         let tableDom = $(`
@@ -215,7 +225,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         if(!ortum_component_properties.data.showThead){
             theadDom.addClass("ortum_display_NONE")
         }
-
         let theadTrObj =BootStrapAsider.tableTheadAddLine(ortum_component_properties.data.tableColumnsArr,
             {
                 trCssClass:ortum_component_properties.data.theadTrCssClass,
@@ -243,6 +252,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             scriptStr = `
                 let tableName = "${ortum_component_properties.data.name}";
             `;
+            //点击和删除的按钮
             scriptStr+=`
                 $("table[name="+ tableName +"]").on("click.addline","td[data-type=act] .icon-jiahao",function(){
                     let tdInfoArr = $(this).parents("table").eq(0).parents(".ortum_item").eq(0).prop("ortum_tbodyTds_info");
@@ -277,16 +287,29 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                 });
                 $("table[name="+ tableName +"]").on("click.delete","td[data-type=act] .icon-shanchu",function(){
                     let tbodyDom = $(this).parents("tbody").eq(0);
+                    let trFather = $(this).parents("tr").eq(0);
+                    let rowIndex = $(this).parents("tr")[0].rowIndex;
+                    $(trFather).nextAll("tr").each(function(index,item){
+                        $(this).find("*[name]").each(function(index2,item2){
+                            let name = $(item2).attr("name");
+                            let nameArr = name.split("_");
+                            if(nameArr[0] === "table"){
+                                nameArr.pop();
+                                nameArr.push(rowIndex + index);
+                            };
+                            $(item2).attr("name",nameArr.join("_"));
+                        });
+                    });
                     $(this).parents("tr").eq(0).remove();
                     $(tbodyDom).find("td[data-type=order]").each(function(index,item){
                         $(item).find("span").eq(0).text(index+1);
                     });
+                    
                 });
             `;
 
             //创建td中组件的json信息
             ortum_component_properties.data.tableColumnsArr.forEach(function(item,index){
-                
                 //创建组件的属性
                 let createDomProp = Object.assign({
                     HasProperties:HasProperties,
@@ -302,9 +325,11 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                         case "order":
                             comDom ={
                                 "html":`<span>1</span>`,
+                                "ortumChildren":index,//插入第几个ortum_children
                             };
                             break;
                         case "act":
+                            createDomProp.ortumChildren=index;//插入第几个ortum_children
                             //新增
                             let addComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
                                 "iconName":"icon-jiahao",
@@ -343,12 +368,16 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                         "children":[],
                     },comDom));
                 }else{
-                    comDom =require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
-                    children.push(Object.assign({
-                        "frame":item.frame,
-                        "componentKey":item.componentKey,
-                        "children":[],
-                    },comDom));
+    
+                    if(item.componentKey && item.frame){
+                        createDomProp.ortumChildren=index;//插入第几个ortum_children
+                        comDom =require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
+                        children.push(Object.assign({
+                            "frame":item.frame,
+                            "componentKey":item.componentKey,
+                            "children":[],
+                        },comDom));
+                    }
                 }
             });
 
@@ -367,6 +396,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                 "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "children":children,
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
+                "ortumChildren":ortumChildren,
             }
         }else{
             return outerDom
@@ -563,7 +593,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             eval(val);
             let editTableColumnArr = eval("tableColumns");
             evenProperties.data.tableColumnsArr = editTableColumnArr;
-            $(globalComponent).prop("ortum_tbodyTds_info",editTableColumnArr)
+            $(globalComponent).prop("ortum_tbodyTds_info",editTableColumnArr);
             $(tbodyDom).empty();//tbody先清空
             $(theadDom).empty();//thead先清空
             let tbodyTrObj =BootStrapAsider.tableTbodyAddLine(tbodyDom,editTableColumnArr,tdMoreProps);
@@ -577,7 +607,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
 
 
         }catch (e) {
-            console.error("编辑table的column信息错误")
+            console.error("编辑table的column信息错误");
         }
         //TODO 修改之后可以优化替换的规则
        /* try{

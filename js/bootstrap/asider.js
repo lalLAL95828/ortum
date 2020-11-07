@@ -1,6 +1,16 @@
 /* bootstrap的辅助函数 */
 define(['require','assist','global',"settings"],function(require,Assist,Global,Settings){
     /**
+     * table的td添加拖拽提示语
+     */
+    let tableTdAddTip = function(){
+        let tdWaitInsert = $(`
+            <span style="color:#c3bebe">插入</span>
+        `);
+        return tdWaitInsert;
+    }
+
+    /**
      * 功能：table的thead新增行
      */
     let tableTheadAddLine = function(thInfo,moreProps=null){
@@ -88,10 +98,12 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 let tdDom = $(`
                     <td 
                     colspan="${headColspan}" 
-                    class="${tdCssClass} ortum_boot_td_waitInsert"></td>
+                    class="${tdCssClass}">
+                    </td>
                 `);
                 //绑定拖拽事件
                 bindDropEvent && bindDropEventToBootstrapTable(tdDom,item);
+                bindDropEvent && tdDom.prop("ortum_tableTd_item",item);
 
                 //编辑table状态，并且有对应的组件
                 if(createWaitSpan && item.type){
@@ -139,16 +151,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     tdDom && (tdDom.append(createDom));
                 }else if(createWaitSpan){
                     tdDom && (
-                        tdDom.append(`
-                            <span>插入其他组件</span>
-                        `)
+                        tdDom.append(tableTdAddTip()).addClass("ortum_boot_td_waitInsert")
                     )
                 }else if(!createWaitSpan && createJson){//创建js
                     switch (item.type) {
                         case "order":
                             tdDom && (
                                 tdDom.append(`
-                                    <ortum_children></ortum_children>
+                                    <ortum_children data-order="${index}"></ortum_children>
                                 `).attr("data-type","order")
                             );
                             break;
@@ -156,14 +166,14 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                             if(tbodyTrNum==0){
                                 tdDom && (
                                     tdDom.append(`
-                                        <ortum_children></ortum_children>
+                                        <ortum_children data-order="${index}"></ortum_children>
                                     `).attr("data-type","act")
                                 );
 
                             }else{
                                 tdDom && (
                                     tdDom.append(`
-                                        <ortum_children></ortum_children>
+                                        <ortum_children data-order="${index}"></ortum_children>
                                     `).attr("data-type","act")
                                 );
                             }
@@ -171,7 +181,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                         default:
                             tdDom && (
                                 tdDom.append(`
-                                    <ortum_children></ortum_children>
+                                    <ortum_children data-order="${index}"></ortum_children>
                                 `)
                             );
                             break;
@@ -190,13 +200,13 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
     let tableActAddLine = function(ele,fatherTbody,moreProps){
         let tbodyDom = null;
         fatherTbody && (tbodyDom = fatherTbody);
-        !fatherTbody && (tbodyDom = $(ele).parents("tbody").eq(0))
+        !fatherTbody && (tbodyDom = $(ele).parents("tbody").eq(0));
         $(ele).off("click.addline").on("click.addline",".icon-jiahao",function(){
             let tdInfoArr = $(this).parents("table").eq(0).parents(".ortum_item").eq(0).prop("ortum_tbodyTds_info");
             let order = $(this).parents("table").eq(0).find("tbody > tr").length;
             moreProps.order = order+1;
             let newtr = tableTbodyAddLine(tbodyDom,tdInfoArr,moreProps);
-            $(this).parents("table").eq(0).find("tbody").eq(0).append(newtr)
+            $(this).parents("table").eq(0).find("tbody").eq(0).append(newtr);
         });
     }
     /**
@@ -206,13 +216,25 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
     let tableActDelLine = function(ele,moreProps){
         $(ele).off("click.delete").on("click.delete",function(){
             let tbodyDom = $(this).parents("tbody").eq(0);
+            let trFather = $(this).parents("tr").eq(0);
+            let rowIndex = $(this).parents("tr")[0].rowIndex;
+            $(trFather).nextAll("tr").each(function(index,item){
+                $(this).find("*[name]").each(function(index2,item2){
+                    let name = $(item2).attr("name");
+                    let nameArr = name.split("_");
+                    if(nameArr[0] === "table"){
+                        nameArr.pop();
+                        nameArr.push(rowIndex + index);
+                    };
+                    $(item2).attr("name",nameArr.join("_"));
+                });
+            });
             $(this).parents("tr").eq(0).remove();
             $(tbodyDom).find("td[data-type=order]").each(function(index,item){
                 $(item).find("span").eq(0).text(index+1);
             });
         })
-    }
-
+    };
 
     /**
      * 给ele添加拖拽事件
@@ -234,7 +256,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 return false;
             }
 
-            if(componentKey == "gridDom" || componentKey == "tableDom"){//如果拖拽上來的是grid,则不进行创建
+            if(componentKey == "gridDom" || componentKey == "tableDom" || componentKey == "buttonGroupDom"){
                 let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
                 let parentsItemLength = $(this).parents(".ortum_item").length;
                 if(parentsItemLength){
@@ -253,9 +275,16 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     //TODO 确定是否替换
                     return false;
                 }
+                //cellIndex  第几列，从0开始
+                //rowIndex 第几行，从1开始
+                let cellIndex = this.cellIndex;
+                let rowIndex = $(this).parents("tr")[0].rowIndex;
+                let customName = $(this).parents("table").eq(0).attr("name")+"_" + cellIndex + "_" + rowIndex;//rowIndex
 
                 //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
+                    customName:customName,
+                });
                 $(this).append(createDom);
                 //将绑定的组件属性，绑定到td上
                 // $(this).prop("ortum_dropComponent_prop",$(createDom).prop("ortum_component_properties"))
@@ -281,16 +310,18 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let createWaitSpan = true;//创建待拖入提示
         let classValue = "col";
         let createJson = false;
+        let ortumChildren = null;
         if(Assist.getDetailType(moreProps) == "Object"){
             (moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null) && (bindDropEvent = moreProps.bindDropEvent);
             (moreProps.createWaitSpan !== undefined && moreProps.createWaitSpan !== null) && (createWaitSpan = moreProps.createWaitSpan);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             (moreProps.classValue !== undefined && moreProps.classValue !== null) && (classValue = moreProps.classValue);
+            (moreProps.ortumChildren !== undefined && moreProps.ortumChildren !== null) && (ortumChildren = moreProps.ortumChildren);
         }
         let col;//要返回的值
         if(createOrtumItem){
             col = $(`
-                <div class="${classValue} ortum_boot_col_default ortum_boot_col_waitInsert">
+                <div ${(ortumChildren || ortumChildren ===0) ? "data-order="+ortumChildren : ''}  class="${classValue} ortum_boot_col_default ortum_boot_col_waitInsert">
                     
                 </div>
             `);
@@ -316,12 +347,12 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         if(!createWaitSpan && createJson){
             col && (
                 $(col).append(`
-                    <ortum_children></ortum_children>
+                    <ortum_children ${(ortumChildren || ortumChildren ===0) ? "data-order="+ortumChildren : ''}></ortum_children>
                 `)
             );
             !col && (
                 col = $(`
-                    <ortum_children></ortum_children>
+                    <ortum_children ${(ortumChildren || ortumChildren ===0) ? "data-order="+ortumChildren : ''}></ortum_children>
                 `)
             )
         }
@@ -402,133 +433,21 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let keyUpEvent =null;
         //设置参数配置的函数
         let beforeSetPrperies = null;
-        switch(type){
-            case "grid":
-                inputEvent = require('BootStrapGrid').inputSetProperties;
-                blurEvent = require('BootStrapGrid').blurSetProperties;
-                changeEvent = require('BootStrapGrid').changeSetProperties;
-                clickEvent = require('BootStrapGrid').clickSetProperties;
-                keyDownEvent = require('BootStrapGrid').keyDownSetProperties;
-                keyUpEvent = require('BootStrapGrid').keyUpSetProperties;
-                break;
-            case "input":
-                inputEvent = require('BootStrapInput').inputSetProperties;
-                blurEvent = require('BootStrapInput').blurSetProperties;
-                changeEvent = require('BootStrapInput').changeSetProperties;
-                clickEvent = require('BootStrapInput').clickSetProperties;
-                keyDownEvent = require('BootStrapInput').keyDownSetProperties;
-                keyUpEvent = require('BootStrapInput').keyUpSetProperties;
-                break;
-            case "textarea":
-                inputEvent = require('BootStrapTextarea').inputSetProperties;
-                blurEvent = require('BootStrapTextarea').blurSetProperties;
-                changeEvent = require('BootStrapTextarea').changeSetProperties;
-                clickEvent = require('BootStrapTextarea').clickSetProperties;
-                keyDownEvent = require('BootStrapTextarea').keyDownSetProperties;
-                keyUpEvent = require('BootStrapTextarea').keyUpSetProperties;
-                break;
-            case "rangeInput":
-                inputEvent = require('BootStrapRangeInput').inputSetProperties;
-                blurEvent = require('BootStrapRangeInput').blurSetProperties;
-                changeEvent = require('BootStrapRangeInput').changeSetProperties;
-                clickEvent = require('BootStrapRangeInput').clickSetProperties;
-                keyDownEvent = require('BootStrapRangeInput').keyDownSetProperties;
-                keyUpEvent = require('BootStrapRangeInput').keyUpSetProperties;
-                break;
-            case "radio":
-                inputEvent = require('BootStrapRadio').inputSetProperties;
-                blurEvent = require('BootStrapRadio').blurSetProperties;
-                changeEvent = require('BootStrapRadio').changeSetProperties;
-                clickEvent = require('BootStrapRadio').clickSetProperties;
-                keyDownEvent = require('BootStrapRadio').keyDownSetProperties;
-                keyUpEvent = require('BootStrapRadio').keyUpSetProperties;
-                break;
-            case "checkbox":
-                inputEvent = require('BootStrapCheckbox').inputSetProperties;
-                blurEvent = require('BootStrapCheckbox').blurSetProperties;
-                changeEvent = require('BootStrapCheckbox').changeSetProperties;
-                clickEvent = require('BootStrapCheckbox').clickSetProperties;
-                keyDownEvent = require('BootStrapCheckbox').keyDownSetProperties;
-                keyUpEvent = require('BootStrapCheckbox').keyUpSetProperties;
-                break;
-                
-            case "file":
-                inputEvent = require('BootStrapFile').inputSetProperties;
-                blurEvent = require('BootStrapFile').blurSetProperties;
-                changeEvent = require('BootStrapFile').changeSetProperties;
-                clickEvent = require('BootStrapFile').clickSetProperties;
-                keyDownEvent = require('BootStrapFile').keyDownSetProperties;
-                keyUpEvent = require('BootStrapFile').keyUpSetProperties;
-                break;
-            case "switch":
-                inputEvent = require('BootStrapSwitch').inputSetProperties;
-                blurEvent = require('BootStrapSwitch').blurSetProperties;
-                changeEvent = require('BootStrapSwitch').changeSetProperties;
-                clickEvent = require('BootStrapSwitch').clickSetProperties;
-                keyDownEvent = require('BootStrapSwitch').keyDownSetProperties;
-                keyUpEvent = require('BootStrapSwitch').keyUpSetProperties;
-                break;
-            case "select":
-                inputEvent = require('BootStrapSelect').inputSetProperties;
-                blurEvent = require('BootStrapSelect').blurSetProperties;
-                changeEvent = require('BootStrapSelect').changeSetProperties;
-                clickEvent = require('BootStrapSelect').clickSetProperties;
-                keyDownEvent = require('BootStrapSelect').keyDownSetProperties;
-                keyUpEvent = require('BootStrapSelect').keyUpSetProperties;
-                break;
-            case "label":
-                inputEvent = require('BootStrapLabel').inputSetProperties;
-                blurEvent = require('BootStrapLabel').blurSetProperties;
-                changeEvent = require('BootStrapLabel').changeSetProperties;
-                clickEvent = require('BootStrapLabel').clickSetProperties;
-                keyDownEvent = require('BootStrapLabel').keyDownSetProperties;
-                keyUpEvent = require('BootStrapLabel').keyUpSetProperties;
-                beforeSetPrperies = require('BootStrapLabel').beforeSetPrperies;
 
-                break;
-            case "iconButton":
-                inputEvent = require('BootStrapIconButton').inputSetProperties;
-                blurEvent = require('BootStrapIconButton').blurSetProperties;
-                changeEvent = require('BootStrapIconButton').changeSetProperties;
-                clickEvent = require('BootStrapIconButton').clickSetProperties;
-                keyDownEvent = require('BootStrapIconButton').keyDownSetProperties;
-                keyUpEvent = require('BootStrapIconButton').keyUpSetProperties;
-                beforeSetPrperies = require('BootStrapIconButton').beforeSetPrperies;
-                break;
-            case "button":
-                inputEvent = require('BootStrapButton').inputSetProperties;
-                blurEvent = require('BootStrapButton').blurSetProperties;
-                changeEvent = require('BootStrapButton').changeSetProperties;
-                clickEvent = require('BootStrapButton').clickSetProperties;
-                keyDownEvent = require('BootStrapButton').keyDownSetProperties;
-                keyUpEvent = require('BootStrapButton').keyUpSetProperties;
-                beforeSetPrperies = require('BootStrapButton').beforeSetPrperies;
-                break;
-            case "buttonGroup":
-                inputEvent = require('BootStrapButtonGroup').inputSetProperties;
-                blurEvent = require('BootStrapButtonGroup').blurSetProperties;
-                changeEvent = require('BootStrapButtonGroup').changeSetProperties;
-                clickEvent = require('BootStrapButtonGroup').clickSetProperties;
-                keyDownEvent = require('BootStrapButtonGroup').keyDownSetProperties;
-                keyUpEvent = require('BootStrapButtonGroup').keyUpSetProperties;
-                beforeSetPrperies = require('BootStrapButtonGroup').beforeSetPrperies;
-                break;
-            case "p":
-                inputEvent = require('BootStrapP').inputSetProperties;
-                blurEvent = require('BootStrapP').blurSetProperties;
-                changeEvent = require('BootStrapP').changeSetProperties;
-                clickEvent = require('BootStrapP').clickSetProperties;
-                keyDownEvent = require('BootStrapP').keyDownSetProperties;
-                keyUpEvent = require('BootStrapP').keyUpSetProperties;
-                beforeSetPrperies = require('BootStrapP').beforeSetPrperies;
-                break;
-            default:
-                break;
-        }
-        
+        let componentToUpper = type.charAt(0).toUpperCase()+type.slice(1);
+        inputEvent = require('BootStrap'+componentToUpper).inputSetProperties;
+        blurEvent = require('BootStrap'+componentToUpper).blurSetProperties;
+        changeEvent = require('BootStrap'+componentToUpper).changeSetProperties;
+        clickEvent = require('BootStrap'+componentToUpper).clickSetProperties;
+        keyDownEvent = require('BootStrap'+componentToUpper).keyDownSetProperties;
+        keyUpEvent = require('BootStrap'+componentToUpper).keyUpSetProperties;
+        beforeSetPrperies =require('BootStrap'+componentToUpper).beforeSetPrperies;
+       
+    
         //获取组件的属性
         let data = properies.data;
         let purview = properies.purview;
+        let dataShowType = properies.dataShowType;
 
         //参数配置 显示之前的处理
         beforeSetPrperies && beforeSetPrperies();
@@ -537,16 +456,21 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         for(let key in data){
             //设置编辑属性权限
             require('feature').setEditPropertiesPurview(key,purview[key]);
-            switch(key){
-                case "authority":case "labelPosition"://checkbox
-                    $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
-                    break;
-                case "hideLabel":case "inline":case "multiple":case "automatic":case "checked":case "useRemote"://开关
-                    $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
-                    break;
-                default:
-                    $('#ortum_property_'+key).val(data[key])
-                    break
+
+            //有定义数据编辑类型
+            if(dataShowType && dataShowType[key]){
+                switch(dataShowType[key]){
+                    case "switch":
+                        $('input[name=ortum_property_'+ key +']').prop("checked",data[key]); 
+                        break;
+                    case "checkbox":
+                        $('input[name=ortum_property_'+ key +'][value='+data[key]+']').prop("checked",true); 
+                        break;
+                    default:
+                        break;
+                }
+            }else{
+                $('#ortum_property_'+key).val(data[key])
             }
         }
         //绑定正在编辑的对象到global对象下
@@ -625,6 +549,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
     }
 
     return {
+        tableTdAddTip,
         tableActAddLine,
         tableActDelLine,
         tableTheadAddLine,

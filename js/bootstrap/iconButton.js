@@ -21,6 +21,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             title:3,
             iconName:3,
         },
+        dataShowType:{
+            authority:"checkbox",
+        },
     }
 
     /**
@@ -34,6 +37,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.customName 自定义name
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
+     * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      */
     let IconButtonDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -41,6 +45,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
+        let ortumChildren = null;
 
         let createJson = false;
         let HasProperties = false;
@@ -54,6 +59,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.iconName !== null && moreProps.iconName !== undefined && (iconName = moreProps.iconName);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName = moreProps.customName);
+            moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
         }
 
@@ -99,6 +105,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 "bindComponentName":ortum_component_properties.data.bindComponentName,
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
+                "ortumChildren":ortumChildren,
             }
         }else{
             return outerDom

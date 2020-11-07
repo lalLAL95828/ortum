@@ -48,12 +48,8 @@
 
     <div style="text-align: center" class="p-2">
         <button type="button" class="btn btn-outline-primary" id="ortum_preview_submit">提交</button>
-     </div>
+    </div>
 
-    <!--<script>
-        let prev = window.opener.require("feature").getFormContentHtml("id",{id:"ortum_field",win:window.opener.document})
-        $("#ortum_preview_ModalLabel_body").html(prev)
-    </script>-->
 
     <script>
         let getDomContextFormData = function(domId){
@@ -123,6 +119,8 @@
 
     <script>
         let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document})
+        console.log(prevArrJSON)
+        debugger
 
         let prevDom = $('<div id="ortum_field_preview"></div>');
 
@@ -149,7 +147,10 @@
                 }
                 switch (way) {
                     case "replace":
-                        if(parentDom.find("ortum_children").length){
+                        console.log(domItem);
+                        if(parentDom.find("ortum_children").length && /^[\d]+$/.test(domItem.ortumChildren)){
+                            parentDom.find("ortum_children[data-order="+ domItem.ortumChildren +"]").eq(0).replaceWith(htmlDom);
+                        }else if(parentDom.find("ortum_children").length){
                             parentDom.find("ortum_children").eq(0).replaceWith(htmlDom);
                         };
                         break;

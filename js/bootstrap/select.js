@@ -54,6 +54,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             serverUrl:3,
             title:3,
         },
+        dataShowType:{
+            hideLabel:"switch",
+            useRemote:"switch",
+            authority:"checkbox",
+            labelPosition:"checkbox",
+        },
     }
 
     /**
@@ -103,15 +109,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
+     * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
+     * @param {*} moreProps.customName 自定义name
      */
     let SelectDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
+        let customName = '';//自定义name
 
         let createJson = false;
         let HasProperties = false;
+        let ortumChildren = null;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
@@ -119,6 +130,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
+            moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
+            moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
         }
 
         let outerDom=$(
@@ -138,6 +151,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定nameselect
+        customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('select'));
         
         //控制标签
@@ -219,6 +233,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "script":scriptDom && scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
+                "ortumChildren":ortumChildren,
             }
         }else{
             return outerDom

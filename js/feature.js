@@ -394,44 +394,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 JsonPropsRenderDom(domItem.children,appendDom,"replace")
             };
         }
-
-        /*switch (way) {
-            case 'append':
-                for(let item of prevArrJSON){
-                    let frame = item.frame;
-                    let componentKey = item.componentKey;
-                    let component_properties = require("assist").jsonParase(item.componentProperties);
-
-                    let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
-                        customProps:component_properties,
-                    })
-                    $(parentDom).append(appendDom)
-                    if(item.children && item.children.length){
-                        JsonPropsRenderDom(item.children,appendDom,"replace")
-                    }
-                }
-                break;
-            case "replace":
-                for(let item of prevArrJSON){
-                    let frame = item.frame;
-                    let componentKey = item.componentKey;
-                    let component_properties = require("assist").jsonParase(item.componentProperties);
-
-                    let appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
-                        customProps:component_properties,
-                    })
-                    $(parentDom).find("*[data-children=true]").eq(0).replaceWith(appendDom)
-
-                    if(item.children && item.children.length){
-                        JsonPropsRenderDom(item.children,appendDom,"replace")
-                        for(let item2 of item.children){
-                            JsonPropsRenderDom(item2,)
-                        }
-                    }
-                }
-                break;
-        }*/
-
     };
     /**
      * 功能：从json的html渲染成 dom
@@ -488,7 +450,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * @param {*} id 
      * @param {*} win 
      */
-    let getFormContentHtml =function(mode="id",datas={"win":window}){
+    /* let getFormContentHtml =function(mode="id",datas={"win":window}){
         !datas.win && (datas.win = window.document);
         switch (mode) {
             case "id":
@@ -564,7 +526,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             default:
                 break;
         }
-    }
+    } */
     /**
      * 功能: 获取win下表单信息,生成对应的dom数组
      * @param {*} id
@@ -580,6 +542,10 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         let HasProperties = false;//保存Properties
         if(datas && datas.HasProperties){
             HasProperties = true;
+        }
+        let ortumChildren = null;
+        if(datas && /^[\d]+$/.test(datas.ortumChildren)){
+            ortumChildren = datas.ortumChildren;
         }
 
         switch (mode) {
@@ -604,6 +570,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                         bindDropEvent:false,
                         createWaitSpan:false,
                         HasProperties:HasProperties,
+                        ortumChildren:ortumChildren,
                     });
                     parentsJson.push(Object.assign({
                         "frame":frame,
@@ -617,11 +584,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     };
                     let parentsJsonLength = parentsJson.length;
                     $(item).find(".ortum_item").each(function(index2,html2){
+                        let ortumChildrenOrder = $(html2).parent().attr("data-order");
+                        !/^[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
                         getFormContentJson(mode="dom",{
                             "dom":$(html2),
                             "win":datas.win,
                             "parent":parentsJson[parentsJsonLength-1],
                             "HasProperties":HasProperties,
+                            "ortumChildren":ortumChildrenOrder,
                         });
                     })
                 })
@@ -645,6 +615,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     bindDropEvent:false,
                     createWaitSpan:false,
                     HasProperties:HasProperties,
+                    ortumChildren:ortumChildren,
                 });
 
                 datas.parent.children.push(Object.assign({
@@ -653,27 +624,16 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     "componentKey":componentKey,
                 },comDom));
 
-                /* datas.parent.children.push({
-                    "frame":frame,
-                    "componentKey":componentKey,
-                    "name":comDom.name,
-                    "html":comDom.html,
-                    "attrs":comDom.attrs,
-                    "css":comDom.css,
-                    "script":comDom.script,
-                    "children":[],
-                    "title":comDom.title,
-                    "bindComponentName":comDom.bindComponentName,
-                    "componentProperties":comDom.componentProperties,
-                    "ortum_table_add_context":comDom.ortum_table_add_context,
-                }); */
                 let length = datas.parent.children.length;
                 $(datas.dom).find(".ortum_item").each(function(index2,html2){
+                    let ortumChildrenOrder = $(html2).parent().attr("data-order");
+                    !/^[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
                     getFormContentJson(mode="dom",{
                         "dom":$(html2),
                         "win":datas.win,
                         "parent":datas.parent.children[length-1],
                         "HasProperties":HasProperties,
+                        "ortumChildren":ortumChildrenOrder,
                     })
                 })
                 break;
@@ -693,7 +653,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      * 功能：预览文件内容,Blob方式
      * @param {*} id 
      */
-    let previewTableBlobContent = function(id){
+    /* let previewTableBlobContent = function(id){
         let urlOrigin=window.location.origin;
         let outInner = `
         <!DOCTYPE HTML>
@@ -738,7 +698,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         var winSon= window.open(urldemo,"preview");
         
         return false;
-    }
+    } */
 
     /**
      * 功能: 找到表单中有prop的组件信息
@@ -830,8 +790,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
 
         getFormComponentsProps,
 
-        getFormContentHtml,//预览
-        previewTableBlobContent,
+        // getFormContentHtml,//预览
+        // previewTableBlobContent,
         previewTableHtmlContent,
 
         JsonPropsRenderDom,//props生成dom

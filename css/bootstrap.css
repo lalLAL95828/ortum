@@ -170,27 +170,6 @@ input::-webkit-calendar-picker-indicator{
 .ortum_bootstrap_td{
     border:1px solid gray;
 }
-.icon-jiahao{
-    /*position: absolute;*/
-    /*right: -1.6rem;*/
-    /*top:0;*/
-    color: #666666;
-    font-size: 1.5rem!important;
-    cursor: pointer;
-    display: none;
-}
-.ortum_bootstrap_tbody tr:nth-of-type(1) .icon-jiahao{
-    display: inline;
-}
-
-.icon-shanchu{
-    color: #666666;
-    font-size: 1.5rem!important;
-    cursor: pointer;
-}
-.ortum_bootstrap_tbody tr:nth-of-type(1) .icon-shanchu{
-    display: none;
-}
 .selectedShadow #ortum_shadow .ortum_shadow_bootstrapTable_settings{
     position: absolute;
     bottom: 0px;
