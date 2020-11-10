@@ -12,6 +12,11 @@
 /* grid柵格 */
 .ortum_boot_col_waitInsert{
     background-color:#e6e6e6;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height:100%;
+    color:rgba(166,166,166,0.8)
 }
 .ortum_bootstrap_grid{
     margin: 0!important;
@@ -109,6 +114,11 @@ option:disabled{
     align-items: center;
 }
 /* label */
+.ortum_bootstrap_span{
+    color:rgb(255,0,0);
+    font-size:14px;
+    font-weight: 700;
+}
 .ortum_bootstrap_label{
     height: calc(1.5em + .75rem + 2px);
 }
@@ -206,8 +216,9 @@ input::-webkit-calendar-picker-indicator{
 .ortum_bootstrap_buttonGroup_drop_div{
     background-color: #dddddd;
 }
-/* p */
-.ortum_bootstrap_pDom{
+/* h */
+.ortum_bootstrap_hDom{
+    line-height: 1.5rem;
     text-align: center;
     padding: 5px 0;
     font-size: 17px;

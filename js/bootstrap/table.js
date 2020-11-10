@@ -8,13 +8,21 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             authority:"edit",//权限
             cssClass:"ortum_bootstrap_tableDom",//table 的 css类
             theadCssClass:'ortum_bootstrap_thead',
+
+
+            tfootCssClass:"ortum_bootstrap_tfoot",
+            tfootTrCssClass:"",
+            tfootTdCssClass:"ortum_bootstrap_td",
+
             tbodyCssClass:'ortum_bootstrap_tbody',
             theadTrCssClass:'',
+
             tbodyTrCssClass:"",
             thCssClass:"ortum_bootstrap_th",
             tdCssClass:"ortum_bootstrap_td",
             showThead:true,
             showTbody:true,
+            showTfoot:true,
 
             onBefore:"",
             onAfter:"",
@@ -102,9 +110,43 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                     "headRowspan":1,
                 },
             ],
+            tfootColumnsArr:[
+                {
+                    "tfootColspan":4,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"hDom",
+                },
+                {
+                    "tfootColspan":1,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "tfootColspan":1,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "tfootColspan":3,
+                    "tfootRowspan":1,
+                },
+                {
+                    "tfootColspan":1,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "tfootColspan":2,
+                    "tfootRowspan":1,
+                },
+            ],
         },
-        inputChange:["id","name","title","verification","cssClass","theadCssClass","tbodyCssClass","theadTrCssClass","tbodyTrCssClass","thCssClass","tdCssClass"],//input事件修改值
-        clickChange:["authority","showThead","showTbody"],
+        inputChange:["id","name","title","tfootCssClass","tfootTrCssClass","tfootTdCssClass","verification","cssClass","theadCssClass","tbodyCssClass","theadTrCssClass","tbodyTrCssClass","thCssClass","tdCssClass"],//input事件修改值
+        clickChange:["authority","showThead","showTbody","showTfoot"],
         purview:{//属性编辑权限
             id:3,//id
             name:2,//name
@@ -114,6 +156,10 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             authority:3,//权限
             cssClass:3,//table 的 css类
 
+            tfootCssClass:3,
+            tfootTrCssClass:3,
+            tfootTdCssClass:3,
+
             theadCssClass:3,
             tbodyCssClass:3,
             tbodyTrCssClass:3,
@@ -122,10 +168,12 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             tdCssClass:3,
             showThead:3,
             showTbody:3,
+            showTfoot:3
         },
         dataShowType:{
             showThead:'switch',
             showTbody:'switch',
+            showTfoot:'switch',
             authority:"checkbox",
         },
     }
@@ -232,8 +280,28 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             });
         $(theadDom).append(theadTrObj);
 
+        //【tfoot】
+        let tfootDom = $(`
+            <tfoot
+                ${ortum_component_properties.data.tfootCssClass ? "class="+ortum_component_properties.data.tfootCssClass : '' } 
+            ></tfoot>
+        `);
+        if(!ortum_component_properties.data.showTfoot){
+            tfootDom.addClass("ortum_display_NONE");
+        }
+        let tfootTdMoreProps = {
+            trCssClass:ortum_component_properties.data.tfootTrCssClass,
+            tdCssClass:ortum_component_properties.data.tfootTdCssClass,
+            tableName:ortum_component_properties.data.name,
+        };
+        Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tfootTdMoreProps,moreProps);
+        let tfootTrObj =BootStrapAsider.tableTfootAddLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
+        $(tfootDom).append(tfootTrObj);
+
+
         $(tableDom).append(theadDom);
         $(tableDom).append(tbodyDom);
+        $(tableDom).append(tfootDom);
 
         outerDom.append(tableDom);
 
@@ -264,7 +332,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                         arr.forEach(function(item){
                             let itemDom = item;
                             if(item.childrenType == "choose"){
-                               
                                 itemDom = item.chooseFun(null,trOrder+1);
                             };
                             let nextHtml = $(itemDom.html);
@@ -278,7 +345,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                             if(itemDom.children && itemDom.children.length){
                                 ortum_BootstraptableDom_addLine(itemDom.children,nextHtml);
                             };
-                            $(trDom).find("ortum_children").eq(0).replaceWith(nextHtml); 
+                            $(trDom).find("ortum_children[data-order="+ itemDom.ortumChildren +"]").eq(0).replaceWith(nextHtml); 
                         });
                     };
                     ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
@@ -307,6 +374,30 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                     
                 });
             `;
+
+
+            //创建tfoot的td的json信息
+            ortum_component_properties.data.tfootColumnsArr.forEach(function(item,index){
+                //创建组件的属性
+                let createDomProp = Object.assign({
+                    HasProperties:HasProperties,
+                    customName:ortum_component_properties.data.name+"_"+"tfoot" + "_" + index,//1代表第一行
+                },moreProps);
+
+                Object.assign(createDomProp,item);
+                createDomProp.customProps = item.customProps;
+
+                let comDom;
+                if(item.componentKey && item.frame){
+                    createDomProp.ortumChildren="tfoot"+index;//插入第几个ortum_children
+                    comDom =require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
+                    children.push(Object.assign({
+                        "frame":item.frame,
+                        "componentKey":item.componentKey,
+                        "children":[],
+                    },comDom));
+                }
+            });
 
             //创建td中组件的json信息
             ortum_component_properties.data.tableColumnsArr.forEach(function(item,index){
@@ -431,33 +522,39 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                 //TODO 验证
                 console.log(val)
                 break;
+            case "tfootCssClass":
+                $(globalComponent).find("tfoot").attr('class',val);
+                break;
+            case "tfootTrCssClass":
+                $(globalComponent).find("tfoot").eq(0).find("tr").attr('class',val);
+                break;
+            case "tfootTdCssClass":
+                $(globalComponent).find("tfoot").eq(0).find("td").attr('class',val);
+                break;
             case "thCssClass":
-                $(globalComponent).find("th").attr('class',val)
+                $(globalComponent).find("th").attr('class',val);
                 break;
             case "tdCssClass":
-                $(globalComponent).find("td").attr('class',val)
+                $(globalComponent).find("tbody").eq(0).find("td").attr('class',val);
                 break;
             case "theadTrCssClass":
-                $(globalComponent).find('thead').eq(0).find("tr").attr('class',val)
+                $(globalComponent).find('thead').eq(0).find("tr").attr('class',val);
                 break;
             case "tbodyTrCssClass":
-                $(globalComponent).find('tbody').eq(0).find("tr").attr('class',val)
+                $(globalComponent).find('tbody').eq(0).find("tr").attr('class',val);
                 break;
             case "tbodyCssClass":
-                $(globalComponent).find('tbody').eq(0).attr('class',val)
+                $(globalComponent).find('tbody').eq(0).attr('class',val);
                 break;
             case "theadCssClass":
-                $(globalComponent).find('tbody').eq(0).attr('class',val)
+                $(globalComponent).find('tbody').eq(0).attr('class',val);
                 break;
             case "cssClass":
-                $(globalComponent).find('table').eq(0).attr('class',val)
-                break;
-            case "labelName":
-                $(globalComponent).find('label').eq(0).text(val)
+                $(globalComponent).find('table').eq(0).attr('class',val);
                 break;
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find('table').eq(0).attr(property,val)
+                    $(globalComponent).find('table').eq(0).attr(property,val);
                 }
                 break;
         }
@@ -489,7 +586,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
 
         //更新到dom属性上
         switch(property){
-            case "showTbody":case "showThead":
+            case "showTbody":case "showThead":case "showTfoot":
                 evenProperties.data[property] = checked;
                 break;
             default:
@@ -551,12 +648,16 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                 break;
 
             case "showTbody":
-                checked && $(globalComponent).find("tbody").show();
-                !checked && $(globalComponent).find("tbody").hide();
+                checked && $(globalComponent).find("tbody").removeClass("ortum_display_NONE");
+                !checked && $(globalComponent).find("tbody").addClass("ortum_display_NONE");
+                break;
+            case "showTfoot":
+                checked && $(globalComponent).find("tfoot").removeClass("ortum_display_NONE");
+                !checked && $(globalComponent).find("tfoot").addClass("ortum_display_NONE");
                 break;
             case "showThead":
-                checked && $(globalComponent).find("thead").show();
-                !checked && $(globalComponent).find("thead").hide();
+                checked && $(globalComponent).find("thead").removeClass("ortum_display_NONE");
+                !checked && $(globalComponent).find("thead").addClass("ortum_display_NONE");
                 break;
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){

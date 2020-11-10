@@ -381,7 +381,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     $(parentDom).append(appendDom);
                     break;
                 case "replace":
-                    $(parentDom).find("*[data-children=true]").eq(0).replaceWith(appendDom);
+                    if(parentDom.find("*[data-children]").length && /[\d]+$/.test(domItem.ortumChildren)){
+                        parentDom.find("*[data-children="+ domItem.ortumChildren +"]").eq(0).html(appendDom);
+                    }else if(parentDom.find("*[data-children]").length){
+                        parentDom.find("*[data-children]").eq(0).html(appendDom);
+                    };
                     break;
             };
 
@@ -422,7 +426,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 parentDom.append(htmlDom);
             };
             if(way=="replace" && domItem.html){
-                $(parentDom).find("ortum_children").eq(0).replaceWith(htmlDom);
+                if(parentDom.find("ortum_children").length && /[\d]+$/.test(domItem.ortumChildren)){
+                    parentDom.find("ortum_children[data-order="+ domItem.ortumChildren +"]").eq(0).replaceWith(htmlDom);
+                }else if(parentDom.find("ortum_children").length){
+                    parentDom.find("ortum_children").eq(0).replaceWith(htmlDom);
+                };
             };
 
             domItem.css && cssDomSet.push(domItem.css);
@@ -544,7 +552,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             HasProperties = true;
         }
         let ortumChildren = null;
-        if(datas && /^[\d]+$/.test(datas.ortumChildren)){
+        if(datas && /[\d]+$/.test(datas.ortumChildren)){
             ortumChildren = datas.ortumChildren;
         }
 
@@ -584,8 +592,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                     };
                     let parentsJsonLength = parentsJson.length;
                     $(item).find(".ortum_item").each(function(index2,html2){
-                        let ortumChildrenOrder = $(html2).parent().attr("data-order");
-                        !/^[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
+                        let ortumChildrenOrder = $(html2).parent().attr("data-children");
+                        !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
                         getFormContentJson(mode="dom",{
                             "dom":$(html2),
                             "win":datas.win,
@@ -627,7 +635,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 let length = datas.parent.children.length;
                 $(datas.dom).find(".ortum_item").each(function(index2,html2){
                     let ortumChildrenOrder = $(html2).parent().attr("data-order");
-                    !/^[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
+                    !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
                     getFormContentJson(mode="dom",{
                         "dom":$(html2),
                         "win":datas.win,
@@ -647,6 +655,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      */
     let previewTableHtmlContent = function(id){
         window.open("preview.html","preview")
+        // window.open("styleHtml.html","preview")
         return false;
     }
     /**
@@ -720,8 +729,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                             text:$(item).prop(propName),
                             title: parentProp.data.title|| parentProp.data.labelName,
                             type:propName,
-                        })
-                    }
+                        });
+                    };
                 })
             }
         }else{

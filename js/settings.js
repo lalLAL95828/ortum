@@ -71,9 +71,9 @@ define(['assist'],function(Assist){
         },
     },
     {
-        key:"pDom",
-        name:"p标签",
-        createFn:"createPDom",
+        key:"hDom",
+        name:"标题标签",
+        createFn:"createHDom",
         children:{
             "Bootstrap":null,
         },

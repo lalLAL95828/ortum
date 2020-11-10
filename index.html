@@ -175,8 +175,20 @@
                                             </div>
                                             <div class="form-group">
                                                 <div class="custom-control custom-switch">
+                                                    <input type="checkbox" name="ortum_property_showTfoot" class="custom-control-input" id="ortum_property_showTfoot">
+                                                    <label class="custom-control-label" for="ortum_property_showTfoot">显示tfoot</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch">
                                                     <input type="checkbox" name="ortum_property_showTbody" class="custom-control-input" id="ortum_property_showTbody">
                                                     <label class="custom-control-label" for="ortum_property_showTbody">显示tbody</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" name="ortum_property_showSpan" class="custom-control-input" id="ortum_property_showSpan">
+                                                    <label class="custom-control-label" for="ortum_property_showSpan">显示tip</label>
                                                 </div>
                                             </div>
                                             
@@ -209,7 +221,17 @@
                                                 <select class="form-control form-control-sm" id="ortum_property_bindComponentName" name="ortum_property_bindComponentName">
                                                 </select>
                                             </div>
-
+                                            <div class="form-group">
+                                                <label for="ortum_property_titleType">title标签</label>
+                                                <select class="form-control form-control-sm" id="ortum_property_titleType" name="ortum_property_titleType">
+                                                    <option value="h1">h1</option>
+                                                    <option value="h2">h2</option>
+                                                    <option value="h3">h3</option>
+                                                    <option value="h4">h4</option>
+                                                    <option value="h5">h5</option>
+                                                    <option value="h6">h6</option>
+                                                </select>
+                                            </div>
                                             <!-- <div class="form-group">
                                                 <label for="ortum_property_step">选项</label>
                                                 <div class="ortum_radio_newValue">
@@ -285,27 +307,38 @@
                                                 <input type="text" class="form-control form-control-sm" name="ortum_property_theadCssClass" id="ortum_property_theadCssClass">
                                             </div>
                                             <div class="form-group">
-                                                <label for="ortum_property_tbodyCssClass">tbody类</label>
-                                                <input type="text" class="form-control form-control-sm" name="ortum_property_tbodyCssClass" id="ortum_property_tbodyCssClass">
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="ortum_property_theadTrCssClass">thead的tr类</label>
                                                 <input type="text" class="form-control form-control-sm" name="ortum_property_theadTrCssClass" id="ortum_property_theadTrCssClass">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="ortum_property_tbodyTrCssClass">tbody的tr类</label>
-                                                <input type="text" class="form-control form-control-sm" name="ortum_property_tbodyTrCssClass" id="ortum_property_tbodyTrCssClass">
                                             </div>
                                             <div class="form-group">
                                                 <label for="ortum_property_thCssClass">th类</label>
                                                 <input type="text" class="form-control form-control-sm" name="ortum_property_thCssClass" id="ortum_property_thCssClass">
                                             </div>
                                             <div class="form-group">
+                                                <label for="ortum_property_tbodyCssClass">tbody类</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_tbodyCssClass" id="ortum_property_tbodyCssClass">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_tbodyTrCssClass">tbody的tr类</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_tbodyTrCssClass" id="ortum_property_tbodyTrCssClass">
+                                            </div>
+
+                                            <div class="form-group">
                                                 <label for="ortum_property_tdCssClass">td类</label>
                                                 <input type="text" class="form-control form-control-sm" name="ortum_property_tdCssClass" id="ortum_property_tdCssClass">
                                             </div>
-
-
+                                            <div class="form-group">
+                                                <label for="ortum_property_tfootCssClass">tfoot类</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_tfootCssClass" id="ortum_property_tfootCssClass">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_tfootTrCssClass">tfoot的tr类</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_tfootTrCssClass" id="ortum_property_tfootTrCssClass">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ortum_property_tfootTdCssClass">tfoot的td类</label>
+                                                <input type="text" class="form-control form-control-sm" name="ortum_property_tfootTdCssClass" id="ortum_property_tfootTdCssClass">
+                                            </div>
 
                                             <div class="form-group">
                                                 <label for="ortum_property_iconName">icon名称</label>

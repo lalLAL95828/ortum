@@ -5,31 +5,28 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             name:'',//name
             verification:"",//校验
             authority:"3",//权限
-            cssClass:"ortum_bootstrap_label_cssClass",
-            labelCSS:"ortum_bootstrap_label_labelCSS",//css类
-            labelName:"名称",//标签名称
+            cssClass:"ortum_bootstrap_hDom",
             title:"",
-            showSpan:true,//显示tip
             bindComponentName:"",//关联组件，label的权限由绑定组件一致
+            defaultVal:"绑定",
+            titleType:"h2",
         },
-        inputChange:["id","name","verification","labelCSS","labelName","cssClass","title"],//input事件修改值
-        clickChange:["authority","showSpan"],
-        changeChange:["bindComponentName"],
+        inputChange:["id","name","verification","cssClass","title","defaultVal"],//input事件修改值
+        clickChange:["authority"],
+        changeChange:[],
         purview:{//属性编辑权限
             id:3,//id
             name:3,
             cssClass:3,
             verification:3,
             authority:3,//权限
-            labelCSS:3,//css类
-            labelName:3,//标签名称
             title:3,
             bindComponentName:3,
-            showSpan:3,
+            defaultVal:3,
+            titleType:3,
         },
         dataShowType:{
             authority:"checkbox",
-            showSpan:"switch",
         },
     }
 
@@ -46,7 +43,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
      */
-    let LabelDom = function(parentDom,moreProps=null){
+    let HDom = function(parentDom,moreProps=null){
         let customProps = null;
         let generateDom =  null;
         let clickChangeAttrs = true;
@@ -63,15 +60,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
-            moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
-            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
+            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
+            moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
         }
 
         let outerDom=$(
             `
-            <div class="ortum_item ortum_bootstrap_label" data-frame="Bootstrap" 
-            data-componentKey="labelDom">
+            <div class="ortum_item ortum_bootstrap_h" data-frame="Bootstrap" 
+            data-componentKey="hDom">
                
             </div>
             `
@@ -84,20 +81,19 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('label'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('h'));
 
-        $(outerDom).append($(`
-            <div class="${ortum_component_properties.data.cssClass}">
-                <span class="ortum_bootstrap_span" ${!ortum_component_properties.data.showSpan ? 'style="display: none"': '' } >*</span>
-                <label class="${ortum_component_properties.data.labelCSS}" 
-                ${ortum_component_properties.data.name ? "name="+ortum_component_properties.data.name : '' }
-                ${ortum_component_properties.data.bindComponentName ? "ortum_bindcomponentname="+ortum_component_properties.data.bindComponentName : '' } 
-                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }>${ortum_component_properties.data.labelName}</label>
-            </div>
+
+        $(outerDom).append($(`   
+            <${ortum_component_properties.data.titleType} class="${ortum_component_properties.data.cssClass}" 
+                ${ortum_component_properties.data.bindComponentName ? "ortum_bindcomponentname="+ortum_component_properties.data.bindComponentName : '' } >
+                ${ortum_component_properties.data.defaultVal}
+            </${ortum_component_properties.data.titleType}>
         `))
 
         //dom绑定property
-        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','label']);
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','h']);
+
         if(parentDom){
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
@@ -138,20 +134,16 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return false;
         }
         switch(property){
+            case "defaultVal":
+                $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).text(val)
+                break;
             case "verification":
                 //TODO 验证
                 console.log(val)
                 break;
-            case "labelName":
-                $(globalComponent).find('label').eq(0).text(val)
-                break;
-            case "labelCSS":
-                // $(globalComponent).find('label').eq(0).addClass(val)
-                $(globalComponent).find('label').eq(0).attr('class',val)
-                break;
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find('label').eq(0).attr(property,val)
+                    $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -166,7 +158,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     let blurSetProperties = function(property,that,e){
         let val=$(that).val();
         let checked=$(that).prop('checked');
-
 
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
@@ -183,9 +174,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         //更新到dom属性上
         switch(property){
-            case "showSpan":
-                evenProperties.data[property] = checked;
-                break;
             default:
                 evenProperties.data[property] = val;
                 break;
@@ -200,7 +188,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} e
      */
     let clickSetProperties = function(property,that,e){
-        let val=$(that).val();
+        let val= $(that).val();
         let checked=$(that).prop('checked');
 
 
@@ -218,17 +206,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //更新到dom属性上
         // evenProperties.data[property] = val;
         switch(property){
-            case "showSpan":
-                checked && $(globalComponent).find('.ortum_bootstrap_span').eq(0).show();
-                !checked && $(globalComponent).find('.ortum_bootstrap_span').eq(0).hide();
-                break;
             case "authority":
                 //TODO 权限
                 console.log(val)
                 break;
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('label').eq(0).attr(property,val)
+                    $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -258,12 +242,21 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         switch(property){
             case "bindComponentName":
                 evenProperties.data[property] = val;
-                val && $(globalComponent).find('label').eq(0).attr("ortum_bindcomponentname",val);
-                !val && $(globalComponent).find('label').eq(0).removeAttr("ortum_bindcomponentname");
+                val && $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).attr("ortum_bindcomponentname",val);
+                !val && $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).removeAttr("ortum_bindcomponentname");
+                break
+            case "titleType":
+                evenProperties.data[property] = val;
+                $(globalComponent).html($(`   
+                    <${val} class="${evenProperties.data.cssClass}" 
+                        ${evenProperties.data.bindComponentName ? "ortum_bindcomponentname="+evenProperties.data.bindComponentName : '' } >
+                        ${evenProperties.data.defaultVal}
+                    </${val}>
+                `))
                 break
             default:
                 if(evenProperties.changeChange.indexOf(property) != -1){
-                    $(globalComponent).find('label').eq(0).attr(property,val)
+                    $(globalComponent).changeChange.eq(0).attr(property,val)
                 }
                 break;
         }
@@ -284,11 +277,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             })
         }else{
             $("#ortum_property_bindComponentName").append(`<option value="" disabled>暂无组件可选</option>`)
-        }
+        };
     }
 
     return {
-        LabelDom,
+        HDom,
 
         inputSetProperties,
         blurSetProperties,

@@ -170,7 +170,7 @@ define(['require'],function(require){
         if(nextOrtumItem.length){
             //bootstrap的栅格col
             if($(nextOrtumItem).hasClass('ortum_boot_col_default')){
-                $(nextOrtumItem).addClass('ortum_boot_col_waitInsert')
+                // $(nextOrtumItem).addClass('ortum_boot_col_waitInsert')
                 $(nextOrtumItem).append(require('BootStrapAsider').tipAddComponentFn(false))//增加提示语
             };
             //bootstrap的td
@@ -205,25 +205,6 @@ define(['require'],function(require){
 
         let editOrtumItem = $(this).parents('.ortum_item').eq(0);
         debugger
-
-        /* let delOrtumItem = $(this).parents('.ortum_item').eq(0)
-        let nextOrtumItem = delOrtumItem.parent()
-        
-        require('global').ortum_edit_component = null;//清空正在编辑的组件
-        
-
-        //还原编辑组件属性的表单状态
-        resetSetPropertyCom()
-
-        delOrtumItem.remove();
-        //删除后的下一步处理方式
-        if(nextOrtumItem){
-            //bootstrap的栅格col
-            if($(nextOrtumItem).hasClass('ortum_boot_col_default')){
-                $(nextOrtumItem).addClass('ortum_boot_col_waitInsert')
-                $(nextOrtumItem).append(require('BootStrapAsider').tipAddComponentFn(false))//增加提示语
-            };
-        } */
         return false;
     }
 

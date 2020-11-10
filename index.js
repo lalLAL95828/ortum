@@ -150,8 +150,6 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 return;
             }
             let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true});
-            console.log(ortumJson);
-            // debugger;
 
             let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
 

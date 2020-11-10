@@ -8,11 +8,11 @@ define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio",
 "BootStrapLabel",
 "BootStrapDate",
 "BootStrapTable", "BootStrapButton","BootStrapButtonGroup",
-"BootStrapIconButton","BootStrapP",
+"BootStrapIconButton","BootStrapH",
 ],
 function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
     BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel,BootStrapDate,BootStrapTable,BootStrapButton,BootStrapButtonGroup,
-    BootStrapIconButton,BootStrapP){
+    BootStrapIconButton,BootStrapH){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -213,13 +213,13 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     }
 
     /**
-     * 创建p标签
+     * 创建标题标签
      * @param {*} type
      */
-    let createPDom = function(parentDom,type,moreProps=null){
+    let createHDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapP.PDom(parentDom,moreProps)
+                return BootStrapH.HDom(parentDom,moreProps)
                 break;
             default:
         }
@@ -241,7 +241,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     createButtonDom.ortum_Bootstrap = true;
     createButtonGroupDom.ortum_Bootstrap = true;
     createIconButtonDom.ortum_Bootstrap = true;
-    createPDom.ortum_Bootstrap = true;
+    createHDom.ortum_Bootstrap = true;
     return {
         createGridDom,
         createInputDom,
@@ -258,6 +258,6 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
         createButtonDom,
         createButtonGroupDom,
         createIconButtonDom,
-        createPDom,
+        createHDom,
     }
 })
