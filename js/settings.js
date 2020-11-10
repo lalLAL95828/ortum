@@ -8,6 +8,7 @@ define(['assist'],function(Assist){
     let menuListsData = [
     {
         key:"inputDom",
+        sort:"form",
         name:"单行文本",
         createFn:"createInputDom",
         children:{
@@ -16,6 +17,7 @@ define(['assist'],function(Assist){
     },
     {
         key:"rangeInputDom",
+        sort:"form",
         name:"进度选择器",
         createFn:"createRangeInputDom",
         children:{
@@ -25,6 +27,8 @@ define(['assist'],function(Assist){
     {
         key:"textareaDom",
         name:"多行文本",
+        sort:"form",
+        sort:"form",
         createFn:"createTextareaDom",
         children:{
             "Bootstrap":null,
@@ -33,6 +37,7 @@ define(['assist'],function(Assist){
     {
         key:"radioDom",
         name:"单选框",
+        sort:"form",
         createFn:"createRadioDom",
         children:{
             "Bootstrap":null,
@@ -41,6 +46,7 @@ define(['assist'],function(Assist){
     {
         key:"checkboxDom",
         name:"多选框",
+        sort:"form",
         createFn:"createCheckboxDom",
         children:{
             "Bootstrap":null,
@@ -56,6 +62,7 @@ define(['assist'],function(Assist){
     },*/
     {
         key:"dateDom",
+        sort:"form",
         name:"日期选择器",
         createFn:"createDateDom",
         children:{
@@ -64,6 +71,7 @@ define(['assist'],function(Assist){
     },
     {
         key:"buttonDom",
+        sort:"form",//表单组件
         name:"按钮",
         createFn:"createButtonDom",
         children:{
@@ -73,6 +81,7 @@ define(['assist'],function(Assist){
     {
         key:"hDom",
         name:"标题标签",
+        sort:"decorate",//修饰组件
         createFn:"createHDom",
         children:{
             "Bootstrap":null,
@@ -81,6 +90,7 @@ define(['assist'],function(Assist){
     {
         key:"iconButtonDom",
         name:"图标按钮",
+        sort:"form",//表单组件
         createFn:"createIconButtonDom",
         children:{
             "Bootstrap":null,
@@ -89,6 +99,7 @@ define(['assist'],function(Assist){
     {
         key:"buttonGroupDom",
         name:"按钮组",
+        sort:"layout",//布局组件
         createFn:"createButtonGroupDom",
         children:{
             "Bootstrap":null,
@@ -96,6 +107,7 @@ define(['assist'],function(Assist){
     },
     /*{
         key:"scoreDom",
+        sort:"form",
         name:"评分",
         createFn:"createScoreDom",
         children:{
@@ -104,6 +116,7 @@ define(['assist'],function(Assist){
     },*/
     /*{
         key:"colorDom",
+        sort:"form",
         name:"颜色选择器",
         createFn:"createColorDom",
         children:{
@@ -113,6 +126,7 @@ define(['assist'],function(Assist){
     {
         key:"selectDom",
         name:"下拉选择框",
+        sort:"form",
         createFn:"createSelectDom",
         children:{
             "Bootstrap":null,
@@ -121,6 +135,7 @@ define(['assist'],function(Assist){
     {
         key:"switchDom",
         name:"开关",
+        sort:"form",
         createFn:"createSwitchDom",
         children:{
             "Bootstrap":null,
@@ -129,6 +144,7 @@ define(['assist'],function(Assist){
     /*{
         key:"slideDom",
         name:"滑块",
+        sort:"form",
         createFn:"createSlideDom",
         children:{
             "Bootstrap":null,
@@ -137,6 +153,7 @@ define(['assist'],function(Assist){
     {
         key:"fileDom",
         name:"文件上传",
+        sort:"form",
         createFn:"createFileDom",
         children:{
             "Bootstrap":null,
@@ -145,6 +162,7 @@ define(['assist'],function(Assist){
     {
         key:"tableDom",
         name:"表格",
+        sort:"layout",
         createFn:"createTableDom",
         children:{
             "Bootstrap":null,
@@ -153,6 +171,7 @@ define(['assist'],function(Assist){
     {
         key:"gridDom",
         name:"栅格布局",
+        sort:"layout",
         createFn:"createGridDom",
         children:{
             "Bootstrap":null,
@@ -161,6 +180,7 @@ define(['assist'],function(Assist){
     {
         key:"labelDom",
         name:"标签",
+        sort:"decorate",//修饰组件
         createFn:"createLabelDom",
         children:{
             "Bootstrap":null,

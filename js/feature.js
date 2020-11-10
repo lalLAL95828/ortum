@@ -9,9 +9,13 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         let ortumLeft = $(ortumMain).find('#ortum_left').eq(0);//左边部分
         let ortumBody = $(ortumMain).find('#ortum_body').eq(0);//中间部分
 
-        let ortumComponents = document.createElement("div");
-        ortumComponents.id = 'ortum_components';
-        Global.ortumComponents = ortumComponents;
+        let formComponents = $(".ortum_components[data-type=form]").eq(0);
+        let layoutComponents = $(".ortum_components[data-type=layout]").eq(0);
+        let decorateComponents = $(".ortum_components[data-type=decorate]").eq(0);
+
+        // let ortumComponents = document.createElement("div");
+        // ortumComponents.className = 'ortum_components';
+        // Global.ortumComponents = ortumComponents;
         
         let ortumField = document.createElement("div");
         ortumField.id = 'ortum_field';
@@ -21,7 +25,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         bindFeatureToOrtumField(ortumField);
 
         //创建文档片段，一次传入多个doomappendChild
-        let fragment = document.createDocumentFragment()
+        let layoutFragment = document.createDocumentFragment();
+        let formFragment = document.createDocumentFragment();
+        let decorateFragment = document.createDocumentFragment();
         Settings.menuListsData.forEach(element => {
             let item =createDragComponents(element);
             //此处的dom节点要做存储处理
@@ -29,12 +35,24 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             //绑定事件
             bindFeatureToComponents(item);
 
-            fragment.appendChild(item)
+            if(element.sort == "decorate"){
+                decorateFragment.appendChild(item)
+            };
+            if(element.sort == "form"){
+                formFragment.appendChild(item)
+            };
+            if(element.sort == "layout"){
+                layoutFragment.appendChild(item)
+            };
+            // fragment.appendChild(item)
         });
+        formComponents.append(formFragment);
+        layoutComponents.append(layoutFragment);
+        decorateComponents.append(decorateFragment);
 
-        ortumComponents.appendChild(fragment);
+        // ortumComponents.appendChild(fragment);
+        // $(ortumLeft).append(ortumComponents)
 
-        $(ortumLeft).append(ortumComponents)
         $(ortumBody).append(ortumField)
 
         //事件监听注册
@@ -252,17 +270,18 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         //TODO 后期补上其他内容,需要引入的js和css
         let outInner = $(`<div><div id="ortum_css"></div><div id="ortum_html"></div><div id="ortum_script"></div></div>`);
         //插入css
-        datasJson.css && datasJson.css.forEach((index,item)=>{
+        datasJson.css && datasJson.css.forEach((item,index)=>{
             $(outInner).find("#ortum_css").append($(item))
         })
         //插入html
-        $(outInner).find("#ortum_html").append(prevDom)
+        $(outInner).find("#ortum_html").append(prevDom);
+
         //保存ortum组件属性
-        datasJson.componentSet && $(outInner).find("#ortum_script").append(`<script>window.ortum_componentSet = ${JSON.stringify(datasJson.componentSet)} <\/script>`)
+        //datasJson.componentSet && $(outInner).find("#ortum_script").append(`<script>window.ortum_componentSet = ${JSON.stringify(datasJson.componentSet)} <\/script>`)
         //插入script
-        datasJson.script && datasJson.script.forEach((index,item)=>{
+        datasJson.script && datasJson.script.forEach((item,index)=>{
             $(outInner).find("#ortum_script").append($(item))
-        })
+        });
 
         let urlObject = window.URL || window.webkitURL || window;
         let export_blob = new Blob([outInner[0].outerHTML]);
@@ -416,7 +435,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
                 domItem = item.chooseFun(parentDom);
             };
             let htmlDom = $(domItem.html);
-            if(domItem.children.length){
+            if(domItem.children && domItem.children.length){
                 let backDatas =JsonHtmlRenderDom(domItem.children,htmlDom,"replace");
                 cssDomSet = cssDomSet.concat(backDatas.css);
                 scriptDomSet = scriptDomSet.concat(backDatas.script);

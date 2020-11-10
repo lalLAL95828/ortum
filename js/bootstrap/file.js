@@ -40,7 +40,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickChange:["authority","multiple","automatic"],
         purview:{//属性编辑权限
             id:3,//id
-            name:2,
+            name:3,
             // defaultVal:3,
             verification:3,
             authority:1,//权限

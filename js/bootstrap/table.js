@@ -149,7 +149,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         clickChange:["authority","showThead","showTbody","showTfoot"],
         purview:{//属性编辑权限
             id:3,//id
-            name:2,//name
+            name:3,//name
             title:3,//设置dom的title属性，一般与labelName一致
 
             verification:3,//校验
@@ -375,7 +375,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                 });
             `;
 
-
             //创建tfoot的td的json信息
             ortum_component_properties.data.tfootColumnsArr.forEach(function(item,index){
                 //创建组件的属性
@@ -570,7 +569,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         let val=$(that).val();
         let checked=$(that).prop('checked');
 
-
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
         }
@@ -621,7 +619,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         // evenProperties.data[property] = val;
         switch(property){
             //TODO
-
             case "authority":
                 if(val=="hide"){//不可见
                     // $(globalComponent).hide();
@@ -684,12 +681,14 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         let globalComponent =Global.ortum_edit_component.comObj;
         let tbodyDom = globalComponent.find("tbody").eq(0);
         let theadDom = globalComponent.find("thead").eq(0);
+        let tfootDom = globalComponent.find("tfoot").eq(0);
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
         let tdMoreProps = {
             trCssClass:evenProperties.data.tbodyTrCssClass,
             tdCssClass:evenProperties.data.tdCssClass,
             tableName:evenProperties.data.name,
         };
+
         try{
             eval(val);
             let editTableColumnArr = eval("tableColumns");
@@ -705,7 +704,17 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                     thCssClass:evenProperties.data.thCssClass,
                 });
             $(theadDom).append(theadTrObj);
-
+            //tfoot
+            let editTfootColumnArr = eval("tfootColumns");
+            evenProperties.data.tfootColumnsArr = editTfootColumnArr;
+            $(tfootDom).empty();//thead先清空
+            let tfootTrObj =BootStrapAsider.tableTfootAddLine(editTfootColumnArr,
+                {
+                    trCssClass:evenProperties.data.tfootTrCssClass,
+                    tdCssClass:evenProperties.data.tfootTdCssClass,
+                    tableName:evenProperties.data.name,
+                });
+            $(tfootDom).append(tfootTrObj);
 
         }catch (e) {
             console.error("编辑table的column信息错误");
@@ -746,7 +755,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
         Global.ortum_codemirrorJS_setVal = function(codeObj){
-            let editArr = [];
+            let tableArr = [];
             for(let item of evenProperties.data.tableColumnsArr){
                 let pushItem = {};
                 for(let key in item){
@@ -754,8 +763,20 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                         key !== "customProps" && (pushItem[key] = item[key]);
                     }
                 };
-                editArr.push(pushItem)
+                tableArr.push(pushItem)
             }
+            let tfootArr = [];
+            for(let item of evenProperties.data.tfootColumnsArr){
+                let pushItem = {};
+                for(let key in item){
+                    if(item.hasOwnProperty(key)){
+                        key !== "customProps" && (pushItem[key] = item[key]);
+                    }
+                };
+                tfootArr.push(pushItem)
+            }
+
+
             //函数字符串
             // var funStr=Assist.jsonStringify(evenProperties.data.tableColumnsArr)
             // if(evenProperties.data.customGetOptions){
@@ -763,7 +784,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             // }else{
             //     funStr = "function getOptions_"+ evenProperties.data.name +"(ortumDom,ortumAjax){\n\n\n\n\n}"
             // }
-            codeObj.setValue(`//编辑table的列信息\nvar tableColumns = ${JSON.stringify(editArr)};
+            codeObj.setValue(`//编辑table的列信息\nvar tableColumns = ${JSON.stringify(tableArr)};\nvar tfootColumns = ${JSON.stringify(tfootArr)};
                 `)
         }
 

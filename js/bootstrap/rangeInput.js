@@ -19,7 +19,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         },
         purview:{//属性编辑权限{1:不可见,2:仅读,3:可编辑,4:必填}
             id:3,//id
-            name:2,
+            name:3,
             defaultVal:3,
             max:3,
             step:3,

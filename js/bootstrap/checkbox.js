@@ -33,7 +33,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickChange:["authority","inline"],
         purview:{//属性编辑权限
             // id:3,//id
-            name:2,
+            name:3,
             // defaultVal:1,
             verification:3,
             authority:3,//权限

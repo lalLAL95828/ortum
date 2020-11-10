@@ -255,7 +255,7 @@ $('#ortum_top_dialog_xl').on('hidden.bs.modal', function (e) {
 //关闭或刷新浏览器之前的操作，可以启用一个线程保存到服务器中
 window.onbeforeunload = function (e) {
     //发送给后端进行保存数据
-    navigator.sendBeacon('http://localhost:3000/Beacon', 'foo=bar');
+    // navigator.sendBeacon('http://localhost:3000/Beacon', 'foo=bar');
 
     e = e || window.event;
     // 兼容IE8和Firefox 4之前的版本

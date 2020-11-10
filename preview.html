@@ -128,12 +128,13 @@
 </head>
 <body>
 
-    <div id="ortum_preview_ModalLabel_body" class="container" style="margin: auto"></div>
+    <div id="ortum_preview_ModalLabel_body" class="container" style="margin: auto">
+
+    </div>
 
     <div style="text-align: center" class="p-2">
         <button type="button" class="btn btn-outline-primary" id="ortum_preview_submit">提交</button>
     </div>
-
 
     <script>
         let getDomContextFormData = function(domId){
@@ -227,7 +228,7 @@
                 if(domItem.frame == "Bootstrap" && domItem.componentKey == "tableDom"){
                     $(htmlDom).prop("ortum_tbodyTds_info",domItem.children);//tr中组件的信息
                     $(htmlDom).prop("ortum_tbodyTr_info",domItem.ortum_tbodyTr_info);//tr信息
-                }
+                };
                 switch (way) {
                     case "replace":
                         console.log(domItem);
@@ -246,14 +247,13 @@
             }
         }
         renderJson(prevArrJSON,prevDom);
-
         $("#ortum_preview_ModalLabel_body").html(prevDom);
         cssDomSet.forEach((item,index)=>{
             $(document.head).append(item);
         })
         scriptDomSet.forEach((item,index)=>{
             $(document.body).append(item);
-        })
+        });
 
     </script>
 

@@ -25,7 +25,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
         clickChange:[],
         purview:{//属性编辑权限
             id:3,//id
-            name:2,
+            name:3,
             cssClass:2,//css类
             columns:3,
             title:3,

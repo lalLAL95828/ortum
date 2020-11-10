@@ -21,7 +21,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickChange:["authority","checked"],
         purview:{//属性编辑权限
             id:3,//id
-            name:2,
+            name:3,
             // defaultVal:3,
             verification:3,
             authority:3,//权限
