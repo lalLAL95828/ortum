@@ -565,59 +565,75 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
      * 获取id下所有的表单元素的值
      * @param {*} properies 
      */
-    let getDomContextFormData = function(domId){
-        let formData = {}
+    let getDomContextFormData = function(domId,settings={id:true,dataset:true,}){
+        let formData = {};
         let form = document.getElementById(domId);  
         let elements = new Array();  
         let inputElements = form.getElementsByTagName('input');  
         let selectElements = form.getElementsByTagName('select');  
         let textareaElements = form.getElementsByTagName('textarea');
-
+        let includeId = false;//表单有id，包含id的key
+        let includeDataSet = false;//包含data属性
+        if(Object.prototype.toString.call(settings).slice(8,-1) === "Object"){
+            settings.id && (includeId = true);
+            settings.dataset && (includeDataSet = true);
+        }
         Array.prototype.forEach.call(inputElements,(item)=>{
             if(!item.name)return;//不存在name，不进行赋值
-            for(let dataKey in item.dataset){
-                if(item.dataset.hasOwnProperty(dataKey)){
-                    formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+            if(includeDataSet){
+                for(let dataKey in item.dataset){
+                    if(item.dataset.hasOwnProperty(dataKey)){
+                        formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                    };
                 }
-            }
+            };
             let type = item.type.toLowerCase();
             switch (type){
                 case "radio":
-                    item.checked && (formData[item.name] = item.value);
+                    includeId && item.checked && item.id && (formData[item.id] = item.value);
+                    item.checked && item.name && (formData[item.name] = item.value);
                     break;
                 case "checkbox":
                     if(item.name && item.name.indexOf("switch") != -1){
+                        includeId && item.checked && item.id && (formData[item.id] = item.value);
                         item.checked && (formData[item.name] = true);
                         !item.checked && (formData[item.name] = false);
                     }else{
-                        item.checked && (formData[item.name] ? formData[item.name].push(item.value) : formData[item.name]=[item.value]);
-                    }
+                        item.name && item.checked && (formData[item.name] ? formData[item.name].push(item.value) : formData[item.name]=[item.value]);
+                        includeId && item.id && item.checked && (formData[item.id] ? formData[item.id].push(item.value) : formData[item.id]=[item.value]);
+                    };
+                    
                     break;
                 default:
-                    formData[item.name] = item.value;
+                    includeId && item.id && (formData[item.id] = item.value);
+                    item.name && (formData[item.name] = item.value);
                     break;
             }
         })
-
         Array.prototype.forEach.call(selectElements,(item)=>{
+            includeId && item.id && (formData[item.id] = item.value);
             if(!item.name)return;//不存在name，不进行赋值
-            for(let dataKey in item.dataset){
-                if(item.dataset.hasOwnProperty(dataKey)){
-                    formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+            if(includeDataSet){
+                for(let dataKey in item.dataset){
+                    if(item.dataset.hasOwnProperty(dataKey)){
+                        formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                    }
                 }
-            }
+            };
             formData[item.name] = item.value;
         })
         Array.prototype.forEach.call(textareaElements,(item)=>{
+            includeId && item.id && (formData[item.id] = item.value);
             if(!item.name)return;//不存在name，不进行赋值
-            for(let dataKey in item.dataset){
-                if(item.dataset.hasOwnProperty(dataKey)){
-                    formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+            if(includeDataSet){
+                for(let dataKey in item.dataset){
+                    if(item.dataset.hasOwnProperty(dataKey)){
+                        formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                    }
                 }
-            }
+            };
             formData[item.name] = item.value;
         })
-
         return formData;
     }
 

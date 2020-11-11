@@ -231,7 +231,8 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
 
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
 
         let tableDom = $(`
             <table

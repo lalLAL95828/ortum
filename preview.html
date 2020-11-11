@@ -137,69 +137,84 @@
     </div>
 
     <script>
-        let getDomContextFormData = function(domId){
+        let getDomContextFormData = function(domId,settings={id:true,dataset:true,}){
             let formData = {}
             let form = document.getElementById(domId);  
             let elements = new Array();  
             let inputElements = form.getElementsByTagName('input');  
             let selectElements = form.getElementsByTagName('select');  
             let textareaElements = form.getElementsByTagName('textarea');
-
+            let includeId = false;//表单有id，包含id的key
+            let includeDataSet = false;//包含data属性
+            if(Object.prototype.toString.call(settings).slice(8,-1) === "Object"){
+                settings.id && (includeId = true);
+                settings.dataset && (includeDataSet = true);
+            }
             Array.prototype.forEach.call(inputElements,(item)=>{
                 if(!item.name)return;//不存在name，不进行赋值
-                for(let dataKey in item.dataset){
-                    if(item.dataset.hasOwnProperty(dataKey)){
-                        formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                if(includeDataSet){
+                    for(let dataKey in item.dataset){
+                        if(item.dataset.hasOwnProperty(dataKey)){
+                            formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                        };
                     }
-                }
+                };
                 let type = item.type.toLowerCase();
                 switch (type){
                     case "radio":
-                        item.checked && (formData[item.name] = item.value);
+                        includeId && item.checked && item.id && (formData[item.id] = item.value);
+                        item.checked && item.name && (formData[item.name] = item.value);
                         break;
                     case "checkbox":
                         if(item.name && item.name.indexOf("switch") != -1){
+                            includeId && item.checked && item.id && (formData[item.id] = item.value);
                             item.checked && (formData[item.name] = true);
                             !item.checked && (formData[item.name] = false);
                         }else{
-                            item.checked && (formData[item.name] ? formData[item.name].push(item.value) : formData[item.name]=[item.value]);
-                        }
+                            item.name && item.checked && (formData[item.name] ? formData[item.name].push(item.value) : formData[item.name]=[item.value]);
+                            includeId && item.id && item.checked && (formData[item.id] ? formData[item.id].push(item.value) : formData[item.id]=[item.value]);
+                        };
+                        
                         break;
                     default:
-                        formData[item.name] = item.value;
+                        includeId && item.id && (formData[item.id] = item.value);
+                        item.name && (formData[item.name] = item.value);
                         break;
                 }
             })
-
             Array.prototype.forEach.call(selectElements,(item)=>{
+                includeId && item.id && (formData[item.id] = item.value);
                 if(!item.name)return;//不存在name，不进行赋值
-                for(let dataKey in item.dataset){
-                    if(item.dataset.hasOwnProperty(dataKey)){
-                        formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                if(includeDataSet){
+                    for(let dataKey in item.dataset){
+                        if(item.dataset.hasOwnProperty(dataKey)){
+                            formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                        }
                     }
-                }
+                };
                 formData[item.name] = item.value;
             })
             Array.prototype.forEach.call(textareaElements,(item)=>{
+                includeId && item.id && (formData[item.id] = item.value);
                 if(!item.name)return;//不存在name，不进行赋值
-                for(let dataKey in item.dataset){
-                    if(item.dataset.hasOwnProperty(dataKey)){
-                        formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                if(includeDataSet){
+                    for(let dataKey in item.dataset){
+                        if(item.dataset.hasOwnProperty(dataKey)){
+                            formData[item.name+"_"+dataKey] = item.dataset[dataKey];
+                        }
                     }
-                }
+                };
                 formData[item.name] = item.value;
             })
-
             return formData;
-        }
-
+        };
 
         $("#ortum_preview_submit").on('click',function(e){
             let formData = getDomContextFormData("ortum_preview_ModalLabel_body");
             console.log(formData)
-            alert(JSON.stringify(formData))
+            // alert(JSON.stringify(formData))
             return false;
-        })
+        });
     </script>
 
     <script>
@@ -231,7 +246,6 @@
                 };
                 switch (way) {
                     case "replace":
-                        console.log(domItem);
                         if(parentDom.find("ortum_children").length && /[\d]+$/.test(domItem.ortumChildren)){
                             parentDom.find("ortum_children[data-order="+ domItem.ortumChildren +"]").eq(0).replaceWith(htmlDom);
                         }else if(parentDom.find("ortum_children").length){
@@ -247,6 +261,34 @@
             }
         }
         renderJson(prevArrJSON,prevDom);
+
+        //从json渲染权限
+        let purviewJson={
+            "table_1605100578804af1b_tfoot_0":2,
+            "table_1605100578804af1b_tfoot_1":3,
+            "table_1605100578804af1b_tfoot_2":3,
+            "table_1605100578804af1b_tfoot_4":1,
+            "table_1605100578804af1b_1":5,
+            "table_1605100578804af1b_2":3,
+            "table_1605100578804af1b_3":3,
+            "table_1605100578804af1b_4":6,
+            "table_1605100578804af1b_5":3,
+            "table_1605100578804af1b_6":3,
+            "table_1605100578804af1b_7":3,
+            "table_1605100578804af1b_8":8,
+            "table_1605100578804af1b_9":3,
+            "table_1605100578804af1b_10":3,
+        }
+
+        function setPri(node,nodeName,pri){
+            console.log(node);
+            console.log(nodeName.toLowerCase());
+            console.log(pri);
+        }
+
+        
+
+
         $("#ortum_preview_ModalLabel_body").html(prevDom);
         cssDomSet.forEach((item,index)=>{
             $(document.head).append(item);
@@ -254,6 +296,21 @@
         scriptDomSet.forEach((item,index)=>{
             $(document.body).append(item);
         });
+
+
+        function setPurview(purviewJson){
+           for(let key in purviewJson){
+               if(purviewJson.hasOwnProperty(key)){
+                   //table
+                   if(/^table/.test(key)){
+                        $("*[name]").each(function(index,item){
+                            new RegExp("^"+ key).test($(item).attr('name')) && setPri(item,$(item)[0].nodeName,purviewJson[key])
+                        })
+                   };
+               }
+           }
+        };
+        setPurview(purviewJson)
 
     </script>
 

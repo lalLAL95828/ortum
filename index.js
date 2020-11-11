@@ -57,8 +57,15 @@ function getTitleAndNameFun(arr){
             }else if(item.name.indexOf("table") !== -1){
                 if(item.children.length){
                     item.children.forEach(function(item2,index){
-                        nameArr.push(item.name+"_"+ index);
-                        titleArr.push(item.title+"_" + index);
+                        if(/tfoot/.test(item2.name) && item2.name){
+                            nameArr.push(item2.name);
+                            titleArr.push(item2.title);
+                        }else if(item2.name){
+                            let nameArr2 = item2.name.split("_");
+                            nameArr2.pop();
+                            nameArr.push(nameArr2.join("_"));
+                            titleArr.push(item2.title);
+                        }
                     })
                 }
             }else{
@@ -134,11 +141,6 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let formId = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-formid") || '';
             let formVersion = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version") || 0;
 
-            //获取localstore中的信息
-            let CATARC_INFO_SYS = window.localStorage.getItem("CATARC_INFO_SYS");
-            let account = JSON.parse(CATARC_INFO_SYS).account;
-            let usename = JSON.parse(account).usname;
-
             if(!tableName){
                 Assist.dangerTip("表单名称不可为空")
                 // alert('表单名称不可为空');
@@ -156,6 +158,11 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
 
+
+            //获取localstore中的信息
+            let CATARC_INFO_SYS = window.localStorage.getItem("CATARC_INFO_SYS");
+            let account = JSON.parse(CATARC_INFO_SYS).account;
+            let usename = JSON.parse(account).usname;
             let ajaxJsom = {
                 columnID:nameArr.toString(),
                 columnName:titleArr.toString(),
