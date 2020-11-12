@@ -231,8 +231,8 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
 
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        // ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
-        ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
 
         let tableDom = $(`
             <table
@@ -622,26 +622,12 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             //TODO
             case "authority":
                 if(val=="hide"){//不可见
-                    // $(globalComponent).hide();
-                    // $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).hide();
                 }
                 if(val=="edit"){//可编辑
-                    // $(globalComponent).show();
-                    // $(globalComponent).find("input").removeAttr("readonly");
-                    // $(globalComponent).find("input").removeAttr("disabled");
-                    // $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
                 }
                 if(val=="readonly"){//只读可点击
-                    // $(globalComponent).show();
-                    // $(globalComponent).find("input").attr("readonly","readonly");
-                    // $(globalComponent).find("input").removeAttr("disabled");
-                    // $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
                 }
                 if(val=="disabled"){//只读且无法点击
-                    // $(globalComponent).show();
-                    // $(globalComponent).find("input").attr("readonly","readonly");
-                    // $(globalComponent).find("input").attr("disabled","disabled");
-                    // $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
                 }
                 break;
 

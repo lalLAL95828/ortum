@@ -219,25 +219,25 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             case "authority":
                 if(val=="hide"){//不可见
                     $(globalComponent).hide();
-                    $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).hide();
+                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).hide();
                 }
                 if(val=="edit"){//可编辑
                     // $(globalComponent).show();
                     // $(globalComponent).find("input").removeAttr("readonly");
                     // $(globalComponent).find("input").removeAttr("disabled");
-                    // $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
+                    // $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).show();
                 }
                 if(val=="readonly"){//只读可点击
                     $(globalComponent).show();
                     $(globalComponent).find(".iconfont").attr("readonly","readonly");
                     $(globalComponent).find(".iconfont").removeAttr("disabled");
-                    $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
+                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).show();
                 }
                 if(val=="disabled"){//只读且无法点击
                     $(globalComponent).show();
                     $(globalComponent).find(".iconfont").attr("readonly","readonly");
                     $(globalComponent).find(".iconfont").attr("disabled","disabled");
-                    $("*[ortum_bindcomponentname]").parents(".ortum_item").eq(0).show();
+                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).show();
                 }
                 break;
             default:

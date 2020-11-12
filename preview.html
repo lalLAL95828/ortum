@@ -174,7 +174,6 @@
                             item.name && item.checked && (formData[item.name] ? formData[item.name].push(item.value) : formData[item.name]=[item.value]);
                             includeId && item.id && item.checked && (formData[item.id] ? formData[item.id].push(item.value) : formData[item.id]=[item.value]);
                         };
-                        
                         break;
                     default:
                         includeId && item.id && (formData[item.id] = item.value);
@@ -226,6 +225,8 @@
         let cssDomSet = [];
         let scriptDomSet = [];
 
+        //待渲染权限的树
+        let rendPowerArr = [];
         //从json渲染成dom
         function renderJson(prevArrJSON,parentDom,way="append") {
             for(let item of prevArrJSON){
@@ -234,7 +235,7 @@
                 if(item.childrenType == "choose" && item.chooseFun){
                     (typeof item.chooseFun !=="function") && (item.chooseFun = Function('return ' + item.chooseFun)());
                     domItem = item.chooseFun(parentDom);
-                }
+                };
                 htmlDom = $(domItem.html);
                 if(domItem.children && domItem.children.length){
                     renderJson(domItem.children,htmlDom,"replace");
@@ -256,38 +257,15 @@
                         parentDom.append(htmlDom);
                         break;
                 };
+                rendPowerArr.push({
+                    dom:htmlDom,
+                    name:domItem.name
+                })
                 domItem.css && cssDomSet.push(domItem.css);
                 domItem.script && scriptDomSet.push(domItem.script);
             }
         }
         renderJson(prevArrJSON,prevDom);
-
-        //从json渲染权限
-        let purviewJson={
-            "table_1605100578804af1b_tfoot_0":2,
-            "table_1605100578804af1b_tfoot_1":3,
-            "table_1605100578804af1b_tfoot_2":3,
-            "table_1605100578804af1b_tfoot_4":1,
-            "table_1605100578804af1b_1":5,
-            "table_1605100578804af1b_2":3,
-            "table_1605100578804af1b_3":3,
-            "table_1605100578804af1b_4":6,
-            "table_1605100578804af1b_5":3,
-            "table_1605100578804af1b_6":3,
-            "table_1605100578804af1b_7":3,
-            "table_1605100578804af1b_8":8,
-            "table_1605100578804af1b_9":3,
-            "table_1605100578804af1b_10":3,
-        }
-
-        function setPri(node,nodeName,pri){
-            console.log(node);
-            console.log(nodeName.toLowerCase());
-            console.log(pri);
-        }
-
-        
-
 
         $("#ortum_preview_ModalLabel_body").html(prevDom);
         cssDomSet.forEach((item,index)=>{
@@ -297,20 +275,66 @@
             $(document.body).append(item);
         });
 
-
-        function setPurview(purviewJson){
-           for(let key in purviewJson){
-               if(purviewJson.hasOwnProperty(key)){
-                   //table
-                   if(/^table/.test(key)){
-                        $("*[name]").each(function(index,item){
-                            new RegExp("^"+ key).test($(item).attr('name')) && setPri(item,$(item)[0].nodeName,purviewJson[key])
-                        })
-                   };
-               }
-           }
+        let purviewJson={
+            "table_1605100578804af1b_tfoot_1":3,
+            "table_1605100578804af1b_tfoot_2":3,
+            "table_1605100578804af1b_tfoot_4":1,
+            "table_1605100578804af1b_1_1":0,
+            "table_1605100578804af1b_2_1":2,
+            "table_1605100578804af1b_3_1":1,
+            "table_1605100578804af1b_4_1":3,
+            "table_1605100578804af1b_5_1":4,
+            "table_1605100578804af1b_6_1":0,
+            "table_1605100578804af1b_7_1":2,
+            "table_1605100578804af1b_8_1":1,
+            "table_1605100578804af1b_9_1":3,
+            "table_1605100578804af1b_10_1":3,
         };
-        setPurview(purviewJson)
+        let priArr = {
+            0:"hide",
+            1:"read",
+            2:"edit",
+            3:"required",
+            4:"readAndReq",
+        }
+        function setDomQ(outDom,formDom,name,priVal){
+            //TODO 完善ortum_bindcomponentname关联组件的权限控制
+            switch (priVal) {
+                case "hide":
+                    $(outDom).hide();
+                    $("*[ortum_bindcomponentname="+ name +"]").parents(".ortum_item").eq(0).hide();
+                    break;
+                case "read":
+                    $(formDom).attr("disabled","disabled");
+                    $("*[ortum_bindcomponentname="+ name +"]").parents(".ortum_item").eq(0).show();
+                    break;
+                case "edit":
+                    $(formDom).removeAttr("disabled");
+                    $("*[ortum_bindcomponentname="+ name +"]").parents(".ortum_item").eq(0).show();
+                    break;
+                case "required":
+                    $(formDom).attr("ortum-verify","required");
+                    $("*[ortum_bindcomponentname="+ name +"]").parents(".ortum_item").eq(0).show();
+                    break;
+                case "readAndReq":
+                    $(formDom).attr("disabled","disabled");
+                    $(formDom).attr("ortum-verify","required");
+                    $("*[ortum_bindcomponentname="+ name +"]").parents(".ortum_item").eq(0).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+        function setQ(dom,name,priJson) {
+            let hasNameDom = $(dom).find("*[name="+ name +"]");
+            if(priJson.hasOwnProperty(name)){
+                setDomQ(dom,hasNameDom,name,priArr[priJson[name]])
+            };
+        };
+        //开始渲染权限
+        // rendPowerArr.forEach(function(item){
+        //     setQ(item.dom,item.name,purviewJson)
+        // });
 
     </script>
 

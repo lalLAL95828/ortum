@@ -35,11 +35,11 @@
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-/**,
-*::before,
-*::after {
+#ortum_preview_ModalLabel_body *,
+#ortum_preview_ModalLabel_body *::before,
+#ortum_preview_ModalLabel_body *::after{
     box-sizing: border-box;
-}*/
+}
 
 html {
     font-family: sans-serif;
@@ -100,9 +100,9 @@ address {
     line-height: inherit;
 }
 
-ol,
-ul,
-dl {
+#ortum_field_preview ol,
+#ortum_field_preview ul,
+#ortum_field_preview dl {
     margin-top: 0;
     margin-bottom: 1rem;
 }
@@ -118,7 +118,7 @@ dt {
     font-weight: 700;
 }
 
-dd {
+#ortum_field_preview dd {
     margin-bottom: .5rem;
     margin-left: 0;
 }
@@ -127,8 +127,8 @@ blockquote {
     margin: 0 0 1rem;
 }
 
-b,
-strong {
+#ortum_field_preview b,
+#ortum_field_preview strong {
     font-weight: bolder;
 }
 

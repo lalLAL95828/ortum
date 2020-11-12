@@ -48,29 +48,27 @@ function getTitleAndNameFun(arr){
     let titleArr = [];
     arr.forEach((item,index)=>{
         if(!item.bindComponentName){//该组件没有绑定组件
-            if(item.name.indexOf("grid") !== -1){
-                if(item.children.length > 0){
-                    let backData = getTitleAndNameFun(item.children);
-                    nameArr = nameArr.concat(backData.nameArr)
-                    titleArr = titleArr.concat(backData.titleArr)
+            // if(item.name && item.name.indexOf("grid") !== -1){
+            //     if(item.children.length > 0){
+            //         let backData = getTitleAndNameFun(item.children);
+            //         nameArr = nameArr.concat(backData.nameArr)
+            //         titleArr = titleArr.concat(backData.titleArr)
+            //     }
+            // }
+            // else if(item.name.indexOf("table") !== -1){
+            //     if(item.children.length){
+            //         item.children.forEach(function(item2,index){
+            //             nameArr.push(item2.name);
+            //             titleArr.push(item2.title);
+            //         });
+            //     };
+            // }
+            if(item.name){
+                //只处理form组件
+                if(require("settings").menuListDataJSON[item.componentKey].sort === "form"){
+                    nameArr.push(item.name)
+                    titleArr.push(item.title)
                 }
-            }else if(item.name.indexOf("table") !== -1){
-                if(item.children.length){
-                    item.children.forEach(function(item2,index){
-                        if(/tfoot/.test(item2.name) && item2.name){
-                            nameArr.push(item2.name);
-                            titleArr.push(item2.title);
-                        }else if(item2.name){
-                            let nameArr2 = item2.name.split("_");
-                            nameArr2.pop();
-                            nameArr.push(nameArr2.join("_"));
-                            titleArr.push(item2.title);
-                        }
-                    })
-                }
-            }else{
-                nameArr.push(item.name)
-                titleArr.push(item.title)
                 if(item.children.length){
                     let backData = getTitleAndNameFun(item.children);
                     nameArr = nameArr.concat(backData.nameArr)
@@ -157,6 +155,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
+            console.log(nameArr)
+            console.log(titleArr)
 
 
             //获取localstore中的信息
