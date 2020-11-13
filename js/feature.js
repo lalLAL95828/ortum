@@ -705,11 +705,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
             <script src="${urlOrigin}/lib/ortumReq.js"><\/script>
         </head>
         <body>
-            <div id="ortum_preview_ModalLabel_body"></div>
+            <div id="ortum_form_Modal_body"></div>
             
             <script>
                 let prev = window.opener.require("feature").getFormContentHtml("id",{id:"ortum_field",win:window.opener.document})
-                $("#ortum_preview_ModalLabel_body").html(prev)
+                $("#ortum_form_Modal_body").html(prev)
             <\/script>
         </body>
         </html>

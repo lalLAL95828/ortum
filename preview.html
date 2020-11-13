@@ -27,7 +27,7 @@
         }
 
         /* 表头样式 */
-        #ortum_preview_ModalLabel_body #ortum_field_preview>.ortum_bootstrap_h:nth-child(1) .ortum_bootstrap_hDom {
+        #ortum_form_Modal_body #ortum_field_preview>.ortum_bootstrap_h:nth-child(1) .ortum_bootstrap_hDom {
             background: #224F85 !important;
             color: #fff !important;
             height: 40px;
@@ -73,16 +73,16 @@
             padding: 0px;
         }
 
-        .ortum_bootstrap_td #ortum_preview_ModalLabel_body #ortum_field_preview>.ortum_item {
+        .ortum_bootstrap_td #ortum_form_Modal_body #ortum_field_preview>.ortum_item {
             margin-top: 2px !important;
             margin-bottom: 2px !important;
         }
 
-        #ortum_preview_ModalLabel_body #ortum_field_preview>.ortum_item:nth-child(2n) {
+        #ortum_form_Modal_body #ortum_field_preview>.ortum_item:nth-child(2n) {
             background: #fafafa !important;
         }
 
-        #ortum_preview_ModalLabel_body #ortum_field_preview>.ortum_item:nth-child(2n+1) {
+        #ortum_form_Modal_body #ortum_field_preview>.ortum_item:nth-child(2n+1) {
             background: rgba(245, 244, 244, 1) !important;
         }
 
@@ -128,7 +128,7 @@
 </head>
 <body>
 
-    <div id="ortum_preview_ModalLabel_body" class="container" style="margin: auto">
+    <div id="ortum_form_Modal_body" class="container" style="margin: auto">
 
     </div>
 
@@ -209,7 +209,7 @@
         };
 
         $("#ortum_preview_submit").on('click',function(e){
-            let formData = getDomContextFormData("ortum_preview_ModalLabel_body");
+            let formData = getDomContextFormData("ortum_form_Modal_body");
             console.log(formData)
             // alert(JSON.stringify(formData))
             return false;
@@ -267,7 +267,7 @@
         }
         renderJson(prevArrJSON,prevDom);
 
-        $("#ortum_preview_ModalLabel_body").html(prevDom);
+        $("#ortum_form_Modal_body").html(prevDom);
         cssDomSet.forEach((item,index)=>{
             $(document.head).append(item);
         })

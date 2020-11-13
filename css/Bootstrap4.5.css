@@ -35,9 +35,9 @@
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-#ortum_preview_ModalLabel_body *,
-#ortum_preview_ModalLabel_body *::before,
-#ortum_preview_ModalLabel_body *::after{
+#ortum_form_Modal_body *,
+#ortum_form_Modal_body *::before,
+#ortum_form_Modal_body *::after{
     box-sizing: border-box;
 }
 
