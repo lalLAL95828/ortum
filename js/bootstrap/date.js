@@ -78,7 +78,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             `
             <div class="form-group ortum_item row" 
                 data-frame="Bootstrap" 
-                data-componentKey="inputDom"
+                data-componentKey="dateDom"
             >
                
             </div>

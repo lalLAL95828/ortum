@@ -26,12 +26,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 {
                     value:"321",
                     name:"兰花",
-                    disabled:true,
+                    // disabled:true,
                 },
                 {
                     value:"321",
                     name:"菊花",
-                    hide:true,
+                    // hide:true,
                 },
             ]
         },

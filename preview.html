@@ -217,7 +217,7 @@
     </script>
 
     <script>
-        let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document})
+        let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document});
         console.log(prevArrJSON)
 
         let prevDom = $('<div id="ortum_field_preview"></div>');
@@ -279,16 +279,17 @@
             "table_1605100578804af1b_tfoot_1":3,
             "table_1605100578804af1b_tfoot_2":3,
             "table_1605100578804af1b_tfoot_4":1,
-            "table_1605100578804af1b_1_1":0,
+            "table_1605100578804af1b_1_1":1,
             "table_1605100578804af1b_2_1":2,
             "table_1605100578804af1b_3_1":1,
             "table_1605100578804af1b_4_1":3,
             "table_1605100578804af1b_5_1":4,
-            "table_1605100578804af1b_6_1":0,
+            "table_1605100578804af1b_6_1":1,
             "table_1605100578804af1b_7_1":2,
             "table_1605100578804af1b_8_1":1,
             "table_1605100578804af1b_9_1":3,
             "table_1605100578804af1b_10_1":3,
+            "table_1605100578804af1b_11_1":0,
         };
         let priArr = {
             0:"hide",
@@ -296,13 +297,19 @@
             2:"edit",
             3:"required",
             4:"readAndReq",
-        }
+        };
         function setDomQ(outDom,formDom,name,priVal){
             //TODO 完善ortum_bindcomponentname关联组件的权限控制
             switch (priVal) {
                 case "hide":
                     $(outDom).hide();
                     $("*[ortum_bindcomponentname="+ name +"]").parents(".ortum_item").eq(0).hide();
+                    //特殊处理table
+                    if(/^table/.test(name)){
+                        let cellIndex = outDom.parents("td")[0].cellIndex;
+                        $(outDom).parents("table").eq(0).find("tr td:nth-of-type("+ (cellIndex+1) +")").hide();
+                        $(outDom).parents("table").eq(0).find("tr th:nth-of-type("+ (cellIndex+1) +")").hide();
+                    };
                     break;
                 case "read":
                     $(formDom).attr("disabled","disabled");
@@ -328,13 +335,14 @@
         function setQ(dom,name,priJson) {
             let hasNameDom = $(dom).find("*[name="+ name +"]");
             if(priJson.hasOwnProperty(name)){
+                $(dom).attr("ortum_authority",priJson[name]);//绑定权限值
                 setDomQ(dom,hasNameDom,name,priArr[priJson[name]])
             };
         };
         //开始渲染权限
-        // rendPowerArr.forEach(function(item){
-        //     setQ(item.dom,item.name,purviewJson)
-        // });
+        rendPowerArr.forEach(function(item){
+            setQ(item.dom,item.name,purviewJson)
+        });
 
     </script>
 

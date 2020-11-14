@@ -5,6 +5,9 @@ http://localhost:918
 ###### github地址:
 https://lalLAL95828.github.io/ortum
 
+###### githubPage地址:
+https://lallal95828.github.io/ortum/index.html
+
 ###### 参考链接：
 
 http://form.making.link/#/zh-CN/

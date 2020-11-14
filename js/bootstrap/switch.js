@@ -1,4 +1,4 @@
-define(["require","assist","createDom","global"],function(require,Assist,CreateDom,Global){
+define(["require","assist","createDom","global","BootStrapAsider"],function(require,Assist,CreateDom,Global,BootStrapAsider){
     let component_properties = {
         data:{
             id:"",//id
@@ -100,8 +100,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
                 name="${ortum_component_properties.data.name}" 
                 ${ortum_component_properties.data.checked ? "checked" :""}
-                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } >
-                <label class="${ortum_component_properties.data.labelCSS}" >${ortum_component_properties.data.labelName}</label>
+                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : "id="+ortum_component_properties.data.name } >
+                <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.id ? ortum_component_properties.data.id : ortum_component_properties.data.name}">${ortum_component_properties.data.labelName}</label>
             </div>
         `))
 
@@ -162,9 +162,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             case "labelName":
                 $(globalComponent).find('label').eq(0).text(val)
                 break; 
-            // case "labelWidth":
-            //     $(globalComponent).find('label').eq(0).attr('width',val)
-            //     break; 
+            case "id":
+                $(globalComponent).find('input').eq(0).attr("id",val);
+                $(globalComponent).find('label').eq(0).attr("for",val);
+                break; 
             case "labelCSS":
                 // $(globalComponent).find('label').eq(0).addClass(val)
                 $(globalComponent).find('label').eq(0).attr('class',val)

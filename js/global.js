@@ -20,6 +20,9 @@ define([],function(){
     let ortum_preview_windowSonUrl;//打开的预览窗口Blob url
 
     let ortum_createDom_frame = "Bootstrap";//默认创建组件使用的框架
+
+    let ortum_life_function;//全局什么周期json
+
     // {
     //     frame:"bootstrap",
     //     type:'input',
@@ -42,5 +45,7 @@ define([],function(){
 
         ortum_preview_windowSon:ortum_preview_windowSon,
         ortum_preview_windowSonUrl:ortum_preview_windowSonUrl,
+
+        ortum_life_function:ortum_life_function,
     }
 })

@@ -44,11 +44,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             // labelPosition:3,//标签位置
             // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
-            inline:3,//单行显示
+            // inline:3,//单行显示
             title:3,
         },
         dataShowType:{
             authority:"checkbox",
+            // inline:'switch',
         },
     }
 

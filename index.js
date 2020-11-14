@@ -48,27 +48,15 @@ function getTitleAndNameFun(arr){
     let titleArr = [];
     arr.forEach((item,index)=>{
         if(!item.bindComponentName){//该组件没有绑定组件
-            // if(item.name && item.name.indexOf("grid") !== -1){
-            //     if(item.children.length > 0){
-            //         let backData = getTitleAndNameFun(item.children);
-            //         nameArr = nameArr.concat(backData.nameArr)
-            //         titleArr = titleArr.concat(backData.titleArr)
-            //     }
-            // }
-            // else if(item.name.indexOf("table") !== -1){
-            //     if(item.children.length){
-            //         item.children.forEach(function(item2,index){
-            //             nameArr.push(item2.name);
-            //             titleArr.push(item2.title);
-            //         });
-            //     };
-            // }
             if(item.name){
                 //只处理form组件
-                if(require("settings").menuListDataJSON[item.componentKey].sort === "form"){
+                if(item.componentKey && require("settings").menuListDataJSON[item.componentKey].sort === "form"){
                     nameArr.push(item.name)
                     titleArr.push(item.title)
-                }
+                }else if(item.childrenType==="choose"){
+                    nameArr.push(item.name)
+                    titleArr.push(item.title)
+                };
                 if(item.children.length){
                     let backData = getTitleAndNameFun(item.children);
                     nameArr = nameArr.concat(backData.nameArr)
@@ -88,7 +76,7 @@ let showTipSetTime;//定时器
 //初始化提示
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
-})
+});
 //菜单栏事件绑定
 $('#ortum_table_act').on('click','.iconfont',function(e){
     //导入
@@ -150,6 +138,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 return;
             }
             let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true});
+            console.log(ortumJson)
 
             let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
 
@@ -157,6 +146,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let nameArr = getTitleAndName.nameArr;
             console.log(nameArr)
             console.log(titleArr)
+            // return;
 
 
             //获取localstore中的信息
@@ -212,12 +202,35 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
     //编辑js
     if($(this).hasClass('icon-js')){
-        require([],function(){
+        require(["global"],function(Global){
             $('#ortum_top_dialog_xl').modal({
                 "backdrop":"static",
                 // "focus":false,
                 "keyboard":false,
             });
+            let funStr = "";
+            if(Global.ortum_life_function){
+                //函数字符串
+                funStr = "var ortum_life_function={\n\tbeigin_function:"+ Global.ortum_life_function.beigin_function.toString() +",\n\tcompleted_function:"+ Global.ortum_life_function.completed_function.toString() +",\n};";
+            }else{
+                funStr = "var ortum_life_function={\n\tbeigin_function:function(){},\n\tcompleted_function:function(){},\n};";
+            }
+
+            Global.ortum_codemirrorJS_setVal = function(codeObj){
+                codeObj.setValue(`//函数名请勿编辑，只需编辑函数体内容\n//beigin_function函数是dom渲染前会执行的函数\n//completed_function函数是dom渲染后会执行的函数\n${funStr}
+                `)
+            };
+            Global.ortum_codemirrorJS_save = function(val){
+                try{
+                    eval(val);
+                    Global.ortum_life_function = {};
+                    Global.ortum_life_function.beigin_function=ortum_life_function.beigin_function.toString();
+                    Global.ortum_life_function.completed_function=ortum_life_function.completed_function.toString();
+                }catch(err){
+                    console.error("编辑有勿！")
+                }
+               
+            };
             $("#ortum_top_model_xl_content").load("html/common/codemirror.html",function(){
                 $('#ortum_top_model_xl_wait').hide();
             });

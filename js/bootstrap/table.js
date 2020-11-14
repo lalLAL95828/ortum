@@ -231,8 +231,8 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
 
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
-        // ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
 
         let tableDom = $(`
             <table
@@ -318,17 +318,22 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         if(createJson){
             //创建tbody的tr模板
             addlineTrInfo = BootStrapAsider.tableTbodyAddLine(null,ortum_component_properties.data.tableColumnsArr,tdMoreProps);
-            // scriptStr = `
-            //     let tableName = "${ortum_component_properties.data.name}";
-            // `;
-            //点击和删除的按钮
+            //新增行的函数
+            //可以根据table的name属性新增；也可以根据this新增，this必须是tbody下的tr的子元素，
             scriptStr+=`
-                $("table[name=${ortum_component_properties.data.name}]").on("click.addline","td[data-type=act] .icon-jiahao",function(){
-                    let tdInfoArr = $(this).parents("table").eq(0).parents(".ortum_item").eq(0).prop("ortum_tbodyTds_info");
-                    let addlineTr = $(this).parents("table").eq(0).parents(".ortum_item").eq(0).prop("ortum_tbodyTr_info");
-                    let bodyTrLength = $(this).parents("table").eq(0).find("tbody > tr").length;
+                function ortumTableDom_addLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}"){
+                    let tableDom;
+                    tableName && (tableDom = $("table[name="+ tableName +"]"));
+                    !tableName && (tableDom = $(this).parents("table").eq(0));
+                    if(!tableDom.length){
+                        console.error("缺少table信息");
+                        return false;
+                    };
+                    let tdInfoArr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTds_info");
+                    let addlineTr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTr_info");
+                    let bodyTrLength = tableDom.find("tbody > tr").length;
                     let nextTr = $(addlineTr);
-                    let trOrder = $(this).parents("tbody").eq(0).find('tr').length;
+                    let trOrder = tableDom.find('tbody tr').length;
                     function ortum_BootstraptableDom_addLine(arr,trDom){
                         arr.forEach(function(item){
                             let itemDom = item;
@@ -346,33 +351,74 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                             if(itemDom.children && itemDom.children.length){
                                 ortum_BootstraptableDom_addLine(itemDom.children,nextHtml);
                             };
-                            $(trDom).find("ortum_children[data-order="+ itemDom.ortumChildren +"]").eq(0).replaceWith(nextHtml); 
+                            $(trDom).find("ortum_children[data-order="+ itemDom.ortumChildren +"]").eq(0).replaceWith(nextHtml);
                         });
                     };
                     ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
                     nextTr.find("td[data-type=order] span").text(trOrder+1);
-                    $(this).parents("table").eq(0).find("tbody").eq(0).append(nextTr);
+                    tableDom.find("tbody").eq(0).append(nextTr);
+                    return false;
+                };
+            `;
+            //删除行的函数
+            //可以根据table的name属性删除；也可以根据this删除，this必须是tbody下的tr的子元素，
+            //根据table的name属性删除，必须提供order，表示删除第几行
+            scriptStr+=`
+                function ortumTableDom_delLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",order=false,act=false){
+                    let tableDom;
+                    tableName && (tableDom = $("table[name="+ tableName +"]"));
+                    !tableName && (tableDom = $(this).parents("table").eq(0));
+                    if(!tableDom.length){
+                        console.error("缺少table信息");
+                        return false;
+                    };
+                    let tbodyDom = tableDom.find("tbody").eq(0);
+                    if(act){
+                        let trFather = $(this).parents("tr").eq(0);
+                        let rowIndex = $(this).parents("tr")[0].rowIndex;
+                        $(trFather).nextAll("tr").each(function(index,item){
+                            $(this).find("*[name]").each(function(index2,item2){
+                                let name = $(item2).attr("name");
+                                let nameArr = name.split("_");
+                                if(nameArr[0] === "table"){
+                                    nameArr.pop();
+                                    nameArr.push(rowIndex + index);
+                                };
+                                $(item2).attr("name",nameArr.join("_"));
+                            });
+                        });
+                        $(this).parents("tr").eq(0).remove();
+                        tbodyDom.find("td[data-type=order]").each(function(index,item){
+                            $(item).find("span").eq(0).text(index+1);
+                        });
+                    }else if(/^[1-9]\d*$/.test(order)){
+                        let delTr = tbodyDom.find("tr:nth-of-type("+ order +")");
+                        let rowIndex = delTr[0].rowIndex;
+                        $(delTr).nextAll("tr").each(function(index,item){
+                            $(this).find("*[name]").each(function(index2,item2){
+                                let name = $(item2).attr("name");
+                                let nameArr = name.split("_");
+                                if(nameArr[0] === "table"){
+                                    nameArr.pop();
+                                    nameArr.push(rowIndex + index);
+                                };
+                                $(item2).attr("name",nameArr.join("_"));
+                            });
+                        });
+                        delTr.remove();
+                        tbodyDom.find("td[data-type=order]").each(function(index,item){
+                            $(item).find("span").eq(0).text(index+1);
+                        });
+                    };
+                };
+            `;
+            //点击和删除的按钮
+            scriptStr+=`
+                $("table[name=${ortum_component_properties.data.name}]").on("click.addline","td[data-type=act] .icon-jiahao",function(){
+                    ortumTableDom_addLine_${ortum_component_properties.data.name}();
                 });
                 $("table[name=${ortum_component_properties.data.name}]").on("click.delete","td[data-type=act] .icon-shanchu",function(){
-                    let tbodyDom = $(this).parents("tbody").eq(0);
-                    let trFather = $(this).parents("tr").eq(0);
-                    let rowIndex = $(this).parents("tr")[0].rowIndex;
-                    $(trFather).nextAll("tr").each(function(index,item){
-                        $(this).find("*[name]").each(function(index2,item2){
-                            let name = $(item2).attr("name");
-                            let nameArr = name.split("_");
-                            if(nameArr[0] === "table"){
-                                nameArr.pop();
-                                nameArr.push(rowIndex + index);
-                            };
-                            $(item2).attr("name",nameArr.join("_"));
-                        });
-                    });
-                    $(this).parents("tr").eq(0).remove();
-                    $(tbodyDom).find("td[data-type=order]").each(function(index,item){
-                        $(item).find("span").eq(0).text(index+1);
-                    });
-                    
+                    ortumTableDom_delLine_${ortum_component_properties.data.name}.call(this,false,false,true);
                 });
             `;
 
@@ -396,7 +442,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                         "componentKey":item.componentKey,
                         "children":[],
                     },comDom));
-                }
+                };
             });
 
             //创建td中组件的json信息
@@ -447,6 +493,8 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                                 }.toString(),
                                 "delComDom":delComDom,
                                 "addComDom":addComDom,
+                                "name":createDomProp.customName,
+                                "title": "操作",
                             };
                             break;
                         default:
@@ -459,7 +507,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                         "children":[],
                     },comDom));
                 }else{
-    
                     if(item.componentKey && item.frame){
                         createDomProp.ortumChildren=index;//插入第几个ortum_children
                         comDom =require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
@@ -471,7 +518,6 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
                     }
                 }
             });
-
             scriptStr && (scriptDom = $(`<script>${scriptStr}</script>`));
         }
 
