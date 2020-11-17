@@ -1,4 +1,4 @@
-define(["require","assist","settings","global",'BootStrapAsider'],function(require,Assist,Settings,Global,BootStrapAsider){
+define(["require","assist","settings","global",'BootstrapAsider'],function(require,Assist,Settings,Global,BootstrapAsider){
     let component_properties = {
         data:{
             id:"",//id
@@ -87,7 +87,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
                 }
             }
             moreProps.ortumChildren = i;
-            let col=BootStrapAsider.tipAddComponentFn(true,moreProps)
+            let col=BootstrapAsider.tipAddComponentFn(true,moreProps)
             $(row).append(col);
         }
 
@@ -146,7 +146,7 @@ define(["require","assist","settings","global",'BootStrapAsider'],function(requi
                 }
                 if(cloumLength < val*1){
                     for(let i =0;i<(val*1 - cloumLength);i++){
-                        let col=BootStrapAsider.tipAddComponentFn(true,{ortumChildren:cloumLength+i})
+                        let col=BootstrapAsider.tipAddComponentFn(true,{ortumChildren:cloumLength+i})
                         $(globalComponent).find(".row").eq(0).append(col)
                         evenProperties.data.columnsArr.push({
                             "classValue":"col"

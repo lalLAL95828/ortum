@@ -1,4 +1,4 @@
-define(["require","assist","createDom","global","BootStrapAsider"],function(require,Assist,CreateDom,Global,BootStrapAsider){
+define(["require","assist","createDom","global","BootstrapAsider"],function(require,Assist,CreateDom,Global,BootstrapAsider){
     let component_properties = {
         data:{
             id:"",//id

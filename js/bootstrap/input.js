@@ -15,6 +15,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             labelCSS:"col-form-label col-2",//标签css类
             onBefore:"",//渲染之前的回调
             onAfter:"",//渲染之后的回调
+            onClick:"",//点击事件的回调
+            onBlur:"",
+            onInput:"",
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -98,7 +101,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         if(ortum_component_properties.data.hideLabel){
             (ortum_component_properties.data.labelCSS.indexOf("ortum_display_NONE") == -1) ? (ortum_component_properties.data.labelCSS+= " ortum_display_NONE") : '';
         };
-
         switch(ortum_component_properties.data.labelPosition){
             case "topLeft":case "topRight":
                 $(outerDom).removeClass('row');
@@ -127,19 +129,64 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         `))
         //插入dom
         $(outerDom).append(inputDom)
-        // $(outerDom).append(`<div class="invalid-feedback">请填写</div>`)
+
+        //TODO 后渲染的关联组件，可能无法正常控制权限
+        switch (ortum_component_properties.data.authority) {
+            case "hide":
+                $(outerDom).addClass("ortum_display_NONE");
+                $("*[ortum_bindcomponentname="+ ortum_component_properties.data.name +"]").parents(".ortum_item").eq(0).addClass("ortum_display_NONE");
+                break;
+            case "edit":
+                $(outerDom).removeClass("ortum_display_NONE");
+                $(outerDom).find("input").removeAttr("readonly");
+                $(outerDom).find("input").removeAttr("disabled");
+                $("*[ortum_bindcomponentname="+ ortum_component_properties.data.name +"]").parents(".ortum_item").eq(0).removeClass("ortum_display_NONE");
+                break;
+            case "readonly":
+                $(outerDom).removeClass("ortum_display_NONE");
+                $(outerDom).find("input").attr("readonly","readonly");
+                $(outerDom).find("input").removeAttr("disabled");
+                $("*[ortum_bindcomponentname="+ ortum_component_properties.data.name +"]").parents(".ortum_item").eq(0).removeClass("ortum_display_NONE");
+                break;
+            case "disabled":
+                $(outerDom).removeClass("ortum_display_NONE");
+                $(outerDom).find("input").attr("readonly","readonly");
+                $(outerDom).find("input").attr("disabled","disabled");
+                $("*[ortum_bindcomponentname="+ ortum_component_properties.data.name +"]").parents(".ortum_item").eq(0).removeClass("ortum_display_NONE");
+                break;
+            default:
+                break;
+        };
+
+
+        //scriptDom
+        let scriptDom ='';
+        if(createJson){
+            scriptDom = $(`<script>
+                    ${ortum_component_properties.data.onClick && '$("input[name='+ ortum_component_properties.data.name +']").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onClick +')'};
+                    ${ortum_component_properties.data.onBlur && '$("input[name='+ ortum_component_properties.data.name +']").off("blur.ortum").on("blur.ortum",'+ ortum_component_properties.data.onBlur +')'};
+                    ${ortum_component_properties.data.onInput && '$("input[name='+ ortum_component_properties.data.name +']").off("input.ortum").on("input.ortum",'+ ortum_component_properties.data.onInput +')'};
+                    ${ortum_component_properties.data.onAfter && '!'+ortum_component_properties.data.onAfter+'($("input[name='+ ortum_component_properties.data.name +']").eq(0))'};
+                </script>`)
+        }
+
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','input']);
         if(parentDom){
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
+            /*var account = window.parent.layui.config.getAccount();
+            that[0].value = account.usname;
+            that[0].dataset.usname = account.usname;
+            that[0].dataset.usid = account.usid;*/
             return {
                 "name":ortum_component_properties.data.name,
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
                 "ortumChildren":ortumChildren,
+                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
             }
         }else{
             return outerDom
@@ -231,7 +278,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                 evenProperties.data[property] = val;
                 break;
         }
-        
     }
 
     /**
@@ -243,7 +289,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
     let clickSetProperties = function(property,that,e){
         let val=$(that).val();
         let checked=$(that).prop('checked');
-
 
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
@@ -261,26 +306,26 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         switch(property){
             case "authority":
                 if(val=="hide"){//不可见
-                    $(globalComponent).hide();
-                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).hide();
+                    $(globalComponent).addClass("ortum_display_NONE");
+                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).addClass("ortum_display_NONE");
                 }
                 if(val=="edit"){//可编辑
-                    $(globalComponent).show();
+                    $(globalComponent).removeClass("ortum_display_NONE");
                     $(globalComponent).find("input").removeAttr("readonly");
                     $(globalComponent).find("input").removeAttr("disabled");
-                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).show();
+                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).removeClass("ortum_display_NONE");
                 }
                 if(val=="readonly"){//只读可点击
-                    $(globalComponent).show();
+                    $(globalComponent).removeClass("ortum_display_NONE");
                     $(globalComponent).find("input").attr("readonly","readonly");
                     $(globalComponent).find("input").removeAttr("disabled");
-                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).show();
+                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).removeClass("ortum_display_NONE");
                 }
                 if(val=="disabled"){//只读且无法点击
-                    $(globalComponent).show();
+                    $(globalComponent).removeClass("ortum_display_NONE");
                     $(globalComponent).find("input").attr("readonly","readonly");
                     $(globalComponent).find("input").attr("disabled","disabled");
-                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).show();
+                    $("*[ortum_bindcomponentname="+ evenProperties.data.name +"]").parents(".ortum_item").eq(0).removeClass("ortum_display_NONE");
                 }
                 break;
             case "hideLabel":
@@ -349,9 +394,62 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
     /**
      * 功能：设置js
      */
-    let ortumComponentSetJs = function(){
-        
-    }
+    let ortumComponentSetJs = function(codeObj){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let setStr = "var ortum_BootstrapInput_setJs = {";
+        if(evenProperties.data.onBefore){
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+        }
+        if(evenProperties.data.onAfter){
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that){},"
+        }
+        if(evenProperties.data.onClick){
+            setStr += "\n//click事件\nonClick:"+ evenProperties.data.onClick.toString() + ",";
+        }else{
+            setStr += "\n//click事件\nonClick:function(){},"
+        }
+        if(evenProperties.data.onBlur){
+            setStr += "\n//blur事件\nonBlur:"+ evenProperties.data.onBlur.toString() + ",";
+        }else{
+            setStr += "\n//blur事件\nonBlur:function(){},"
+        }
+        if(evenProperties.data.onInput){
+            setStr += "\n//input事件\nonInput:"+ evenProperties.data.onInput.toString() + ",";
+        }else{
+            setStr += "\n//input事件\nonInput:function(){},"
+        }
+        setStr +="\n};";
+        codeObj.setValue(setStr)
+    };
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        try{
+            eval(val);
+            evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
+            evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
+            evenProperties.data.onClick = ortum_BootstrapInput_setJs.onClick;
+            evenProperties.data.onBlur = ortum_BootstrapInput_setJs.onBlur;
+            evenProperties.data.onInput = ortum_BootstrapInput_setJs.onInput;
+        }catch (e) {
+            console.error("设置input的js有误，请重新设置");
+        }
+    };
 
 
     return {
@@ -365,6 +463,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         // keyUpSetProperties,
 
         ortumComponentSetJs,
+        ortumComponentSaveJs,
 
     }
 })

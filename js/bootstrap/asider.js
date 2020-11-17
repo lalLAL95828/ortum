@@ -508,13 +508,13 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let beforeSetPrperies = null;
 
         let componentToUpper = type.charAt(0).toUpperCase()+type.slice(1);
-        inputEvent = require('BootStrap'+componentToUpper).inputSetProperties;
-        blurEvent = require('BootStrap'+componentToUpper).blurSetProperties;
-        changeEvent = require('BootStrap'+componentToUpper).changeSetProperties;
-        clickEvent = require('BootStrap'+componentToUpper).clickSetProperties;
-        keyDownEvent = require('BootStrap'+componentToUpper).keyDownSetProperties;
-        keyUpEvent = require('BootStrap'+componentToUpper).keyUpSetProperties;
-        beforeSetPrperies =require('BootStrap'+componentToUpper).beforeSetPrperies;
+        inputEvent = require('Bootstrap'+componentToUpper).inputSetProperties;
+        blurEvent = require('Bootstrap'+componentToUpper).blurSetProperties;
+        changeEvent = require('Bootstrap'+componentToUpper).changeSetProperties;
+        clickEvent = require('Bootstrap'+componentToUpper).clickSetProperties;
+        keyDownEvent = require('Bootstrap'+componentToUpper).keyDownSetProperties;
+        keyUpEvent = require('Bootstrap'+componentToUpper).keyUpSetProperties;
+        beforeSetPrperies =require('Bootstrap'+componentToUpper).beforeSetPrperies;
        
     
         //获取组件的属性

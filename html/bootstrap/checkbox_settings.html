@@ -121,7 +121,7 @@
         //保存
         $('#ortum_checkbox_save').off('click.save').on('click.save',function(){
             if(!require)return;
-            require(["BootStrapCheckbox"],function(BootStrapCheckbox){
+            require(["BootstrapCheckbox"],function(BootstrapCheckbox){
                 let newLine = [];
                 $('#ortum_checkbox_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
                     let label = $(item).find('.ortum_checkbox_label').eq(0).val()
@@ -135,7 +135,7 @@
                         })
                     }
                 })
-                BootStrapCheckbox.setCheckboxItems(newLine);
+                BootstrapCheckbox.setCheckboxItems(newLine);
                 $('#ortum_top_dialog').modal('toggle')
             })
         })

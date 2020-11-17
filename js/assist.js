@@ -171,12 +171,12 @@ define(['require'],function(require){
             //bootstrap的栅格col
             if($(nextOrtumItem).hasClass('ortum_boot_col_default')){
                 // $(nextOrtumItem).addClass('ortum_boot_col_waitInsert')
-                $(nextOrtumItem).append(require('BootStrapAsider').tipAddComponentFn(false))//增加提示语
+                $(nextOrtumItem).append(require('BootstrapAsider').tipAddComponentFn(false))//增加提示语
             };
             //bootstrap的td
             if($(nextOrtumItem).hasClass('ortum_bootstrap_td')){
                 $(nextOrtumItem).addClass('ortum_boot_td_waitInsert');
-                $(nextOrtumItem).append(require('BootStrapAsider').tableTdAddTip())//增加提示语
+                $(nextOrtumItem).append(require('BootstrapAsider').tableTdAddTip())//增加提示语
                 let tdItem = $(nextOrtumItem).prop("ortum_tableTd_item");
                 //去除item的组件属性
                 delete tdItem.frame;
@@ -202,9 +202,25 @@ define(['require'],function(require){
      * @param {*} e
      */
     let ortumComponentSetJs = function(e){
-
         let editOrtumItem = $(this).parents('.ortum_item').eq(0);
-        debugger
+        let ortum_component_properties = editOrtumItem.prop("ortum_component_properties");
+        let ortum_component_type = editOrtumItem.prop("ortum_component_type");
+
+        //首字母大写
+        let s = ortum_component_type[1].slice(0,1).toUpperCase();
+        let h = ortum_component_type[1].slice(1);
+
+        // require(ortum_component_type[0] + s + h).ortumComponentSetJs();
+
+        $('#ortum_top_dialog_xl').modal({
+            "backdrop":"static",
+            "keyboard":false,
+        });
+        require('global').ortum_codemirrorJS_setVal = require(ortum_component_type[0] + s + h).ortumComponentSetJs;
+        require('global').ortum_codemirrorJS_save = require(ortum_component_type[0] + s + h).ortumComponentSaveJs;
+        $("#ortum_top_model_xl_content").load("html/common/codemirror.html",function(){
+            $('#ortum_top_model_xl_wait').hide();
+        });
         return false;
     }
 
@@ -273,23 +289,23 @@ define(['require'],function(require){
 
         //radio的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_radio')){
-            $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',require('BootStrapRadio').showRadioItems);
+            $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',require('BootstrapRadio').showRadioItems);
         }
         //grid的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_grid')){
-            $("#ortum_shadow .ortum_shadow_bootstrapGrid_settings").off('click.setting').on('click.setting',require('BootStrapGrid').showGridItems);
+            $("#ortum_shadow .ortum_shadow_bootstrapGrid_settings").off('click.setting').on('click.setting',require('BootstrapGrid').showGridItems);
         }
         //checkbox的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_checkbox')){
-            $("#ortum_shadow .ortum_shadow_bootstrapCheckbox_settings").off('click.setting').on('click.setting',require('BootStrapCheckbox').showCheckboxItems);
+            $("#ortum_shadow .ortum_shadow_bootstrapCheckbox_settings").off('click.setting').on('click.setting',require('BootstrapCheckbox').showCheckboxItems);
         }
         //select的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_select')){
-            $("#ortum_shadow .ortum_shadow_bootstrapSelect_settings").off('click.setting').on('click.setting',require('BootStrapSelect').showSelectOptions);
+            $("#ortum_shadow .ortum_shadow_bootstrapSelect_settings").off('click.setting').on('click.setting',require('BootstrapSelect').showSelectOptions);
         }
         //table的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_table')){
-            $("#ortum_shadow .ortum_shadow_bootstrapTable_settings").off('click.setting').on('click.setting',require('BootStrapTable').setTableColumns);
+            $("#ortum_shadow .ortum_shadow_bootstrapTable_settings").off('click.setting').on('click.setting',require('BootstrapTable').setTableColumns);
         }
 
         let properiesObj = $(this).prop('ortum_component_properties')
@@ -300,7 +316,7 @@ define(['require'],function(require){
         
         switch(properiesType[0]){
             case 'Bootstrap':
-                require('BootStrapAsider').setProperties(properiesObj,properiesType[1],$(this));
+                require('BootstrapAsider').setProperties(properiesObj,properiesType[1],$(this));
                 break;
             default:
                 break;

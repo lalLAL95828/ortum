@@ -18,7 +18,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             serverUrl:"",//服务器地址
             title:"",
             options:[
-                {
+                /*{
                     value:"123",
                     name:"玫瑰",
                     selected:true,
@@ -32,8 +32,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     value:"321",
                     name:"菊花",
                     // hide:true,
-                },
-            ]
+                },*/
+            ],
+            onBefore:"",//渲染之前的回调
+            onAfter:"",//渲染之后的回调
+            onChange:"",//change事件
+
         },
         inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS","serverUrl","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition","useRemote"],
@@ -180,12 +184,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         `)
         
         //scriptDom
-        let scriptDom ='';
+        let scriptDom ='<script>';
         if(ortum_component_properties.data.useRemote && Assist.getDetailType(ortum_component_properties.data.customGetOptions) == "Function"){
             //函数生成script节点中
             if(generateDom){
-                scriptDom = $(`<script>${ortum_component_properties.data.customGetOptions.toString()};getOptions_${ortum_component_properties.data.name}("${ortum_component_properties.data.name}",ortumReq);
-                </script>`)
+                scriptDom += `${ortum_component_properties.data.customGetOptions.toString()};getOptions_${ortum_component_properties.data.name}("${ortum_component_properties.data.name}",ortumReq);
+                `;
             }
             if(!generateDom){
                 //返回TODO
@@ -195,6 +199,16 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 }
             }    
         }
+        if(createJson){
+            scriptDom +=`
+                ${ortum_component_properties.data.onChange && '$("select[name='+ ortum_component_properties.data.name +']").off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +')'};
+                ${ortum_component_properties.data.onAfter && '!'+ortum_component_properties.data.onAfter+'($("select[name='+ ortum_component_properties.data.name +']").eq(0),"'+ ortum_component_properties.data.name +'")'};
+            `;
+        };
+        scriptDom += "</script>";
+        scriptDom = $(scriptDom);
+
+
         if(!ortum_component_properties.data.useRemote){
             //循环生成option
             for(let i=0;i<ortum_component_properties.data.options.length;i++){
@@ -536,6 +550,54 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
     };
 
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(codeObj){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let setStr = "var ortum_BootstrapSelect_setJs = {";
+        if(evenProperties.data.onBefore){
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+        };
+        if(evenProperties.data.onAfter){
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that,name){},"
+        };
+        if(evenProperties.data.onClick){
+            setStr += "\n//change事件\nonChange:"+ evenProperties.data.onChange.toString() + ",";
+        }else{
+            setStr += "\n//change事件\nonChange:function(){},"
+        };
+        setStr +="\n};";
+        codeObj.setValue(setStr)
+    };
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        };
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        try{
+            eval(val);
+            evenProperties.data.onBefore = ortum_BootstrapSelect_setJs.onBefore;
+            evenProperties.data.onAfter = ortum_BootstrapSelect_setJs.onAfter;
+            evenProperties.data.onChange = ortum_BootstrapSelect_setJs.onChange;
+        }catch (e) {
+            console.error("设置input的js有误，请重新设置");
+        };
+    };
+
     return {
         SelectDom,
 
@@ -548,6 +610,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+        ortumComponentSetJs,
+        ortumComponentSaveJs,
 
 
 

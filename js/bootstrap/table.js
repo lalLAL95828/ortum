@@ -1,4 +1,4 @@
-define(["require","assist","createDom","global","settings",'BootStrapAsider'], function(require, Assist, CreateDom, Global, Settings, BootStrapAsider){
+define(["require","assist","createDom","global","settings",'BootstrapAsider'], function(require, Assist, CreateDom, Global, Settings, BootstrapAsider){
     let component_properties = {
         data:{
             id:"",//id
@@ -231,8 +231,8 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
 
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        // ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
-        ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
 
         let tableDom = $(`
             <table
@@ -261,7 +261,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         //将tr的所有td信息存放在tbody上
         !createJson && $(outerDom).prop("ortum_tbodyTds_info",ortum_component_properties.data.tableColumnsArr)
         //创建tbody的tr
-        let tbodyTrObj =BootStrapAsider.tableTbodyAddLine(tbodyDom,ortum_component_properties.data.tableColumnsArr,tdMoreProps);
+        let tbodyTrObj =BootstrapAsider.tableTbodyAddLine(tbodyDom,ortum_component_properties.data.tableColumnsArr,tdMoreProps);
         $(tbodyDom).append(tbodyTrObj);
 
         //【thead】
@@ -274,7 +274,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         if(!ortum_component_properties.data.showThead){
             theadDom.addClass("ortum_display_NONE")
         }
-        let theadTrObj =BootStrapAsider.tableTheadAddLine(ortum_component_properties.data.tableColumnsArr,
+        let theadTrObj =BootstrapAsider.tableTheadAddLine(ortum_component_properties.data.tableColumnsArr,
             {
                 trCssClass:ortum_component_properties.data.theadTrCssClass,
                 thCssClass:ortum_component_properties.data.thCssClass,
@@ -296,7 +296,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             tableName:ortum_component_properties.data.name,
         };
         Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tfootTdMoreProps,moreProps);
-        let tfootTrObj =BootStrapAsider.tableTfootAddLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
+        let tfootTrObj =BootstrapAsider.tableTfootAddLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
         $(tfootDom).append(tfootTrObj);
 
 
@@ -317,7 +317,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
         let children = [];
         if(createJson){
             //创建tbody的tr模板
-            addlineTrInfo = BootStrapAsider.tableTbodyAddLine(null,ortum_component_properties.data.tableColumnsArr,tdMoreProps);
+            addlineTrInfo = BootstrapAsider.tableTbodyAddLine(null,ortum_component_properties.data.tableColumnsArr,tdMoreProps);
             //新增行的函数
             //可以根据table的name属性新增；也可以根据this新增，this必须是tbody下的tr的子元素，
             scriptStr+=`
@@ -729,9 +729,9 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             $(globalComponent).prop("ortum_tbodyTds_info",editTableColumnArr);
             $(tbodyDom).empty();//tbody先清空
             $(theadDom).empty();//thead先清空
-            let tbodyTrObj =BootStrapAsider.tableTbodyAddLine(tbodyDom,editTableColumnArr,tdMoreProps);
+            let tbodyTrObj =BootstrapAsider.tableTbodyAddLine(tbodyDom,editTableColumnArr,tdMoreProps);
             $(tbodyDom).append(tbodyTrObj);
-            let theadTrObj =BootStrapAsider.tableTheadAddLine(editTableColumnArr,
+            let theadTrObj =BootstrapAsider.tableTheadAddLine(editTableColumnArr,
                 {
                     trCssClass:evenProperties.data.theadTrCssClass,
                     thCssClass:evenProperties.data.thCssClass,
@@ -741,7 +741,7 @@ define(["require","assist","createDom","global","settings",'BootStrapAsider'], f
             let editTfootColumnArr = eval("tfootColumns");
             evenProperties.data.tfootColumnsArr = editTfootColumnArr;
             $(tfootDom).empty();//thead先清空
-            let tfootTrObj =BootStrapAsider.tableTfootAddLine(editTfootColumnArr,
+            let tfootTrObj =BootstrapAsider.tableTfootAddLine(editTfootColumnArr,
                 {
                     trCssClass:evenProperties.data.tfootTrCssClass,
                     tdCssClass:evenProperties.data.tfootTdCssClass,

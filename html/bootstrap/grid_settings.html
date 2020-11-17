@@ -76,7 +76,7 @@
     //保存
     $('#ortum_grid_save').off('click.save').on('click.save',function(){
         if(!require)return;
-        require(["BootStrapGrid"],function(BootStrapGrid){
+        require(["BootstrapGrid"],function(BootstrapGrid){
             let newLine = [];
             $('#ortum_grid_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
                 let value = $(item).find('.ortum_grid_colValue').eq(0).val()
@@ -86,7 +86,7 @@
                     })
                 }
             })
-            BootStrapGrid.setGridItems(newLine);
+            BootstrapGrid.setGridItems(newLine);
             $('#ortum_top_dialog').modal('toggle')
         })
     })

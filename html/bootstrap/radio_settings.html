@@ -115,7 +115,7 @@
     //保存
     $('#ortum_radio_save').off('click.save').on('click.save',function(){
         if(!require)return;
-        require(["BootStrapRadio"],function(BootStrapRadio){
+        require(["BootstrapRadio"],function(BootstrapRadio){
             let newLine = [];
             $('#ortum_radio_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
                 let label = $(item).find('.ortum_radio_label').eq(0).val()
@@ -127,7 +127,7 @@
                     })
                 }
             })
-            BootStrapRadio.setRadioItems(newLine);
+            BootstrapRadio.setRadioItems(newLine);
             $('#ortum_top_dialog').modal('toggle')
         })
     })

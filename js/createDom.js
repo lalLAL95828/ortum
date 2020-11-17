@@ -1,18 +1,18 @@
 /* 创建不同框架下的不同组件 */
 
-define(["BootStrapGrid","BootStrapInput","BootStrapRangeInput","BootStrapRadio","BootStrapTextarea",
-"BootStrapCheckbox",
-"BootStrapFile",
-"BootStrapSwitch",
-"BootStrapSelect",
-"BootStrapLabel",
-"BootStrapDate",
-"BootStrapTable", "BootStrapButton","BootStrapButtonGroup",
-"BootStrapIconButton","BootStrapH",
+define(["BootstrapGrid","BootstrapInput","BootstrapRangeInput","BootstrapRadio","BootstrapTextarea",
+"BootstrapCheckbox",
+"BootstrapFile",
+"BootstrapSwitch",
+"BootstrapSelect",
+"BootstrapLabel",
+"BootstrapDate",
+"BootstrapTable", "BootstrapButton","BootstrapButtonGroup",
+"BootstrapIconButton","BootstrapH",
 ],
-function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStrapTextarea,BootStrapCheckbox,
-    BootStrapFile,BootStrapSwitch,BootStrapSelect,BootStrapLabel,BootStrapDate,BootStrapTable,BootStrapButton,BootStrapButtonGroup,
-    BootStrapIconButton,BootStrapH){
+function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,BootstrapTextarea,BootstrapCheckbox,
+    BootstrapFile,BootstrapSwitch,BootstrapSelect,BootstrapLabel,BootstrapDate,BootstrapTable,BootstrapButton,BootstrapButtonGroup,
+    BootstrapIconButton,BootstrapH){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -20,7 +20,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createGridDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapGrid.GridDom(parentDom,moreProps)
+                return BootstrapGrid.GridDom(parentDom,moreProps)
                 break;
             default:
 
@@ -33,7 +33,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createInputDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapInput.InputDom(parentDom,moreProps)
+                return BootstrapInput.InputDom(parentDom,moreProps)
                 break;
             default:
 
@@ -46,7 +46,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createTextareaDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapTextarea.TextareaDom(parentDom,moreProps)
+                return BootstrapTextarea.TextareaDom(parentDom,moreProps)
                 break;
             default:
 
@@ -60,7 +60,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createRangeInputDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapRangeInput.RangeInputDom(parentDom,moreProps)
+                return BootstrapRangeInput.RangeInputDom(parentDom,moreProps)
                 break;
             default:
 
@@ -73,7 +73,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createRadioDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapRadio.RadioDom(parentDom,moreProps)
+                return BootstrapRadio.RadioDom(parentDom,moreProps)
                 break;
             default:
 
@@ -86,7 +86,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createCheckboxDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapCheckbox.CheckboxDom(parentDom,moreProps)
+                return BootstrapCheckbox.CheckboxDom(parentDom,moreProps)
                 break;
             default:
 
@@ -99,7 +99,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createFileDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapFile.FileDom(parentDom,moreProps)
+                return BootstrapFile.FileDom(parentDom,moreProps)
                 break;
             default:
 
@@ -112,7 +112,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createSwitchDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapSwitch.SwitchDom(parentDom,moreProps)
+                return BootstrapSwitch.SwitchDom(parentDom,moreProps)
                 break;
             default:
 
@@ -125,7 +125,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createSelectDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapSelect.SelectDom(parentDom,moreProps)
+                return BootstrapSelect.SelectDom(parentDom,moreProps)
                 break;
             default:
 
@@ -139,7 +139,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createLabelDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapLabel.LabelDom(parentDom,moreProps)
+                return BootstrapLabel.LabelDom(parentDom,moreProps)
                 break;
             default:
 
@@ -152,7 +152,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createDateDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapDate.DateDom(parentDom,moreProps)
+                return BootstrapDate.DateDom(parentDom,moreProps)
                 break;
             default:
 
@@ -166,7 +166,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createTableDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapTable.TableDom(parentDom,moreProps)
+                return BootstrapTable.TableDom(parentDom,moreProps)
                 break;
             default:
 
@@ -180,7 +180,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createButtonDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapButton.ButtonDom(parentDom,moreProps)
+                return BootstrapButton.ButtonDom(parentDom,moreProps)
                 break;
             default:
 
@@ -193,7 +193,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createIconButtonDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapIconButton.IconButtonDom(parentDom,moreProps)
+                return BootstrapIconButton.IconButtonDom(parentDom,moreProps)
                 break;
             default:
         }
@@ -206,7 +206,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createButtonGroupDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapButtonGroup.ButtonGroupDom(parentDom,moreProps)
+                return BootstrapButtonGroup.ButtonGroupDom(parentDom,moreProps)
                 break;
             default:
         }
@@ -219,7 +219,7 @@ function(BootStrapGrid,BootStrapInput,BootStrapRangeInput,BootStrapRadio,BootStr
     let createHDom = function(parentDom,type,moreProps=null){
         switch(type){
             case 'Bootstrap':
-                return BootStrapH.HDom(parentDom,moreProps)
+                return BootstrapH.HDom(parentDom,moreProps)
                 break;
             default:
         }

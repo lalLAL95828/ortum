@@ -12,23 +12,23 @@ require.config({
         "feature":"js/feature",
 
 
-        "BootStrapButton":"js/bootstrap/button",
-        "BootStrapH":"js/bootstrap/h",
-        "BootStrapIconButton":"js/bootstrap/IconButton",
-        "BootStrapButtonGroup":"js/bootstrap/buttonGroup",
-        "BootStrapAsider":"js/bootstrap/asider",
-        "BootStrapInput":"js/bootstrap/input",
-        "BootStrapGrid":"js/bootstrap/grid",
-        "BootStrapRangeInput":"js/bootstrap/rangeInput",
-        "BootStrapRadio":"js/bootstrap/radio",
-        "BootStrapCheckbox":"js/bootstrap/checkbox",
-        "BootStrapTextarea":"js/bootstrap/textarea",
-        "BootStrapFile":"js/bootstrap/file",
-        "BootStrapSwitch":"js/bootstrap/switch",
-        "BootStrapSelect":"js/bootstrap/select",
-        "BootStrapLabel":"js/bootstrap/label",
-        "BootStrapDate":"js/bootstrap/date",
-        "BootStrapTable":"js/bootstrap/table",
+        "BootstrapButton":"js/bootstrap/button",
+        "BootstrapH":"js/bootstrap/h",
+        "BootstrapIconButton":"js/bootstrap/IconButton",
+        "BootstrapButtonGroup":"js/bootstrap/buttonGroup",
+        "BootstrapAsider":"js/bootstrap/asider",
+        "BootstrapInput":"js/bootstrap/input",
+        "BootstrapGrid":"js/bootstrap/grid",
+        "BootstrapRangeInput":"js/bootstrap/rangeInput",
+        "BootstrapRadio":"js/bootstrap/radio",
+        "BootstrapCheckbox":"js/bootstrap/checkbox",
+        "BootstrapTextarea":"js/bootstrap/textarea",
+        "BootstrapFile":"js/bootstrap/file",
+        "BootstrapSwitch":"js/bootstrap/switch",
+        "BootstrapSelect":"js/bootstrap/select",
+        "BootstrapLabel":"js/bootstrap/label",
+        "BootstrapDate":"js/bootstrap/date",
+        "BootstrapTable":"js/bootstrap/table",
 
         "CSS":"lib/css.min",
 
@@ -52,7 +52,8 @@ require.config({
         location: "lib/codeMirror",
         main: "lib/codemirror"
     }],
-})
+});
+
 require(['feature','assist'],function(Feature,Assist){
     //【1】初始化
     Feature.init('ortum');
@@ -61,9 +62,26 @@ require(['feature','assist'],function(Feature,Assist){
     let tableAct_method = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-method")
     let tableAct_formId = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-formid")
 
+
     //编辑表单
     if(tableAct_method == "editPCTable" && tableAct_formId){
-        ortumReq({
+        // 为给定 ID 的 user 创建请求
+        axios.get("/catarc_infoSys/api/form/"+tableAct_formId)
+            .then(function (res) {
+                if(res.data.ok){
+                    let tableContent = JSON.parse(res.data.data.contentHtml);
+                    $("#ortum_table_name").val(res.data.data.formName);
+                    $("#ortum_table_code").val(res.data.data.formCode);
+                    $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version)
+                    $('#ortum_field').removeClass("ortum_field_originState").html('');
+                    Feature.JsonPropsRenderDom(tableContent,$("#ortum_field"),"append");
+                };
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        /*ortumReq({
             "url":"/catarc_infoSys/api/form/"+tableAct_formId,
             "method":"GET",
             "success":(xhr,e)=>{
@@ -71,28 +89,17 @@ require(['feature','assist'],function(Feature,Assist){
                     let response = JSON.parse(xhr.response)
                     if(response.ok){
                         let tableContent = JSON.parse(response.data.contentHtml);
-                        // console.log(tableContent);
                         $("#ortum_table_name").val(response.data.formName);
                         $("#ortum_table_code").val(response.data.formCode);
                         $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",response.data.version)
-                        // console.log(tableContent)
-                        // console.log(JSON.parse(tableContent[0].componentProperties))
                         $('#ortum_field').removeClass("ortum_field_originState").html('');
-
                         Feature.JsonPropsRenderDom(tableContent,$("#ortum_field"),"append")
-
-                        // console.log(JSON.parse(response.data.contentHtml))
                     }
                 }
-                // console.log("成功")
-                // console.log(xhr)
-                // console.log(e)
             },
             "error":(xhr,e)=>{
-                // console.log("失败")
-                // console.log(xhr)
-                // console.log(e)
+
             },
-        })
+        })*/
     }
 })

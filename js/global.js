@@ -26,7 +26,7 @@ define([],function(){
     // {
     //     frame:"bootstrap",
     //     type:'input',
-    //     listen:require('BootStrapInput').setInputProperty,
+    //     listen:require('BootstrapInput').setInputProperty,
     // }
 
 

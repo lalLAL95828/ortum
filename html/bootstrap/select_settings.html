@@ -142,7 +142,7 @@
         //保存
         $('#ortum_select_save').off('click.save').on('click.save',function(){
             if(!require)return;
-            require(["BootStrapSelect"],function(BootStrapSelect){
+            require(["BootstrapSelect"],function(BootstrapSelect){
                 let newLine = [];
                 $('#ortum_select_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
                     let name = $(item).find('.ortum_select_name').eq(0).val()
@@ -161,7 +161,7 @@
                         })
                     }
                 })
-                BootStrapSelect.setSelectOptions(newLine);
+                BootstrapSelect.setSelectOptions(newLine);
                 $('#ortum_top_dialog_lg').modal('toggle')
             })
         })
