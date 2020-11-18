@@ -54,7 +54,7 @@ require.config({
     }],
 });
 
-require(['feature','assist'],function(Feature,Assist){
+require(['feature','assist','global'],function(Feature,Assist,Global){
     //【1】初始化
     Feature.init('ortum');
 
@@ -72,9 +72,10 @@ require(['feature','assist'],function(Feature,Assist){
                     let tableContent = JSON.parse(res.data.data.contentHtml);
                     $("#ortum_table_name").val(res.data.data.formName);
                     $("#ortum_table_code").val(res.data.data.formCode);
-                    $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version)
+                    $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version);
                     $('#ortum_field').removeClass("ortum_field_originState").html('');
-                    Feature.JsonPropsRenderDom(tableContent,$("#ortum_field"),"append");
+                    Feature.JsonPropsRenderDom(tableContent.ortumJson,$("#ortum_field"),"append");
+                    Global.ortum_lift_json = tableContent.ortumSet;
                 };
             })
             .catch(function (error) {

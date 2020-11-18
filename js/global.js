@@ -21,7 +21,9 @@ define([],function(){
 
     let ortum_createDom_frame = "Bootstrap";//默认创建组件使用的框架
 
-    let ortum_life_function;//全局什么周期json
+    let ortum_life_function;//全局生命周期json
+
+    let ortum_lift_json={};//参数json
 
     // {
     //     frame:"bootstrap",
@@ -47,5 +49,6 @@ define([],function(){
         ortum_preview_windowSonUrl:ortum_preview_windowSonUrl,
 
         ortum_life_function:ortum_life_function,
+        ortum_lift_json:ortum_lift_json,
     }
 })

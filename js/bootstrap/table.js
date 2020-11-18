@@ -144,6 +144,9 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     "tfootRowspan":1,
                 },
             ],
+
+            onBefore:"",
+            onAfter:"",
         },
         inputChange:["id","name","title","tfootCssClass","tfootTrCssClass","tfootTdCssClass","verification","cssClass","theadCssClass","tbodyCssClass","theadTrCssClass","tbodyTrCssClass","thCssClass","tdCssClass"],//input事件修改值
         clickChange:["authority","showThead","showTbody","showTfoot"],
@@ -231,8 +234,8 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
 
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
-        // ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
 
         let tableDom = $(`
             <table
@@ -331,6 +334,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     };
                     let tdInfoArr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTds_info");
                     let addlineTr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTr_info");
+                    let tbodyFirstTr = tableDom.find("tbody tr:nth-of-type(1)");
                     let bodyTrLength = tableDom.find("tbody > tr").length;
                     let nextTr = $(addlineTr);
                     let trOrder = tableDom.find('tbody tr').length;
@@ -341,9 +345,20 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                                 itemDom = item.chooseFun(null,trOrder+1);
                             };
                             let nextHtml = $(itemDom.html);
+                            let hide = false;
+                            let read = false;
+                            let required = false;
+                            let verifyInfo = "";
                             nextHtml.find("*[name]").each(function(index2,item2){
                                 let nameValArr = $(item2).attr("name") && $(item2).attr("name").split("_");
                                 if(nameValArr && nameValArr.length && nameValArr[0] == "table"){
+                                    /*********获取权限**********/
+                                    if(tbodyFirstTr.length){
+                                        let brotherDom = tbodyFirstTr.find("*[name="+ $(item2).attr("name") +"]").eq(0);
+                                        brotherDom.parents(".ortum_item").eq(0).css("display") == "none" && (hide=true);
+                                        brotherDom.attr("disabled") && (read=true);
+                                        brotherDom.attr("ortum-verify") && (verifyInfo=brotherDom.attr("ortum-verify"));
+                                    };
                                     nameValArr[nameValArr.length -1] = bodyTrLength+1;
                                 };
                                 $(item2).attr("name",nameValArr.join("_"));
@@ -352,6 +367,20 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                                 ortum_BootstraptableDom_addLine(itemDom.children,nextHtml);
                             };
                             $(trDom).find("ortum_children[data-order="+ itemDom.ortumChildren +"]").eq(0).replaceWith(nextHtml);
+                            /*********设置权限**********/
+                            if(hide){
+                                nextHtml.hide();
+                                nextHtml.parents("td").eq(0).hide();
+                            };
+                            if(read){
+                                nextHtml.find("*[name]").attr("disabled","disabled");
+                            };
+                            if(required){
+                                nextHtml.find("*[name]").attr("ortum-verify","required");
+                            };
+                            if(verifyInfo){
+                                nextHtml.attr("ortum_authority","verifyInfo");
+                            };
                         });
                     };
                     ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
@@ -518,6 +547,15 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     }
                 }
             });
+
+            // if(ortum_component_properties.data.onBefore && typeof ortum_component_properties.data.onBefore === "function"){
+            //
+            // }
+            if(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function"){
+                scriptStr += '!'+ortum_component_properties.data.onAfter+'($("input[name='+ ortum_component_properties.data.name +']").eq(0));'
+            }
+
+
             scriptStr && (scriptDom = $(`<script>${scriptStr}</script>`));
         }
 
@@ -700,11 +738,45 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
     /**
      * 功能：设置js
      */
-    let ortumComponentSetJs = function(val){
-        //将字符串装成函数
-        console.log(val)
-        debugger
-    }
+    let ortumComponentSetJs = function(codeObj){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let setStr = "var ortum_BootstrapInput_setJs = {";
+        if(evenProperties.data.onBefore){
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+        }
+        if(evenProperties.data.onAfter){
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that){},"
+        }
+        setStr +="\n};";
+        codeObj.setValue(setStr)
+    };
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        try{
+            eval(val);
+            evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
+            evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
+        }catch (e) {
+            console.error("设置input的js有误，请重新设置");
+        }
+    };
+
 
 
     /**
@@ -848,7 +920,9 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         setTableColumns,
         saveTableColumns,
 
+
         ortumComponentSetJs,
+        ortumComponentSaveJs,
 
     }
 })

@@ -201,8 +201,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
         if(createJson){
             scriptDom +=`
-                ${ortum_component_properties.data.onChange && '$("select[name='+ ortum_component_properties.data.name +']").off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +')'};
-                ${ortum_component_properties.data.onAfter && '!'+ortum_component_properties.data.onAfter+'($("select[name='+ ortum_component_properties.data.name +']").eq(0),"'+ ortum_component_properties.data.name +'")'};
+                ${(ortum_component_properties.data.onChange && typeof ortum_component_properties.data.onChange === "function") ? '$("select[name='+ ortum_component_properties.data.name +']").off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +');' : ''}
+                ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("select[name='+ ortum_component_properties.data.name +']").eq(0),"'+ ortum_component_properties.data.name +'");' : ''}
             `;
         };
         scriptDom += "</script>";
@@ -245,7 +245,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 "name":ortum_component_properties.data.name,
                 "html":outerDom && outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
-                "script":scriptDom && scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
+                "script":scriptDom && scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," ").length >= 20 && scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
                 "ortumChildren":ortumChildren,
             }

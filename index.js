@@ -120,7 +120,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 
     //保存
     if($(this).hasClass('icon-baocun')){
-        require(['feature','assist','settings'],function(Feature,Assist,Settings){
+        require(['feature','assist','settings','global'],function(Feature,Assist,Settings,Global){
             let tableName = $("#ortum_table_name").val().trim();
             let tableCode = $("#ortum_table_code").val().trim();
             let actWay = $(".ortum_table_method").eq(0).attr('data-method') || "newPCTable";
@@ -138,14 +138,15 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 return;
             }
             let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true});
-            console.log(ortumJson)
+            let ortumJS = '';
+            let ortumSet = Global.ortum_lift_json;
 
             let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
 
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
-            console.log(nameArr)
-            console.log(titleArr)
+            // console.log(nameArr)
+            // console.log(titleArr)
             // return;
 
 
@@ -156,7 +157,11 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let ajaxJsom = {
                 columnID:nameArr.toString(),
                 columnName:titleArr.toString(),
-                contentHtml:JSON.stringify(ortumJson),
+                contentHtml:JSON.stringify({
+                    ortumJson:ortumJson,
+                    ortumJS:ortumJS,
+                    ortumSet:ortumSet,
+                }),
                 editor:"ortum",
                 editName:usename,
                 editTime:new Date().toLocaleString(),
@@ -216,6 +221,9 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 funStr = "var ortum_life_function={\n\tbeigin_function:function(){},\n\tcompleted_function:function(){},\n};";
             }
 
+            if(Global.ortum_lift_json){
+                funStr += "\n//表单参数配置\nvar ortum_lift_json=" + JSON.stringify(Global.ortum_lift_json) +";";
+            }
             Global.ortum_codemirrorJS_setVal = function(codeObj){
                 codeObj.setValue(`//函数名请勿编辑，只需编辑函数体内容\n//beigin_function函数是dom渲染前会执行的函数\n//completed_function函数是dom渲染后会执行的函数\n${funStr}
                 `)
@@ -226,6 +234,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     Global.ortum_life_function = {};
                     Global.ortum_life_function.beigin_function=ortum_life_function.beigin_function.toString();
                     Global.ortum_life_function.completed_function=ortum_life_function.completed_function.toString();
+                    Global.ortum_lift_json = ortum_lift_json;
                 }catch(err){
                     console.error("编辑有勿！")
                 }
