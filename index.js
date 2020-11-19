@@ -138,8 +138,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 return;
             }
             let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true});
-            let ortumJS = '';
-            let ortumSet = Global.ortum_lift_json;
+            let ortumJS = Global.ortum_life_function;
+            let ortumSet = Global.ortum_life_json;
 
             let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
 
@@ -147,6 +147,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let nameArr = getTitleAndName.nameArr;
             // console.log(nameArr)
             // console.log(titleArr)
+            // debugger;
             // return;
 
 
@@ -216,13 +217,13 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let funStr = "";
             if(Global.ortum_life_function){
                 //函数字符串
-                funStr = "var ortum_life_function={\n\tbeigin_function:"+ Global.ortum_life_function.beigin_function.toString() +",\n\tcompleted_function:"+ Global.ortum_life_function.completed_function.toString() +",\n};";
+                funStr = "var ortum_life_function={\n\tbeigin_function:"+ Global.ortum_life_function.beigin_function.toString() +",\n\tcompleted_function:"+ Global.ortum_life_function.completed_function.toString() +",\n\tsubmit_function:"+ Global.ortum_life_function.submit_function.toString() +"\n};";
             }else{
-                funStr = "var ortum_life_function={\n\tbeigin_function:function(){},\n\tcompleted_function:function(){},\n};";
+                funStr = "var ortum_life_function={\n\tbeigin_function:function(){},\n\tcompleted_function:function(){},\n\tsubmit_function:function(){},\n};";
             }
 
-            if(Global.ortum_lift_json){
-                funStr += "\n//表单参数配置\nvar ortum_lift_json=" + JSON.stringify(Global.ortum_lift_json) +";";
+            if(Global.ortum_life_json){
+                funStr += "\n//表单参数配置\nvar ortum_life_json=" + JSON.stringify(Global.ortum_life_json) +";";
             }
             Global.ortum_codemirrorJS_setVal = function(codeObj){
                 codeObj.setValue(`//函数名请勿编辑，只需编辑函数体内容\n//beigin_function函数是dom渲染前会执行的函数\n//completed_function函数是dom渲染后会执行的函数\n${funStr}
@@ -232,9 +233,10 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 try{
                     eval(val);
                     Global.ortum_life_function = {};
-                    Global.ortum_life_function.beigin_function=ortum_life_function.beigin_function.toString();
-                    Global.ortum_life_function.completed_function=ortum_life_function.completed_function.toString();
-                    Global.ortum_lift_json = ortum_lift_json;
+                    Global.ortum_life_function.beigin_function=ortum_life_function.beigin_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");
+                    Global.ortum_life_function.completed_function=ortum_life_function.completed_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");
+                    Global.ortum_life_function.submit_function=ortum_life_function.submit_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");
+                    Global.ortum_life_json = ortum_life_json;
                 }catch(err){
                     console.error("编辑有勿！")
                 }

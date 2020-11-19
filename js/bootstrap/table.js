@@ -302,7 +302,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         let tfootTrObj =BootstrapAsider.tableTfootAddLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
         $(tfootDom).append(tfootTrObj);
 
-
         $(tableDom).append(theadDom);
         $(tableDom).append(tbodyDom);
         $(tableDom).append(tfootDom);
@@ -324,8 +323,9 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             //新增行的函数
             //可以根据table的name属性新增；也可以根据this新增，this必须是tbody下的tr的子元素，
             scriptStr+=`
-                function ortumTableDom_addLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}"){
+                function ortumTableDom_addLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",tableVal=null,setValueFun=null){
                     let tableDom;
+                    let rendPowerArr=[];
                     tableName && (tableDom = $("table[name="+ tableName +"]"));
                     !tableName && (tableDom = $(this).parents("table").eq(0));
                     if(!tableDom.length){
@@ -367,6 +367,10 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                                 ortum_BootstraptableDom_addLine(itemDom.children,nextHtml);
                             };
                             $(trDom).find("ortum_children[data-order="+ itemDom.ortumChildren +"]").eq(0).replaceWith(nextHtml);
+                            rendPowerArr.push({
+                                dom:nextHtml,
+                                name:nextHtml.find("*[name]").attr("name")
+                            });
                             /*********设置权限**********/
                             if(hide){
                                 nextHtml.hide();
@@ -381,6 +385,10 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                             if(verifyInfo){
                                 nextHtml.attr("ortum_authority","verifyInfo");
                             };
+                            /*********设置值**********/
+                            tableVal && (typeof setValueFun == "function") && rendPowerArr.forEach(function(item){
+                                setValueFun(item.dom,item.name,tableVal);
+                            });
                         });
                     };
                     ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);

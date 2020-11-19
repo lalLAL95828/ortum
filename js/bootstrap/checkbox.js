@@ -105,6 +105,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('checkbox'));
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name = "checkbox_21561456456456456");
 
         for(let i=0;i<ortum_component_properties.data.items.length;i++){
             let choose = false;
@@ -121,7 +122,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             </div>
             `);
             let obj =ortum_component_properties.data.items[i]
-            for (key in obj) {
+            for (let key in obj) {
                 if (obj.hasOwnProperty(key) && key != "label" && key != 'value') {
                     $(newDom).find('.form-check-input').eq(0).attr(key,obj[key])
                 }
@@ -276,7 +277,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     let setCheckboxItems = function(newArr){
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
-
 
         $(globalComponent).find('.form-check').remove();
 

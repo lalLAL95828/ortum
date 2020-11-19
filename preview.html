@@ -123,6 +123,22 @@
             padding-right: 0px;
             padding-left: 0px;
         }
+
+        /*option意见*/
+        .optionContainer{
+            background-color:rgba(245,244,244,1);
+        }
+        .optionContainer > .row{
+            margin: 0;
+        }
+        .optionTitle{border: 2px solid white;display: flex;align-items: center;}
+        .optionContent{padding: 0 10px;border: 1px solid white;}
+        .optionText{line-height: 30px;height: 90px}
+        .optionSpan{display: block;}
+        .optionTimeAndName{display: flex;flex-direction: column;justify-content: center;align-items: flex-end;border-bottom: 2px solid white;}
+        .optionContent .optionTimeAndName:last-of-type{
+            border-bottom:none;
+        }
     </style>
 
 </head>
@@ -275,6 +291,8 @@
             $(document.body).append(item);
         });
         let purviewJson={
+            "checkbox_21561456456456456":1,
+            "radio_1252314543323":4,
             "table_1605100578804af1b_tfoot_1":3,
             "table_1605100578804af1b_tfoot_2":3,
             "table_1605100578804af1b_tfoot_4":1,
@@ -343,6 +361,31 @@
             setQ(item.dom,item.name,purviewJson)
         });
 
+        /*$("#ortum_form_Modal_body").append(`
+            <div class="optionContainer">
+                <div class="row">
+                    <div class="col-3 optionTitle">
+                        <span style="display: block">投资与运营管理部意见</span>
+                    </div>
+                    <div class="col optionContent">
+                        <div class="optionText"><span class="optionSpan">同意</span></div>
+                        <div class="optionTimeAndName">
+                            <div style="text-align: center">
+                                <span class="optionSpan optionTime">路爱丽丝</span>
+                                <span class="optionSpan optionName">2020-11-12 09:51:14</span>
+                            </div>
+                        </div>
+                        <div class="optionText"><span class="optionSpan">同意</span></div>
+                        <div class="optionTimeAndName">
+                            <div style="text-align: center">
+                                <span class="optionSpan optionTime">路爱丽丝</span>
+                                <span class="optionSpan optionName">2020-11-12 09:51:14</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);*/
     </script>
 
 </body>

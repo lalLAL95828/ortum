@@ -75,7 +75,8 @@ require(['feature','assist','global'],function(Feature,Assist,Global){
                     $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version);
                     $('#ortum_field').removeClass("ortum_field_originState").html('');
                     Feature.JsonPropsRenderDom(tableContent.ortumJson,$("#ortum_field"),"append");
-                    Global.ortum_lift_json = tableContent.ortumSet;
+                    Global.ortum_life_json = tableContent.ortumSet;
+                    Global.ortum_life_function = tableContent.ortumJS;
                 };
             })
             .catch(function (error) {

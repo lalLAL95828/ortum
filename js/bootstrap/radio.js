@@ -14,6 +14,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             // labelWidth:"",//标签宽度
             labelCSS:"form-check-label",//标签css类,
             inline:true,//单行显示
+            title:"名称",//
             items:[
                 {
                     "label":"香水",
@@ -27,7 +28,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 },
             ],
         },
-        inputChange:["name","defaultVal","verification","cssClass","labelCSS"],//input事件修改值
+        inputChange:["name","defaultVal","verification","cssClass","labelCSS","title"],//input事件修改值
         clickChange:["authority","inline"],
         purview:{//属性编辑权限
             // id:1,//id
@@ -43,6 +44,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             // labelWidth:1,//标签宽度
             labelCSS:3,//标签css类
             // inline:3,//单行显示
+            title:3,
         },
         dataShowType:{
             // inline:'switch',
@@ -69,7 +71,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
-        
 
         let createJson = false;
         let HasProperties = false;
@@ -104,6 +105,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('radio'));
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name = "radio_1252314543323");
 
         for(let i=0;i<ortum_component_properties.data.items.length;i++){
             let choose = false;
@@ -113,7 +115,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             let newDom = $(`
             <div class="form-check ${ortum_component_properties.data.inline?'form-check-inline':''}">
                 <input class="${ortum_component_properties.data.cssClass}" ${choose ? "checked" :""} type="radio" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
-                <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.name+"_"+1}">
+                <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.name+"_"+i}">
                     ${ortum_component_properties.data.items[i].label}
                 </label>
             </div>
@@ -168,9 +170,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         // evenProperties.data[property] = val;
         switch(property){
             case "defaultVal":
-                $(globalComponent).find('input').removeAttr('checked')
-                $(globalComponent).find('input[value='+ val+']').eq(0).attr('checked',true)
-                $(globalComponent).find('input[value='+ val+']').eq(0).prop('checked',false)
+                // $(globalComponent).find('input').removeAttr('checked').removeProp("checked");
+                $(globalComponent).find('input[value='+ val+']').eq(0).attr('checked',true);
                 break;
             case "verification":
                 //TODO 验证
