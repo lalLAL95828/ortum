@@ -1,3 +1,35 @@
+function switchTableAct(act="edit",settings={}){
+    switch (act) {
+        case "new":
+            $("#ortum_table_name").val('');
+            $("#ortum_table_code").val('');
+            $("#ortum_table_info .ortum_table_method").eq(0).text("新增").attr("data-method","newPCTable")
+                .removeAttr("data-formid")
+                .removeClass("data-version")
+                .removeClass("ortum_editPC_color")
+                .addClass("ortum_newPC_color");
+            $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_editPC_color").addClass("ortum_newPC_color");
+            $("body").removeClass("body_bgc_editPC").addClass("body_bgc_newPC");
+            //切换新增
+            $(".ortum_form_switch").hide();
+            break;
+        case "edit":
+            $("#ortum_table_name").val(settings.formName || '');
+            $("#ortum_table_code").val(settings.formCode || '');
+            $("#ortum_table_info .ortum_table_method").eq(0).text("修改").attr("data-method","editPCTable")
+                .attr("data-formid",settings.formId).attr("data-version",settings.version || 0)
+                .removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
+            $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
+            $("body").removeClass("body_bgc_newPC").addClass("body_bgc_editPC");
+            //切换新增
+            $(".ortum_form_switch").show();
+            break;
+        default:
+            break;
+    }
+};
+
+
 //获取location信息，决定编辑状态
 $(function(){
     let search = window.location.search;
@@ -16,34 +48,21 @@ $(function(){
     })
     //修改表单
     if(searchObj.method && searchObj.method=="editPCTable" && searchObj.formId){
-        //修改页面样式
-        $("#ortum_table_info .ortum_table_method").eq(0).text("修改").attr("data-method","editPCTable").attr("data-formid",searchObj.formId)
-            .removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
-        $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
-        $("body").removeClass("body_bgc_newPC").addClass("body_bgc_editPC");
-
-        //切换新增
-        $(".ortum_form_switch").show();
-        $(".ortum_form_switch").off("click.switch").on('click.switch',function (e) {
-            let sureSwitch = confirm("确定切换成新表单,并使用当前表单的内容吗？");
-            if(sureSwitch){
-                $("#ortum_table_name").val('');
-                $("#ortum_table_code").val('');
-                $("#ortum_table_info .ortum_table_method").eq(0).text("新增").attr("data-method","newPCTable").removeAttr("data-formid")
-                    .removeClass("data-version")
-                    .removeClass("ortum_editPC_color")
-                    .addClass("ortum_newPC_color");
-                $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_editPC_color").addClass("ortum_newPC_color");
-                $("body").removeClass("body_bgc_editPC").addClass("body_bgc_newPC");
-                $(this).hide().off("click.switch");
-            }
-        })
+        switchTableAct("edit",{formId:searchObj.formId,version:0})
     };
-
+    //切换新增
+    $(".ortum_form_switch").off("click.switch").on('click.switch',function (e) {
+        let sureSwitch = confirm("确定切换成新表单,并使用当前表单的内容吗？");
+        if(sureSwitch){
+            switchTableAct("new");
+        }
+    });
 })
 
+
+
 //getFormContentJson函数的返回值 从数组中获取 name和title数组
-function getTitleAndNameFun(arr){
+/*function getTitleAndNameFun(arr){
     let nameArr = [];
     let titleArr = [];
     arr.forEach((item,index)=>{
@@ -69,7 +88,7 @@ function getTitleAndNameFun(arr){
         titleArr:titleArr,
         nameArr:nameArr,
     };
-}
+}*/
 
 let showTipSetTime;//定时器
 
@@ -87,7 +106,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     //导出
     if($(this).hasClass('icon-daochu')){
         require(['feature'],function(Feature){
-            Feature.exportFileListen(e)
+            // Feature.exportFileListen(e);
+            Feature.exportJsonFileListen(e);
         })
         return;
     }
@@ -141,7 +161,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let ortumJS = Global.ortum_life_function;
             let ortumSet = Global.ortum_life_json;
 
-            let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
+            let getTitleAndName =  Feature.getTitleAndNameFun(ortumJson)//后端需要的数据
 
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
@@ -177,7 +197,51 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 ajaxJsom.formWrite = '0';
             }
 
-            ortumReq({
+            //有formID时 校验版本号
+            formId && axios.get("/catarc_infoSys/api/form/"+formId)
+                .then(function (res) {
+                    if(res.data.ok){
+                        if((res.data.data.version)*1 > formVersion*1 ){
+                            Assist.dangerTip("当前版本号小于数据库的版本号！")
+                            return Promise.reject({"noShowTip":true})
+                        }else{
+                            return axios.put("/catarc_infoSys/api/form?_ts="+(new Date()).getTime(),ajaxJsom)
+                        }
+                    }else{
+                        Assist.dangerTip(res.data.message)
+                    }
+                })
+                .then(function(res){
+                    if(res.data.ok){
+                        Assist.infoTip("保存成功");
+                        //更新版本号和formId
+                        $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version);
+                    }else{
+                        Assist.dangerTip(res.data.message)
+                    }
+                })
+                .catch(function (error) {
+                    if(!error || !error.noShowTip){
+                        Assist.dangerTip("保存失败");
+                    }
+                    console.error(error);
+                });
+            //无formID时 不检查版本号
+            !formId && axios.post("/catarc_infoSys/api/form?_ts="+(new Date()).getTime(),ajaxJsom)
+                .then(function(res){
+                    if(res.data.ok){
+                        Assist.infoTip("保存成功");
+                        //切换为编辑
+                        switchTableAct("edit",{formId:res.data.data.id,version:res.data.data.version})
+                    }else{
+                        Assist.dangerTip(res.data.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    Assist.dangerTip("保存失败");
+                });
+            /*ortumReq({
                 "url":"/catarc_infoSys/api/form?_ts=1603870623362",
                 "method":Settings.ortum_tableAct[actWay].way,
                 "header":{
@@ -201,8 +265,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     console.log(xhr)
                     console.log(e)
                 },
-            })
-
+            })*/
         })
         return;
     }

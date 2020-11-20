@@ -1,5 +1,5 @@
 /* ortun的辅助函数 */
-define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
+define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
     /**
      * 功能：初始化函数
      * @param {*} mainId 
@@ -221,28 +221,114 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
      */
     let importFileListen = function(e){
         let FileList = $(this).prop('files');
-        let htmlFile = FileList[0];
+        let FileOne = FileList[0];
+        if(!FileOne)return false;
         if(FileList.length>2){
-            require("assist").dangerTip("只能导入一个html和js文件！");
+            // require("assist").dangerTip("只能导入一个html和js文件！");
+            require("assist").dangerTip("只能一个json文件！");
             return false;
         }
-        if(!htmlFile)return false;
-        // var name = htmlFile.name; //读取选中文件的文件名
-        // var size = htmlFile.size; //读取选中文件的大小
-        var reader = new FileReader(); 
-        reader.readAsText(htmlFile); 
+
+        // var name = FileOne.name; //读取选中文件的文件名
+        // var size = FileOne.size; //读取选中文件的大小
+        let type = FileOne.type; //读取选中文件的mime
+        if(type != "application/json"){
+            require("assist").dangerTip("文件的MIME类型不是application/json")
+            return false;
+        }
+
+        var reader = new FileReader();
+        reader.readAsText(FileOne);
         reader.onload = function() {
-            let domArr = $(this.result);
-            // console.log(domArr)
-            for(let i of domArr){
-                // console.log($(domArr[i]))
-                if($(i).attr('id') =='ortum_body'){
-                    $('#ortum_field').removeClass("ortum_field_originState")
-                    $('#ortum_field').html($(i).find('#ortum_field').html())
-                }
+            let jsonInfo = JSON.parse(this.result);
+            let contenHtml = JSON.parse(jsonInfo.contentHtml);
+            if(jsonInfo.id){
+                switchTableAct("edit",{formId:jsonInfo.id,version:jsonInfo.version,formName:jsonInfo.formName,formCode:jsonInfo.formCode})
+                $('#ortum_field').removeClass("ortum_field_originState").html('');
+                JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
+                Global.ortum_life_json = contenHtml.ortumSet;
+                Global.ortum_life_function = contenHtml.ortumJS;
+            }else{
+                switchTableAct("new");
+                $('#ortum_field').removeClass("ortum_field_originState").html('');
+                JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
+                Global.ortum_life_json = contenHtml.ortumSet;
+                Global.ortum_life_function = contenHtml.ortumJS;
             }
+
+            // let domArr = $(this.result);
+            // for(let i of domArr){
+            //     // console.log($(domArr[i]))
+            //     if($(i).attr('id') =='ortum_body'){
+            //         $('#ortum_field').removeClass("ortum_field_originState")
+            //         $('#ortum_field').html($(i).find('#ortum_field').html())
+            //     }
+            // }
         }
     }
+    let exportJsonFileListen = function(e){
+        let tableName = $("#ortum_table_name").val().trim();
+        let tableCode = $("#ortum_table_code").val().trim();
+        let actWay = $(".ortum_table_method").eq(0).attr('data-method') || "newPCTable";
+        let formId = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-formid") || '';
+        let formVersion = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version") || 0;
+        // if(!tableName){
+        //     require("assist").dangerTip("表单名称不可为空")
+        //     return;
+        // }
+        // if(!tableCode){
+        //     require("assist").dangerTip("表单编号不可为空")
+        //     return;
+        // }
+        let ortumJson = getFormContentJson("id",{id:"ortum_field",HasProperties:true});
+        let ortumJS = Global.ortum_life_function;
+        let ortumSet = Global.ortum_life_json;
+
+        let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
+
+        let titleArr = getTitleAndName.titleArr;
+        let nameArr = getTitleAndName.nameArr;
+
+        //获取localstore中的信息
+        // let CATARC_INFO_SYS = window.localStorage.getItem("CATARC_INFO_SYS");
+        // let account = JSON.parse(CATARC_INFO_SYS).account;
+        // let usename = JSON.parse(account).usname;
+        let ajaxJsom = {
+            columnID:nameArr.toString(),
+            columnName:titleArr.toString(),
+            contentHtml:JSON.stringify({
+                ortumJson:ortumJson,
+                ortumJS:ortumJS,
+                ortumSet:ortumSet,
+            }),
+            editor:"ortum",
+            // editName:usename,
+            editTime:new Date().toLocaleString(),
+            formCode:tableCode,
+            formName:tableName,
+            id:formId,
+            version:formVersion*1,
+        }
+        if(actWay == "newPCTable"){
+            ajaxJsom.dataSourceId = '';
+            ajaxJsom.delFlag = '0';
+            ajaxJsom.formWrite = '0';
+        };
+
+
+        let urlObject = window.URL || window.webkitURL || window;
+        let export_blob = new Blob([JSON.stringify(ajaxJsom)]);
+        let save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")//参考https://developer.mozilla.org/zh-CN/docs/Web/API/Document/createElementNS
+        save_link.href = urlObject.createObjectURL(export_blob);
+        // urlObject.revokeObjectURL(save_link.href);//一般需要从内存中释放objectURL
+        save_link.download = tableName ? (tableName+".json") : "表单.json";
+        let ev = document.createEvent("MouseEvents");//原生实现一个点击事件
+        ev.initMouseEvent(
+            "click", true, false, window, 0, 0, 0, 0, 0
+            , false, false, false, false, 0, null
+        );
+        save_link.dispatchEvent(ev);
+    };
     /**
      * 功能：监听文件导出
      * @param {*} e 
@@ -803,7 +889,39 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
 
             return false;
         })
-    }
+    };
+    /**
+     * 功能：从数组中获取title和name
+     * @param arr
+     * @returns {{titleArr: [], nameArr: []}}
+     */
+    let getTitleAndNameFun = function(arr){
+        let nameArr = [];
+        let titleArr = [];
+        arr.forEach((item,index)=>{
+            if(!item.bindComponentName){//该组件没有绑定组件
+                if(item.name){
+                    //只处理form组件
+                    if(item.componentKey && require("settings").menuListDataJSON[item.componentKey].sort === "form"){
+                        nameArr.push(item.name)
+                        titleArr.push(item.title)
+                    }else if(item.childrenType==="choose"){
+                        nameArr.push(item.name)
+                        titleArr.push(item.title)
+                    };
+                    if(item.children.length){
+                        let backData = getTitleAndNameFun(item.children);
+                        nameArr = nameArr.concat(backData.nameArr)
+                        titleArr = titleArr.concat(backData.titleArr)
+                    }
+                }
+            }
+        })
+        return {
+            titleArr:titleArr,
+            nameArr:nameArr,
+        };
+    };
 
     return {
         createContextMenuObj:createContextMenuObj,
@@ -814,6 +932,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         importFileListen,
         propertiesSetListen,
         exportFileListen,
+        exportJsonFileListen,
         setEditPropertiesPurview,
 
         getFormComponentsProps,
@@ -827,5 +946,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom){
         getFormContentJson,//生成dom数组
 
         bindDropEventToOrtumItem,//ortum_item的拖拽事件
+
+        getTitleAndNameFun,
     }
 })

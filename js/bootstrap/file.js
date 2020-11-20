@@ -8,7 +8,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         for(let file of filelists){
             names.push(file.name);
         }
-        $(this).next("label").text(names);
+        names.length && $(this).next("label").text(names);
     }
 
     let component_properties = {
@@ -27,14 +27,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             // labelCSS:"col-form-label col-2",//标签css类
 
             accept:"*/*",//接收类型
-            browse:"浏览",//浏览
+            browse:"上传",//浏览
             multiple:false,//多个文件
             onChange:changeLabelName,//文件改变，修改labelName
             onChangeUpload:'',//自动上传文件的函数，默认绑定uploadFile
-            uploadUrl:"http://localhost:3000/uploadfile",//自动上传的url
+            // uploadUrl:"http://localhost:3000/uploadfile",//自动上传的url
+            uploadUrl:"/catarc_infoSys/api/sys/file/uploadMultipartFiles",//自动上传的url
             formName:"files",//form的name(上传时候的name)
             automatic:true,//自动上传
             title:"名称",
+            ortumDelFile:"",//删除
+            ortumPreviewFile:"",//预览
+            ortumDownFile:"",//下载
+            onBefore:"",
+            onAfter:"",
         },
         inputChange:["id","name","accept","verification","cssClass","labelName","formName","uploadUrl","title"],//input事件修改值
         clickChange:["authority","multiple","automatic"],
@@ -158,7 +164,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let createJson = false;
         let HasProperties = false;
         let ortumChildren = null;
-        
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -188,10 +193,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('file'));
-        
-        //<button class="btn btn-outline-secondary" type="button">预览</button>
-        //<button class="btn btn-outline-secondary" type="button">下载</button>
-        
+
         $(outerDom).append($(`
             <div class="input-group">
                 <div class="custom-file">
@@ -209,6 +211,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     ${ortum_component_properties.data.labelName}</label>
                 </div>
                 <div class="input-group-append" style="margin-left:0">
+                    <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
+                        onclick="javascript:${ortum_component_properties.data.ortumPreviewFile && Function('return ' + ortum_component_properties.data.ortumPreviewFile)(ortum_component_properties.data.name)}">预览</button>
+                    <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
+                        onclick="javascript:${ortum_component_properties.data.ortumDownFile && Function('return ' + ortum_component_properties.data.ortumDownFile)(ortum_component_properties.data.name)}">下载</button>
+                    <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
+                        onclick="javascript:${ortum_component_properties.data.ortumDelFile && Function('return ' + ortum_component_properties.data.ortumDelFile)(ortum_component_properties.data.name)}">删除</button>
                 </div>
             </div>
             <div class="progress" style="height: 5px;margin-top:5px;display:none">
@@ -413,6 +421,67 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
     }
 
+
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(codeObj){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let setStr = "var ortum_BootstrapFile_setJs = {";
+        if(evenProperties.data.onBefore){
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+        }
+        if(evenProperties.data.onAfter){
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that){},"
+        }
+        if(evenProperties.data.ortumDelFile){
+            setStr += "\n//删除\nortumDelFile:"+ evenProperties.data.ortumDelFile.toString() + ",";
+        }else{
+            setStr += "\n//删除\nortumDelFile:function(){},"
+        }
+        if(evenProperties.data.ortumPreviewFile){
+            setStr += "\n//预览\nortumPreviewFile:"+ evenProperties.data.ortumPreviewFile.toString() + ",";
+        }else{
+            setStr += "\n//预览\nortumPreviewFile:function(){},"
+        }
+        if(evenProperties.data.ortumDownFile){
+            setStr += "\n//下载\nortumDownFile:"+ evenProperties.data.ortumDownFile.toString() + ",";
+        }else{
+            setStr += "\n//下载\nortumDownFile:function(){},"
+        }
+        setStr +="\n};";
+        codeObj.setValue(setStr)
+    };
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        try{
+            eval(val);
+            evenProperties.data.onBefore = ortum_BootstrapFile_setJs.onBefore;
+            evenProperties.data.onAfter = ortum_BootstrapFile_setJs.onAfter;
+            evenProperties.data.ortumDelFile = ortum_BootstrapFile_setJs.ortumDelFile;
+            evenProperties.data.ortumPreviewFile = ortum_BootstrapFile_setJs.ortumPreviewFile;
+            evenProperties.data.ortumDownFile = ortum_BootstrapFile_setJs.ortumDownFile;
+        }catch (e) {
+            console.error("设置input的js有误，请重新设置");
+        }
+    };
+
     return {
         FileDom,
 
@@ -422,6 +491,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+        ortumComponentSetJs,
+        ortumComponentSaveJs,
 
     }
 })

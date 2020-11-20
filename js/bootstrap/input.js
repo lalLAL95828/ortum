@@ -443,11 +443,14 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             evenProperties.data.onClick = ortum_BootstrapInput_setJs.onClick;
             evenProperties.data.onBlur = ortum_BootstrapInput_setJs.onBlur;
             evenProperties.data.onInput = ortum_BootstrapInput_setJs.onInput;
+
+            // globalComponent.find("input").attr("onclick","javascript: Function('return ' "+ evenProperties.data.onClick +")()");
+            // globalComponent.find("input").attr("onblur","javascript: Function('return ' "+ evenProperties.data.onBlur +")()");
+            // globalComponent.find("input").attr("oninput","javascript: Function('return ' "+ evenProperties.data.onInput +")()");
         }catch (e) {
             console.error("设置input的js有误，请重新设置");
         }
     };
-
 
     return {
         InputDom,

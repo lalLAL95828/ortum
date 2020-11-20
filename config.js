@@ -14,7 +14,7 @@ require.config({
 
         "BootstrapButton":"js/bootstrap/button",
         "BootstrapH":"js/bootstrap/h",
-        "BootstrapIconButton":"js/bootstrap/IconButton",
+        "BootstrapIconButton":"js/bootstrap/iconButton",
         "BootstrapButtonGroup":"js/bootstrap/buttonGroup",
         "BootstrapAsider":"js/bootstrap/asider",
         "BootstrapInput":"js/bootstrap/input",
@@ -61,7 +61,6 @@ require(['feature','assist','global'],function(Feature,Assist,Global){
     //如果是编辑pc端
     let tableAct_method = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-method")
     let tableAct_formId = $("#ortum_table_info .ortum_table_method").eq(0).attr("data-formid")
-
 
     //编辑表单
     if(tableAct_method == "editPCTable" && tableAct_formId){
