@@ -425,6 +425,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             setStr += "\n//input事件\nonInput:function(){},"
         }
         setStr +="\n};";
+
+        //格式化
+        setStr = js_beautify(setStr,2);
         codeObj.setValue(setStr)
     };
     /**
@@ -436,8 +439,11 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         }
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let packer = new Packer;
+        let varFormat = packer.pack(val, 0, 0); 
         try{
-            eval(val);
+            eval(varFormat);
             evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
             evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
             evenProperties.data.onClick = ortum_BootstrapInput_setJs.onClick;

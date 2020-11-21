@@ -254,6 +254,19 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
         }
     }
 
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(){
+        
+    }
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        
+    };
+
     return {
         SwitchDom,
 
@@ -263,6 +276,9 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+        ortumComponentSetJs,
+        ortumComponentSaveJs,
 
     }
 })

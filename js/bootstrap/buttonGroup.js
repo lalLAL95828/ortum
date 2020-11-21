@@ -303,6 +303,12 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
     let ortumComponentSetJs = function(){
         
     }
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        
+    };
 
     return {
         ButtonGroupDom,
@@ -315,5 +321,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         // keyUpSetProperties,
 
         ortumComponentSetJs,
+        ortumComponentSaveJs,
     }
 })

@@ -459,6 +459,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             setStr += "\n//下载\nortumDownFile:function(){},"
         }
         setStr +="\n};";
+        //格式化
+        setStr = js_beautify(setStr,2);
         codeObj.setValue(setStr)
     };
     /**
@@ -470,8 +472,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let packer = new Packer;
+        let varFormat = packer.pack(val, 0, 0); 
         try{
-            eval(val);
+            eval(varFormat);
             evenProperties.data.onBefore = ortum_BootstrapFile_setJs.onBefore;
             evenProperties.data.onAfter = ortum_BootstrapFile_setJs.onAfter;
             evenProperties.data.ortumDelFile = ortum_BootstrapFile_setJs.ortumDelFile;

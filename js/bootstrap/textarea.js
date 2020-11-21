@@ -329,6 +329,18 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
     }
 
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(){
+        
+    }
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        
+    };
 
     return {
         TextareaDom,
@@ -339,6 +351,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+        ortumComponentSetJs,
+        ortumComponentSaveJs,
 
     }
 })

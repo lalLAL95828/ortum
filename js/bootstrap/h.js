@@ -280,6 +280,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         };
     }
 
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(){
+        
+    }
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        
+    };
+
+
     return {
         HDom,
 
@@ -290,5 +304,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         // keyDownSetProperties,
         // keyUpSetProperties,
         beforeSetPrperies,
+
+        ortumComponentSetJs,
+        ortumComponentSaveJs,
     }
 })

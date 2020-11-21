@@ -56,3 +56,9 @@ http://flowchart.js.org/flowchart-latest.js
 https://www.bilibili.com/video/av41341063/
 
 ![](C:\Users\14456\Desktop\前端\image-20200926150829923.png)
+
+
+###### 代码压缩和美化
+https://github.com/beautify-web/js-beautify
+https://tool.oschina.net/js/jsbeautify.js
+https://c.runoob.com/wp-content/themes/toolrunoob/assets/js/format.js

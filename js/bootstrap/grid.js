@@ -273,6 +273,19 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         return false;
     };
 
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(){
+        
+    }
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        
+    };
+
     return {
         GridDom,
 
@@ -285,5 +298,8 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
 
         setGridItems,
         showGridItems,
+
+        ortumComponentSetJs,
+        ortumComponentSaveJs,
     }
 })

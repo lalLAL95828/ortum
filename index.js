@@ -278,23 +278,29 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 "keyboard":false,
             });
             let funStr = "";
+
             if(Global.ortum_life_function){
                 //函数字符串
-                funStr = "var ortum_life_function={\n\tbeigin_function:"+ Global.ortum_life_function.beigin_function.toString() +",\n\tcompleted_function:"+ Global.ortum_life_function.completed_function.toString() +",\n\tsubmit_function:"+ Global.ortum_life_function.submit_function.toString() +"\n};";
+                funStr = "var ortum_life_function={beigin_function:"+ Global.ortum_life_function.beigin_function.toString() +",completed_function:"+ Global.ortum_life_function.completed_function.toString() +",submit_function:"+ Global.ortum_life_function.submit_function.toString() +"};";
             }else{
-                funStr = "var ortum_life_function={\n\tbeigin_function:function(){},\n\tcompleted_function:function(){},\n\tsubmit_function:function(){},\n};";
+                funStr = "var ortum_life_function={beigin_function:function(){},completed_function:function(){},submit_function:function(){},};";
             }
 
             if(Global.ortum_life_json){
-                funStr += "\n//表单参数配置\nvar ortum_life_json=" + JSON.stringify(Global.ortum_life_json) +";";
+                funStr += "/*表单参数配置*/\nvar ortum_life_json=" + JSON.stringify(Global.ortum_life_json) +";";
             }
+            //格式化
+            funStr = js_beautify(funStr,2);
+            
             Global.ortum_codemirrorJS_setVal = function(codeObj){
-                codeObj.setValue(`//函数名请勿编辑，只需编辑函数体内容\n//beigin_function函数是dom渲染前会执行的函数\n//completed_function函数是dom渲染后会执行的函数\n${funStr}
+                codeObj.setValue(`/*函数名请勿编辑，只需编辑函数体内容\nbeigin_function函数是dom渲染前会执行的函数\ncompleted_function函数是dom渲染后会执行的函数*/\n${funStr}
                 `)
             };
             Global.ortum_codemirrorJS_save = function(val){
+                let packer = new Packer;
+                let varFormat = packer.pack(val, 0, 0); 
                 try{
-                    eval(val);
+                    eval(varFormat);
                     Global.ortum_life_function = {};
                     Global.ortum_life_function.beigin_function=ortum_life_function.beigin_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");
                     Global.ortum_life_function.completed_function=ortum_life_function.completed_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");

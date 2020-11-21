@@ -356,7 +356,18 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         }
     }
 
-
+    /**
+     * 功能：设置js
+     */
+    let ortumComponentSetJs = function(){
+        
+    }
+    /**
+     * 功能：保存js
+     */
+    let ortumComponentSaveJs = function(val){
+        
+    };
     return {
         DateDom,
 
@@ -367,5 +378,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         // keyDownSetProperties,
         // keyUpSetProperties,
 
+        ortumComponentSetJs,
+        ortumComponentSaveJs,
     }
 })
