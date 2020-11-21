@@ -441,9 +441,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
         let packer = new Packer;
-        let varFormat = packer.pack(val, 0, 0); 
+        let valFormat = packer.pack(val, 0, 0); 
         try{
-            eval(varFormat);
+            eval(valFormat);
             evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
             evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
             evenProperties.data.onClick = ortum_BootstrapInput_setJs.onClick;

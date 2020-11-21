@@ -298,9 +298,9 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             };
             Global.ortum_codemirrorJS_save = function(val){
                 let packer = new Packer;
-                let varFormat = packer.pack(val, 0, 0); 
+                let valFormat = packer.pack(val, 0, 0); 
                 try{
-                    eval(varFormat);
+                    eval(valFormat);
                     Global.ortum_life_function = {};
                     Global.ortum_life_function.beigin_function=ortum_life_function.beigin_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");
                     Global.ortum_life_function.completed_function=ortum_life_function.completed_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");

@@ -781,9 +781,9 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
         let packer = new Packer;
-        let varFormat = packer.pack(val, 0, 0); 
+        let valFormat = packer.pack(val, 0, 0); 
         try{
-            eval(varFormat);
+            eval(valFormat);
             evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
             evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
         }catch (e) {
@@ -808,8 +808,10 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             tableName:evenProperties.data.name,
         };
 
+        let packer = new Packer;
+        let valFormat = packer.pack(val, 0, 0); 
         try{
-            eval(val);
+            eval(valFormat);
             let editTableColumnArr = eval("tableColumns");
             evenProperties.data.tableColumnsArr = editTableColumnArr;
             $(globalComponent).prop("ortum_tbodyTds_info",editTableColumnArr);
@@ -903,7 +905,12 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             // }else{
             //     funStr = "function getOptions_"+ evenProperties.data.name +"(ortumDom,ortumAjax){\n\n\n\n\n}"
             // }
-            codeObj.setValue(`//编辑table的列信息\nvar tableColumns = ${JSON.stringify(tableArr)};\nvar tfootColumns = ${JSON.stringify(tfootArr)};
+            
+            //格式化
+            let tableArrStr = js_beautify(JSON.stringify(tableArr),2);
+            let tfootArrStr = js_beautify(JSON.stringify(tfootArr),2);
+
+            codeObj.setValue(`//编辑table的列信息\nvar tableColumns = ${tableArrStr};\n//编辑tfoot的列信息\nvar tfootColumns = ${tfootArrStr};
                 `)
         }
 
