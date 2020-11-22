@@ -25,12 +25,6 @@ define([],function(){
 
     let ortum_life_json={};//参数json
 
-    // {
-    //     frame:"bootstrap",
-    //     type:'input',
-    //     listen:require('BootstrapInput').setInputProperty,
-    // }
-
 
     return{
         ortumField:ortum_field,

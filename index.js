@@ -125,7 +125,17 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             if(!confirm("确定清空吗？")){
                 return;
             };
-            Global.ortum_edit_component = null;
+
+            Global.ortum_edit_component=undefined;//正在编辑的对象
+            Global.ortum_codemirrorJS_setVal=undefined;;//设置codemirror的初始值
+            Global.ortum_codemirrorJS_save=undefined;;//codemirror关闭函数
+        
+            Global.ortum_preview_windowSon=undefined;;//打开的预览窗口
+            Global.ortum_preview_windowSonUrl=undefined;;//打开的预览窗口Blob url
+        
+            Global.ortum_life_function=undefined;;//全局生命周期json
+            Global.ortum_life_json={};//参数json
+
             $('#ortum_collapseOne .form-group').show();
             $('#ortum_collapseOne input').each(function(){
                 if($(this).attr("type")!="checkbox" && $(this).attr("type")!="radio"){
