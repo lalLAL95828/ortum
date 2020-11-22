@@ -3,9 +3,10 @@ function switchTableAct(act="edit",settings={}){
         case "new":
             $("#ortum_table_name").val('');
             $("#ortum_table_code").val('');
-            $("#ortum_table_info .ortum_table_method").eq(0).text("新增").attr("data-method","newPCTable")
+            $("#ortum_table_info .ortum_table_method").eq(0).text("新增")
+                .attr("data-method","newPCTable")
                 .removeAttr("data-formid")
-                .removeClass("data-version")
+                .removeAttr("data-version")
                 .removeClass("ortum_editPC_color")
                 .addClass("ortum_newPC_color");
             $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_editPC_color").addClass("ortum_newPC_color");
@@ -16,8 +17,10 @@ function switchTableAct(act="edit",settings={}){
         case "edit":
             $("#ortum_table_name").val(settings.formName || '');
             $("#ortum_table_code").val(settings.formCode || '');
-            $("#ortum_table_info .ortum_table_method").eq(0).text("修改").attr("data-method","editPCTable")
-                .attr("data-formid",settings.formId).attr("data-version",settings.version || 0)
+            $("#ortum_table_info .ortum_table_method").eq(0).text("修改")
+                .attr("data-method","editPCTable")
+                .attr("data-formid",settings.formId)
+                .attr("data-version",settings.version || 0)
                 .removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
             $("#ortum_table_act .ortum_tableAct_icon").removeClass("ortum_newPC_color").addClass("ortum_editPC_color");
             $("body").removeClass("body_bgc_newPC").addClass("body_bgc_editPC");
