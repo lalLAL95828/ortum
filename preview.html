@@ -20,10 +20,16 @@
     <script src="lib/ortumReq.js"></script>
 
     <style>
-        input::-webkit-input-placeholder {
-            color: #aab2bd;
+        #ortum_form_Modal_body input::-webkit-input-placeholder,#ortum_form_Modal_body textarea::-webkit-input-placeholder {
+            color: #77777773;
+            font-size: 14px;
+        }
+        #ortum_form_Modal_body input,#ortum_form_Modal_body select,#ortum_form_Modal_body textarea{
             font-size: 14px;
             padding-left: 10px;
+        }
+        #ortum_form_Modal_body input:disabled,#ortum_form_Modal_body select:disabled{
+            color: black;
         }
 
         /* 表头样式 */
@@ -51,8 +57,6 @@
         }
         .ortum_bootstrap_grid .ortum_boot_col_default .form-control {
             border-radius: 0 !important;
-            top: 0;
-            bottom: 0;
             margin: 3.5px 0!important;
             height: 30px;
             line-height: 30px;
@@ -71,6 +75,15 @@
             padding: 0px;
             margin:3.5px 0;
         }
+
+        /* textarea */
+        .ortum_bootstrap_grid .ortum_boot_col_default .ortum_bootstrap_textarea{
+            width: 96%;
+        }
+        .ortum_bootstrap_grid .ortum_boot_col_default .ortum_bootstrap_textarea textarea{
+            height: auto!important;
+        }
+
 
         .ortum_bootstrap_td #ortum_form_Modal_body #ortum_field_preview>.ortum_item {
             margin-top: 2px !important;
@@ -142,6 +155,17 @@
 
 </head>
 <body>
+    <!--<p>I would like to say: </p><div id="foo">Hello</div>
+    <button id="buttonC">交换位置</button>
+    <script>
+        $("p").on("click",function(){
+            alert("123");
+        })
+        $("#buttonC").on("click",function () {
+            $("#foo").html($("p"))
+        });
+    </script>-->
+
 
     <div id="ortum_form_Modal_body" class="container" style="margin: auto">
 

@@ -37,6 +37,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             onBefore:"",//渲染之前的回调
             onAfter:"",//渲染之后的回调
             onChange:"",//change事件
+            uuid: "",
 
         },
         inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS","serverUrl","title"],//input事件修改值
@@ -157,6 +158,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定nameselect
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('select'));
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
         
         //控制标签
         if(ortum_component_properties.data.hideLabel){

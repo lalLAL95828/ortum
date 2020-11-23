@@ -1,5 +1,12 @@
 /* 功能性辅助小工具 */
 define(['require'],function(require){
+    let getUUId = function() {
+        function S4() {
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        }
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    }
+
     let getDetailType= function(obj){
         return Object.prototype.toString.call(obj).slice(8,-1);
     }
@@ -12,7 +19,7 @@ define(['require'],function(require){
         setTimeout(function(){
             $('.ortum_tip').hide();
             $('#ortum_tip_content_danger').hide();
-        },time)
+        },time);
     }
     /**
      * 功能：提示2
@@ -183,6 +190,7 @@ define(['require'],function(require){
                 delete tdItem.componentKey;
                 delete tdItem.type;
                 delete tdItem.customProps;
+                delete tdItem.uuid;
             };
         };
 
@@ -358,6 +366,8 @@ define(['require'],function(require){
     }
 
     return {
+        getUUId,
+
         getDetailType,
         deepClone,
         dangerTip,

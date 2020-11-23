@@ -18,6 +18,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             onClick:"",//点击事件的回调
             onBlur:"",
             onInput:"",
+            uuid: "",
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -75,7 +76,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
-        }
+        };
+
+
         let outerDom=$(
             `
             <div class="form-group ortum_item ortum_bootstrap_input row" 
@@ -93,9 +96,14 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         let ortum_component_properties = (customProps ? customProps : Assist.deepClone(component_properties));
 
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
+
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('input'));
+
 
         //控制标签
         if(ortum_component_properties.data.hideLabel){

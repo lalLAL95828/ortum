@@ -737,6 +737,12 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     "componentKey":componentKey,
                 },comDom));
 
+
+                //如果是Bootstrap_tableDom 不在向下寻找ortum_item;
+                if(frame == "Bootstrap" && componentKey == "tableDom"){
+                    return true;
+                };
+
                 let length = datas.parent.children.length;
                 $(datas.dom).find(".ortum_item").each(function(index2,html2){
                     let ortumChildrenOrder = $(html2).parent().attr("data-order");
@@ -871,7 +877,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             }
 
             if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
-                Assist.dangerTip();
+                require("assist").dangerTip();
                 return false;
             }
 

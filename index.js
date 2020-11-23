@@ -15,8 +15,8 @@ function switchTableAct(act="edit",settings={}){
             $(".ortum_form_switch").hide();
             break;
         case "edit":
-            $("#ortum_table_name").val(settings.formName || '');
-            $("#ortum_table_code").val(settings.formCode || '');
+            settings.formName && $("#ortum_table_name").val(settings.formName);
+            settings.formCode && $("#ortum_table_code").val(settings.formCode);
             $("#ortum_table_info .ortum_table_method").eq(0).text("修改")
                 .attr("data-method","editPCTable")
                 .attr("data-formid",settings.formId)
@@ -31,7 +31,19 @@ function switchTableAct(act="edit",settings={}){
             break;
     }
 };
-
+function showOrtumLoading(show){
+    if(show === false){
+        $(".ortum_loading").eq(0).css("display","none");
+    }else if(show === true){
+        $(".ortum_loading").eq(0).css("display","flex");
+    }else{
+        if($(".ortum_loading").eq(0).css("display") == "none"){
+            $(".ortum_loading").eq(0).css("display","flex");
+        }else{
+            $(".ortum_loading").eq(0).css("display","none");
+        }
+    }
+}
 
 //获取location信息，决定编辑状态
 $(function(){
@@ -178,11 +190,13 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 
             let titleArr = getTitleAndName.titleArr;
             let nameArr = getTitleAndName.nameArr;
+            // console.log(ortumJson);
             // console.log(nameArr)
             // console.log(titleArr)
             // debugger;
             // return;
 
+            showOrtumLoading(true);
 
             //获取localstore中的信息
             let CATARC_INFO_SYS = window.localStorage.getItem("CATARC_INFO_SYS");
@@ -232,12 +246,15 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     }else{
                         Assist.dangerTip(res.data.message)
                     }
+                    showOrtumLoading(true);
                 })
                 .catch(function (error) {
                     if(!error || !error.noShowTip){
                         Assist.dangerTip("保存失败");
                     }
                     console.error(error);
+                }).finally(function () {
+                    showOrtumLoading(false);
                 });
             //无formID时 不检查版本号
             !formId && axios.post("/catarc_infoSys/api/form?_ts="+(new Date()).getTime(),ajaxJsom)
@@ -245,7 +262,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     if(res.data.ok){
                         Assist.infoTip("保存成功");
                         //切换为编辑
-                        switchTableAct("edit",{formId:res.data.data.id,version:res.data.data.version})
+                        switchTableAct("edit",{formName:res.data.data.formName,formCode:res.data.data.formCode,formId:res.data.data.id,version:res.data.data.version})
                     }else{
                         Assist.dangerTip(res.data.message);
                     }
@@ -253,6 +270,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                 .catch(function (error) {
                     console.error(error);
                     Assist.dangerTip("保存失败");
+                }).finally(function () {
+                    showOrtumLoading(false);
                 });
             /*ortumReq({
                 "url":"/catarc_infoSys/api/form?_ts=1603870623362",

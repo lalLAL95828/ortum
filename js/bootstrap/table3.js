@@ -23,110 +23,131 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             showTbody:true,
             showTfoot:true,
 
-            theadColumnsArr:[
-                [
-                    /*{
-                        "type":"order",
-                        "headHtml":"<span>序号</span>",
-                        "rowspan":1,
-                        "colspan":1,
-                    },*/
-                    {
-                        "headHtml":"<span>建筑名称</span>",
-                        "rowspan":1,
-                        "colspan":1,
-                    },
-                    {
-                        "headHtml":"<span>新增建筑面积（m²）</span>",
-                        "rowspan":1,
-                        "colspan":1,
-                    },
-                    {
-                        "headHtml":"<span>建筑工程费（万元）</span>",
-                        "rowspan":1,
-                        "colspan":1,
-                    },
-                    {
-                        "type":"act",//手动新增和删除
-                        "headHtml":"<span>操作</span>",
-                        "rowspan":1,
-                        "colspan":1,
-                    },
-                ]
-            ],//thead信息
-            tbodyColumnsArr:[
-                [
-                    /*{
-                        "type":"order",
-                        "rowspan":1,
-                        "colspan":1,
-                    },*/
-                    {
-                        "rowspan":1,
-                        "colspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },
-                    {
-                        "rowspan":1,
-                        "colspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },
-                    {
-                        "rowspan":1,
-                        "colspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },
-                    /*{
-                        "rowspan":1,
-                        "colspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },*/
-                    {
-                        "type":"act",//手动新增和删除
-                        "rowspan":1,
-                        "colspan":1,
-                    },
-                ]
-            ],//tbody信息
+            tableColumnsArr:[
+                /*{
+                    "type":"order",
+                    "headHtml":"<span>序号</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                },*/
+                {
+                    "headHtml":"<span>建筑名称</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>新增建筑面积（m²）</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>建筑工程费（万元）</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                /*{
+                    "headHtml":"<span>规格型号</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>不含税价格（元）</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>数量</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>单位</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>开始使用日期</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>使用状况</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>预计处置价格（元）</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "headHtml":"<span>备注</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },*/
+                {
+                    "type":"act",//手动新增和删除
+                    "headHtml":"<span>操作</span>",
+                    "headColspan":1,
+                    "headRowspan":1,
+                },
+            ],
+
             tfootColumnsArr:[
-                [
-                    /*{
-                        "colspan":4,
-                        "rowspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"hDom",
-                    },
-                    {
-                        "colspan":1,
-                        "rowspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },
-                    {
-                        "colspan":1,
-                        "rowspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },
-                    {
-                        "colspan":3,
-                        "rowspan":1,
-                    },
-                    {
-                        "colspan":1,
-                        "rowspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },
-                    {
-                        "colspan":1,
-                        "rowspan":1,
-                    },*/
-                ],
+                /*{
+                    "tfootColspan":4,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"hDom",
+                },
+                {
+                    "tfootColspan":1,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "tfootColspan":1,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "tfootColspan":3,
+                    "tfootRowspan":1,
+                },
+                {
+                    "tfootColspan":1,
+                    "tfootRowspan":1,
+                    "frame":"Bootstrap",
+                    "componentKey":"inputDom",
+                },
+                {
+                    "tfootColspan":2,
+                    "tfootRowspan":1,
+                },*/
             ],
 
             onBefore:"",
@@ -219,7 +240,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
-        // ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605001144245d71b");
+        // ortum_component_properties.data.name || (ortum_component_properties.data.name ="table_1605100578804af1b");
 
         let tableDom = $(`
             <table
@@ -246,14 +267,10 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         };
         Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tdMoreProps,moreProps);
         //将tr的所有td信息存放在tbody上
-        !createJson && $(outerDom).prop("ortum_tbodyTds_info",ortum_component_properties.data.tbodyColumnsArr)
-
+        !createJson && $(outerDom).prop("ortum_tbodyTds_info",ortum_component_properties.data.tableColumnsArr)
         //创建tbody的tr
-        let tbodyTrObj =BootstrapAsider.tableTbodyAddTrLine(tbodyDom,ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
-        tbodyTrObj.forEach(function(item){
-            $(tbodyDom).append(item);
-        })
-
+        let tbodyTrObj =BootstrapAsider.tableTbodyAddLine(tbodyDom,ortum_component_properties.data.tableColumnsArr,tdMoreProps);
+        $(tbodyDom).append(tbodyTrObj);
 
         //【thead】
         let theadDom = $(`
@@ -265,14 +282,12 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         if(!ortum_component_properties.data.showThead){
             theadDom.addClass("ortum_display_NONE")
         }
-        let theadTrObj =BootstrapAsider.tableTheadAddTrLine(ortum_component_properties.data.theadColumnsArr,
+        let theadTrObj =BootstrapAsider.tableTheadAddLine(ortum_component_properties.data.tableColumnsArr,
             {
                 trCssClass:ortum_component_properties.data.theadTrCssClass,
                 thCssClass:ortum_component_properties.data.thCssClass,
             });
-        theadTrObj.forEach(function(item){
-            $(theadDom).append(item);
-        })
+        $(theadDom).append(theadTrObj);
 
         //【tfoot】
         let tfootDom = $(`
@@ -289,12 +304,8 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             tableName:ortum_component_properties.data.name,
         };
         Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tfootTdMoreProps,moreProps);
-        let tfootTrObj =BootstrapAsider.tableTfootAddTrLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
-
-
-        tfootTrObj.forEach(function(item){
-            $(tfootDom).append(item);
-        })
+        let tfootTrObj =BootstrapAsider.tableTfootAddLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
+        $(tfootDom).append(tfootTrObj);
 
         $(tableDom).append(theadDom);
         $(tableDom).append(tbodyDom);
@@ -308,19 +319,15 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         //script字符串
         let scriptStr = '';
         let scriptDom = ""
-        let addlineTrInfo = [];
+        let addlineTrInfo = '';
         //创建children
         let children = [];
         if(createJson){
             //创建tbody的tr模板
-            let addlineTrInfoHTMLArr = BootstrapAsider.tableTbodyAddTrLine(null,ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
-            addlineTrInfoHTMLArr.forEach(function(item){
-                addlineTrInfo.push(item[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "))
-            });
-
+            addlineTrInfo = BootstrapAsider.tableTbodyAddLine(null,ortum_component_properties.data.tableColumnsArr,tdMoreProps);
             //新增行的函数
             //可以根据table的name属性新增；也可以根据this新增，this必须是tbody下的tr的子元素，
-            scriptStr +=`
+            scriptStr+=`
                 function ortumTableDom_addLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",tableVal=null,setValueFun=null){
                     let tableDom;
                     let rendPowerArr=[];
@@ -333,18 +340,16 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     let tdInfoArr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTds_info");
                     let addlineTr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTr_info");
                     let tbodyFirstTr = tableDom.find("tbody tr:nth-of-type(1)");
-                    
-                    
+                    let bodyTrLength = tableDom.find("tbody > tr").length;
+                    let nextTr = $(addlineTr);
                     let trOrder = tableDom.find('tbody tr').length;
                     function ortum_BootstraptableDom_addLine(arr,trDom){
-                        let bodyTrLength = tableDom.find("tbody > tr").length;
                         arr.forEach(function(item){
                             let itemDom = item;
                             if(item.childrenType == "choose"){
                                 itemDom = item.chooseFun(null,trOrder+1);
                             };
                             let nextHtml = $(itemDom.html);
-                            
                             let hide = false;
                             let read = false;
                             let required = false;
@@ -359,7 +364,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                                         brotherDom.attr("disabled") && (read=true);
                                         brotherDom.attr("ortum-verify") && (verifyInfo=brotherDom.attr("ortum-verify"));
                                     };
-                                    nameValArr[nameValArr.length - 1] = bodyTrLength+1;
+                                    nameValArr[nameValArr.length -1] = bodyTrLength+1;
                                 };
                                 $(item2).attr("name",nameValArr.join("_"));
                             });
@@ -391,12 +396,9 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                             });
                         });
                     };
-                    addlineTr.forEach(function(item,index){
-                        let nextTr = $(item);
-                        ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
-                        nextTr.find("td[data-type=order] span").text(trOrder+1+index);
-                        tableDom.find("tbody").eq(0).append(nextTr);
-                    });
+                    ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
+                    nextTr.find("td[data-type=order] span").text(trOrder+1);
+                    tableDom.find("tbody").eq(0).append(nextTr);
                     return false;
                 };
             `;
@@ -463,104 +465,100 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             `;
 
             //创建tfoot的td的json信息
-            ortum_component_properties.data.tfootColumnsArr.forEach(function(itemArr,indexArr){
-                itemArr.forEach(function (item,index) {
-                    //创建组件的属性
-                    let createDomProp = Object.assign({
-                        HasProperties:HasProperties,
-                        customName:ortum_component_properties.data.name+"_"+"tfoot" + "_" + index + "-"+ indexArr,//1代表第一行
-                    },moreProps);
+            ortum_component_properties.data.tfootColumnsArr.forEach(function(item,index){
+                //创建组件的属性
+                let createDomProp = Object.assign({
+                    HasProperties:HasProperties,
+                    customName:ortum_component_properties.data.name+"_"+"tfoot" + "_" + index,//1代表第一行
+                },moreProps);
 
-                    Object.assign(createDomProp,item);
-                    createDomProp.customProps = item.customProps;
+                Object.assign(createDomProp,item);
+                createDomProp.customProps = item.customProps;
 
-                    let comDom;
+                let comDom;
+                if(item.componentKey && item.frame){
+                    createDomProp.ortumChildren="tfoot"+index;//插入第几个ortum_children
+                    comDom =require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
+                    children.push(Object.assign({
+                        "frame":item.frame,
+                        "componentKey":item.componentKey,
+                        "children":[],
+                    },comDom));
+                };
+            });
+
+            //创建td中组件的json信息
+            ortum_component_properties.data.tableColumnsArr.forEach(function(item,index){
+                //创建组件的属性
+                let createDomProp = Object.assign({
+                    HasProperties:HasProperties,
+                    customName:ortum_component_properties.data.name+"_"+index + "_" + 1,//1代表第一行
+                },moreProps);
+                
+                Object.assign(createDomProp,item);
+                createDomProp.customProps = item.customProps;
+
+                let comDom;
+                if(item.type){
+                    switch (item.type) {
+                        case "order":
+                            comDom ={
+                                "html":`<span>1</span>`,
+                                "ortumChildren":index,//插入第几个ortum_children
+                            };
+                            break;
+                        case "act":
+                            createDomProp.ortumChildren=index;//插入第几个ortum_children
+                            //新增
+                            let addComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
+                                "iconName":"icon-jiahao",
+                            },createDomProp));
+                            //删除
+                            let delComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
+                                "iconName":"icon-shanchu",
+                            },createDomProp));
+                            comDom = {
+                                "childrenType":"choose",
+                                "chooseFun":function (parents,sureOrder=false) {
+                                    let order = 0;
+                                    if(sureOrder !== false){
+                                        order = sureOrder;
+                                    }else{
+                                        let tbodyDom = parents.find('tbody').eq(0);
+                                        order = $(tbodyDom).find("tr").length;
+                                    }
+                                    if(order == 1){
+                                        return this.addComDom;
+                                    }else{
+                                        return this.delComDom;
+                                    };
+                                }.toString(),
+                                "delComDom":delComDom,
+                                "addComDom":addComDom,
+                                "name":createDomProp.customName,
+                                "title": "操作",
+                            };
+                            break;
+                        default:
+                            console.error("type类型不正确")
+                            break;
+                    }
+                    children.push(Object.assign({
+                        "frame":null,
+                        "componentKey":null,
+                        "children":[],
+                    },comDom));
+                }else{
                     if(item.componentKey && item.frame){
-                        createDomProp.ortumChildren="tfoot"+index+"-"+indexArr;//插入第几个ortum_children
+                        createDomProp.ortumChildren=index;//插入第几个ortum_children
                         comDom =require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
                         children.push(Object.assign({
                             "frame":item.frame,
                             "componentKey":item.componentKey,
                             "children":[],
                         },comDom));
-                    };
-                })
-            });
-            //创建td中组件的json信息
-            ortum_component_properties.data.tbodyColumnsArr.forEach(function(itemArr,indexArr){
-                itemArr.forEach(function(item,index){
-                    //创建组件的属性
-                    let createDomProp = Object.assign({
-                        HasProperties:HasProperties,
-                        customName:ortum_component_properties.data.name+"_"+index+"-"+indexArr  + "_" + 1,//1代表第一行
-                    },moreProps);
-
-                    Object.assign(createDomProp,item);
-                    createDomProp.customProps = item.customProps;
-
-                    let comDom;
-                    if(item.type){
-                        switch (item.type) {
-                            case "order":
-                                comDom ={
-                                    "html":`<span>1</span>`,
-                                    "ortumChildren":index+"-"+indexArr,//插入第几个ortum_children
-                                };
-                                break;
-                            case "act":
-                                createDomProp.ortumChildren= index+"-"+indexArr;//插入第几个ortum_children
-                                //新增
-                                let addComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
-                                    "iconName":"icon-jiahao",
-                                },createDomProp));
-                                //删除
-                                let delComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
-                                    "iconName":"icon-shanchu",
-                                },createDomProp));
-                                comDom = {
-                                    "childrenType":"choose",
-                                    "chooseFun":function (parents,sureOrder=false) {
-                                        let order = 0;
-                                        if(sureOrder !== false){
-                                            order = sureOrder;
-                                        }else{
-                                            let tbodyDom = parents.find('tbody').eq(0);
-                                            order = $(tbodyDom).find("tr").length;
-                                        }
-                                        if(order == 1){
-                                            return this.addComDom;
-                                        }else{
-                                            return this.delComDom;
-                                        };
-                                    }.toString(),
-                                    "delComDom":delComDom,
-                                    "addComDom":addComDom,
-                                    "name":createDomProp.customName,
-                                    "title": "操作",
-                                };
-                                break;
-                            default:
-                                console.error("type类型不正确")
-                                break;
-                        }
-                        children.push(Object.assign({
-                            "frame":null,
-                            "componentKey":null,
-                            "children":[],
-                        },comDom));
-                    }else{
-                        if(item.componentKey && item.frame){
-                            createDomProp.ortumChildren=index+"-"+indexArr;//插入第几个ortum_children
-                            comDom =require("createDom")[Settings.menuListDataJSON[item.componentKey].createFn](null,item.frame,createDomProp);
-                            children.push(Object.assign({
-                                "frame":item.frame,
-                                "componentKey":item.componentKey,
-                                "children":[],
-                            },comDom));
-                        }
                     }
-                });
-
+                }
             });
 
             // if(ortum_component_properties.data.onBefore && typeof ortum_component_properties.data.onBefore === "function"){
@@ -582,7 +580,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                 "name":ortum_component_properties.data.name,
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "html":outerDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
-                "ortum_tbodyTr_info":addlineTrInfo,
+                "ortum_tbodyTr_info":addlineTrInfo[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "),
                 "children":children,
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
@@ -788,7 +786,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
         let packer = new Packer;
-        let valFormat = packer.pack(val, 0, 0);
+        let valFormat = packer.pack(val, 0, 0); 
         try{
             eval(valFormat);
             evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
@@ -809,83 +807,69 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         let theadDom = globalComponent.find("thead").eq(0);
         let tfootDom = globalComponent.find("tfoot").eq(0);
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        let tdMoreProps = {
+            trCssClass:evenProperties.data.tbodyTrCssClass,
+            tdCssClass:evenProperties.data.tdCssClass,
+            tableName:evenProperties.data.name,
+        };
 
         let packer = new Packer;
-        let valFormat = packer.pack(val, 0, 0);
+        let valFormat = packer.pack(val, 0, 0); 
         try{
             eval(valFormat);
-
-            let editTheadColumnArr = eval("theadColumns");
-            let editTbodyColumnArr = eval("tbodyColumns");
-            let editTfootColumnArr = eval("tfootColumns");
-
-            //绑定属性先
-            $(globalComponent).prop("ortum_tbodyTds_info",editTbodyColumnArr);
-
-            let tbodyTrObj =BootstrapAsider.tableTbodyAddTrLine(tbodyDom,editTbodyColumnArr,{
-                trCssClass:evenProperties.data.tbodyTrCssClass,
-                tdCssClass:evenProperties.data.tdCssClass,
-                tableName:evenProperties.data.name,
-            });
-            $(tbodyDom).empty();//tbody 必须放在此处清空
-            tbodyTrObj.forEach(function(item){
-                $(tbodyDom).append(item);
-            });
-
-            let theadTrObj =BootstrapAsider.tableTheadAddTrLine(editTheadColumnArr,
+            let editTableColumnArr = eval("tableColumns");
+            evenProperties.data.tableColumnsArr = editTableColumnArr;
+            $(globalComponent).prop("ortum_tbodyTds_info",editTableColumnArr);
+            $(tbodyDom).empty();//tbody先清空
+            $(theadDom).empty();//thead先清空
+            let tbodyTrObj =BootstrapAsider.tableTbodyAddLine(tbodyDom,editTableColumnArr,tdMoreProps);
+            $(tbodyDom).append(tbodyTrObj);
+            let theadTrObj =BootstrapAsider.tableTheadAddLine(editTableColumnArr,
                 {
                     trCssClass:evenProperties.data.theadTrCssClass,
                     thCssClass:evenProperties.data.thCssClass,
                 });
-            $(theadDom).empty();//thead 必须放在此处清空
-            theadTrObj.forEach(function(item){
-                $(theadDom).append(item);
-            })
-
-            let tfootTrObj =BootstrapAsider.tableTfootAddTrLine(editTfootColumnArr,
+            $(theadDom).append(theadTrObj);
+            //tfoot
+            let editTfootColumnArr = eval("tfootColumns");
+            evenProperties.data.tfootColumnsArr = editTfootColumnArr;
+            $(tfootDom).empty();//thead先清空
+            let tfootTrObj =BootstrapAsider.tableTfootAddLine(editTfootColumnArr,
                 {
                     trCssClass:evenProperties.data.tfootTrCssClass,
                     tdCssClass:evenProperties.data.tfootTdCssClass,
                     tableName:evenProperties.data.name,
                 });
-            $(tfootDom).empty();//thead 必须放在此处清空
             $(tfootDom).append(tfootTrObj);
 
-            //替换table上的属性值
-            evenProperties.data.tfootColumnsArr = editTfootColumnArr;
-            evenProperties.data.tbodyColumnsArr = editTbodyColumnArr;
-            evenProperties.data.theadColumnsArr = editTheadColumnArr;
-
         }catch (e) {
-            console.error(e);
             console.error("编辑table的column信息错误");
         }
         //TODO 修改之后可以优化替换的规则
-        /*
-        try{
-             eval(val);
-             let editTableColumnArr = eval("tableColumns");
-             for(let index = 0;index < editTableColumnArr.length;index++){
-                 let type = item[index].type;
-                 let headHtml = item[index].headHtml;
-                 let headColspan = item[index].headHtml;
-                 let headRowspan = item[index].headHtml;
-                 let frame = item[index].headHtml;
-                 let componentKey = item[index].headHtml;
-                 let width = item[index].width;
-                 switch (type) {
-                     case "order":
-                         break;
-                     case "act":
-                         break;
-                     default:
-                         break;
-                 }
+       /* try{
+            eval(val);
+            let editTableColumnArr = eval("tableColumns");
+            for(let index = 0;index < editTableColumnArr.length;index++){
+                let type = item[index].type;
+                let headHtml = item[index].headHtml;
+                let headColspan = item[index].headHtml;
+                let headRowspan = item[index].headHtml;
+                let frame = item[index].headHtml;
+                let componentKey = item[index].headHtml;
+                let width = item[index].width;
+                switch (type) {
+                    case "order":
+                        break;
+                    case "act":
+                        break;
+                    default:
+                        break;
+                }
 
-             }
-         }catch (e) {
-             console.error("编辑table的column信息错误")
-         }*/
+            }
+        }catch (e) {
+            console.error("编辑table的column信息错误")
+        }*/
 
     };
     /**
@@ -897,69 +881,41 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
         Global.ortum_codemirrorJS_setVal = function(codeObj){
-            // let tableArr = [];
-            // for(let item of evenProperties.data.tableColumnsArr){
-            //     let pushItem = {};
-            //     for(let key in item){
-            //         if(item.hasOwnProperty(key)){
-            //             key !== "customProps" && (pushItem[key] = item[key]);
-            //         }
-            //     };
-            //     tableArr.push(pushItem)
-            // }
-
-            let theadArr = [];
-            evenProperties.data.theadColumnsArr.forEach(function (itemArr,indexArr) {
-                let pushArr = [];
-                itemArr.forEach(function (item,index) {
-                    let pushItem = {};
-                    for(let key in item){
-                        if(item.hasOwnProperty(key)){
-                            key !== "customProps" && (pushItem[key] = item[key]);
-                        }
-                    };
-                    pushArr.push(pushItem);
-                })
-                theadArr.push(pushArr)
-            });
-
-            let tbodyArr = [];
-            evenProperties.data.tbodyColumnsArr.forEach(function (itemArr,indexArr) {
-                let pushArr = [];
-                itemArr.forEach(function (item,index) {
-                    let pushItem = {};
-                    for(let key in item){
-                        if(item.hasOwnProperty(key)){
-                            key !== "customProps" && (pushItem[key] = item[key]);
-                        }
-                    };
-                    pushArr.push(pushItem);
-                })
-                tbodyArr.push(pushArr)
-            });
-
+            let tableArr = [];
+            for(let item of evenProperties.data.tableColumnsArr){
+                let pushItem = {};
+                for(let key in item){
+                    if(item.hasOwnProperty(key)){
+                        key !== "customProps" && (pushItem[key] = item[key]);
+                    }
+                };
+                tableArr.push(pushItem)
+            }
             let tfootArr = [];
-            evenProperties.data.tfootColumnsArr.forEach(function (itemArr,indexArr) {
-                let pushArr = [];
-                itemArr.forEach(function (item,index) {
-                    let pushItem = {};
-                    for(let key in item){
-                        if(item.hasOwnProperty(key)){
-                            key !== "customProps" && (pushItem[key] = item[key]);
-                        }
-                    };
-                    pushArr.push(pushItem);
-                })
-                tfootArr.push(pushArr)
-            });
+            for(let item of evenProperties.data.tfootColumnsArr){
+                let pushItem = {};
+                for(let key in item){
+                    if(item.hasOwnProperty(key)){
+                        key !== "customProps" && (pushItem[key] = item[key]);
+                    }
+                };
+                tfootArr.push(pushItem)
+            }
 
 
+            //函数字符串
+            // var funStr=Assist.jsonStringify(evenProperties.data.tableColumnsArr)
+            // if(evenProperties.data.customGetOptions){
+            //     funStr=evenProperties.data.customGetOptions.toString();
+            // }else{
+            //     funStr = "function getOptions_"+ evenProperties.data.name +"(ortumDom,ortumAjax){\n\n\n\n\n}"
+            // }
+            
             //格式化
-            let theadArrStr = js_beautify(JSON.stringify(theadArr),2);
-            let tbodyArrStr = js_beautify(JSON.stringify(tbodyArr),2);
+            let tableArrStr = js_beautify(JSON.stringify(tableArr),2);
             let tfootArrStr = js_beautify(JSON.stringify(tfootArr),2);
 
-            codeObj.setValue(`//编辑thead的列信息\nvar theadColumns = ${theadArrStr};\n//编辑tbody的列信息\nvar tbodyColumns = ${tbodyArrStr};\n//编辑tfoot的列信息\nvar tfootColumns = ${tfootArrStr};
+            codeObj.setValue(`//编辑table的列信息\nvar tableColumns = ${tableArrStr};\n//编辑tfoot的列信息\nvar tfootColumns = ${tfootArrStr};
                 `)
         }
 

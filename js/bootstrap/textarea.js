@@ -77,7 +77,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let outerDom=$(
             `
-            <div class="form-group ortum_item row" data-frame="Bootstrap" 
+            <div class="form-group ortum_item row ortum_bootstrap_textarea" data-frame="Bootstrap" 
             data-componentKey="textareaDom">
                
             </div>
