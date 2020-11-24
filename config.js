@@ -76,6 +76,7 @@ require(['feature','assist','global'],function(Feature,Assist,Global){
                     Feature.JsonPropsRenderDom(tableContent.ortumJson,$("#ortum_field"),"append");
                     Global.ortum_life_json = tableContent.ortumSet;
                     Global.ortum_life_function = tableContent.ortumJS;
+                    Global.ortum_life_Css = tableContent.ortumCss;
                 };
             })
             .catch(function (error) {

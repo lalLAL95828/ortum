@@ -248,12 +248,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;
                 Global.ortum_life_function = contenHtml.ortumJS;
+                Global.ortum_life_Css = contenHtml.ortumCss;
             }else{
                 switchTableAct("new");
                 $('#ortum_field').removeClass("ortum_field_originState").html('');
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;
                 Global.ortum_life_function = contenHtml.ortumJS;
+                Global.ortum_life_Css = contenHtml.ortumCss;
             }
 
             // let domArr = $(this.result);
@@ -283,6 +285,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         let ortumJson = getFormContentJson("id",{id:"ortum_field",HasProperties:true});
         let ortumJS = Global.ortum_life_function;
         let ortumSet = Global.ortum_life_json;
+        let ortumCss = Global.ortum_life_Css;
 
         let getTitleAndName =  getTitleAndNameFun(ortumJson)//后端需要的数据
 
@@ -300,6 +303,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 ortumJson:ortumJson,
                 ortumJS:ortumJS,
                 ortumSet:ortumSet,
+                ortumCss:ortumCss,
             }),
             editor:"ortum",
             // editName:usename,
@@ -460,7 +464,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
      * @param way
      */
     let JsonPropsRenderDom = function (prevArrJSON,parentDom,way="append") {
-        for(let item of prevArrJSON){
+        if(!Array.isArray(prevArrJSON))return false;
+        prevArrJSON.forEach(function (item) {
             let domItem = item;
             /*if(item.childrenType == "choose"){
                 (typeof item.chooseFun !=="function") && (item.chooseFun = Function('return ' + item.chooseFun)());
@@ -496,13 +501,16 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
 
             //如果是bootstrap的grid，不处理其children
             if(frame == "Bootstrap" && componentKey=="tableDom"){
-                return true;
+                //return，break会终止for of循环
+                //forEach的return实现continue的效果
+                return;
             };
 
             if(domItem.children && domItem.children.length){
                 JsonPropsRenderDom(domItem.children,appendDom,"replace")
             };
-        }
+        })
+
     };
     /**
      * 功能：从json的html渲染成 dom
@@ -736,7 +744,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     "children":[],
                     "componentKey":componentKey,
                 },comDom));
-
 
                 //如果是Bootstrap_tableDom 不在向下寻找ortum_item;
                 if(frame == "Bootstrap" && componentKey == "tableDom"){

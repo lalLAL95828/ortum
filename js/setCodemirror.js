@@ -3,6 +3,8 @@ define([
 
     "CSS!codemirror/lib/codemirror.css",
     "codemirror/mode/javascript/javascript",
+    "codemirror/mode/css/css",
+
     "CSS!codemirror/theme/monokai.css",
     "CSS!codemirror/addon/fold/foldgutter.css",
     "codemirror/addon/fold/brace-fold",
@@ -82,9 +84,60 @@ function(CodeMirror){
         
         return myCodeMirror
     }
+
+    //初始化编辑CSS
+    let initCss = function(){
+        const option = {
+            // value: "function myScript(){return 100;}",
+            mode:  "css",
+            theme:"monokai",
+            lineNumbers:true,//行号
+            lineWrapping: true,
+            autofocus:true,
+            keyMap:"sublime",
+            foldGutter: true,//开启折叠
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
+
+            //提示
+            hintOptions:{
+                // hint:CodeMirror.hint.javascript,
+                completeSingle:false,
+            },
+            //语法检查
+            // gutters: ["CodeMirror-lint-markers"],
+            lint: true,
+
+            placeholder:"光标在编辑器上时，F11全屏，ESC退出",
+
+            styleActiveLine:true,//光标行高亮
+        }
+
+        let myCodeMirror = CodeMirror.fromTextArea(document.getElementById('ortum_codeMirror'), option);
+
+        myCodeMirror.refresh();
+        //显示提示
+        myCodeMirror.on("inputRead", () => {
+            myCodeMirror.showHint();
+        });
+
+        //设置全屏快捷键
+        myCodeMirror.setOption("extraKeys", {
+            F11:function(cm) {
+                cm.setOption("fullScreen", true)
+            },
+            Esc:function(cm) {
+                cm.setOption("fullScreen", false)
+                myCodeMirror.refresh()
+            },
+        });
+
+
+        return myCodeMirror
+    }
     
 
     return {
         initJs:initJs,
+        initCss:initCss,
     }
 })

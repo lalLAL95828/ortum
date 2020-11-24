@@ -25,6 +25,10 @@ define([],function(){
 
     let ortum_life_json={};//参数json
 
+    let ortum_life_Css;//全局css
+    let ortum_codemirrorCSS_setVal;
+    let ortum_codemirrorCSS_save;
+
 
     return{
         ortumField:ortum_field,
@@ -44,5 +48,8 @@ define([],function(){
 
         ortum_life_function:ortum_life_function,
         ortum_life_json:ortum_life_json,
+        ortum_life_Css:ortum_life_Css,
+        ortum_codemirrorCSS_setVal:ortum_codemirrorCSS_setVal,
+        ortum_codemirrorCSS_save:ortum_codemirrorCSS_save,
     }
 })

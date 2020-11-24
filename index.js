@@ -185,6 +185,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true});
             let ortumJS = Global.ortum_life_function;
             let ortumSet = Global.ortum_life_json;
+            let ortumCss = Global.ortum_life_Css;
+
 
             let getTitleAndName =  Feature.getTitleAndNameFun(ortumJson)//后端需要的数据
 
@@ -209,6 +211,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     ortumJson:ortumJson,
                     ortumJS:ortumJS,
                     ortumSet:ortumSet,
+                    ortumCss:ortumCss,
                 }),
                 editor:"ortum",
                 editName:usename,
@@ -344,6 +347,35 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                
             };
             $("#ortum_top_model_xl_content").load("html/common/codemirror.html",function(){
+                $('#ortum_top_model_xl_wait').hide();
+            });
+        })
+        return;
+    }
+
+
+    //编辑css
+    if($(this).hasClass('icon-css1')){
+        require(["global",'assist'],function(Global,Assist){
+            $('#ortum_top_dialog_xl').modal({
+                "backdrop":"static",
+                // "focus":false,
+                "keyboard":false,
+            });
+            let cssStr = "";
+
+            if(Global.ortum_life_Css){
+                cssStr = Assist.actCssCoder.format(Global.ortum_life_Css);
+            }
+
+            Global.ortum_codemirrorCSS_setVal = function(codeObj){
+                codeObj.setValue(`/*****编辑CSS*****/\n` + cssStr);
+            };
+            Global.ortum_codemirrorCSS_save = function(val){
+                let packCss = Assist.actCssCoder.pack(val);
+                Global.ortum_life_Css = packCss;
+            };
+            $("#ortum_top_model_xl_content").load("html/common/codemirrorCss.html",function(){
                 $('#ortum_top_model_xl_wait').hide();
             });
         })

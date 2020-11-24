@@ -206,8 +206,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
         if(createJson){
             scriptDom +=`
-                ${(ortum_component_properties.data.onChange && typeof ortum_component_properties.data.onChange === "function") ? '$("select[name='+ ortum_component_properties.data.name +']").off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +');' : ''}
-                ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("select[name='+ ortum_component_properties.data.name +']").eq(0),"'+ ortum_component_properties.data.name +'");' : ''}
+                ${(ortum_component_properties.data.onChange && typeof ortum_component_properties.data.onChange === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("select").eq(0).off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +');' : ''}
+                ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("select").eq(0),"'+ ortum_component_properties.data.name +'");' : ''}
             `;
         };
         scriptDom += "</script>";
@@ -576,7 +576,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }else{
             setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that,name){},"
         };
-        if(evenProperties.data.onClick){
+        if(evenProperties.data.onChange){
             setStr += "\n//change事件\nonChange:"+ evenProperties.data.onChange.toString() + ",";
         }else{
             setStr += "\n//change事件\nonChange:function(){},"

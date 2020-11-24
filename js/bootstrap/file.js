@@ -36,11 +36,17 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             formName:"files",//form的name(上传时候的name)
             automatic:true,//自动上传
             title:"名称",
-            ortumDelFile:"",//删除
+            ortumDelFile:function(e){$(this).parents('.input-group-append').eq(0).hide()},//删除
             ortumPreviewFile:"",//预览
             ortumDownFile:"",//下载
+            onChange:"",//change事件
+            onCallBack:'',//上传后回调
+            onSuccess:'',//上传成功
+            onError:'',//上传失败
             onBefore:"",
             onAfter:"",
+
+            uuid:"",
         },
         inputChange:["id","name","accept","verification","cssClass","labelName","formName","uploadUrl","title"],//input事件修改值
         clickChange:["authority","multiple","automatic"],
@@ -104,6 +110,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let uploadUrl = $(this).attr("data-uploadurl");
         let itemParents = $(this).parents(".ortum_item").eq(0);
         let filelists = $(this).prop('files');
+
+        let uuid = $(this).parents(".ortum_item").eq(0).attr("ortum_uuid");
+        let oldUUID = uuid;
+        uuid && (uuid = uuid.replaceAll("-",''));
+        let callBack = 'ortum_bootstrap_file_onCallBack_' + uuid;
+        let onSuccess = 'ortum_bootstrap_file_onSuccess_' + uuid;
+        let onError = 'ortum_bootstrap_file_onError_' + uuid;
+
+
         /*发送到后端*/
         let fd = new FormData();
         let L = filelists.length;
@@ -120,11 +135,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             "data":fd,
             "success":(xhr,e)=>{
                 /*require("assist").infoTip("上传成功！");*/
-                alert("上传成功！");
+                /*alert("上传成功！");*/
+                $("#ortum_file_append_"+oldUUID).show();
+
+                uuid && Function("if(typeof "+ onSuccess +" == 'function')return "+ onSuccess + "()")();
             },
             "error":(xhr,e)=>{
                 /*require("assist").dangerTip("上传失败！");*/
-                alert("上传失败！");
+                /*alert("上传失败！");*/
+                uuid && Function("if(typeof "+ onError +" == 'function')return "+ onError + "()")();
             },
             progress:(xhr,e)=>{
                 let pro = e.loaded/e.total * 100;
@@ -136,7 +155,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     $(itemParents).find(".progress").eq(0).css("display","none");
                     $(itemParents).find(".progress-bar").eq(0).css("width","0%");
                     $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", 0);
-                },200)
+                },200);
+                uuid && Function("if(typeof "+ callBack +" == 'function')return "+ callBack + "()")();
             }
         });
     }
@@ -190,6 +210,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
+
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('file'));
@@ -210,13 +236,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     for="${ortum_component_properties.data.id ? ortum_component_properties.data.id : ortum_component_properties.data.name}">
                     ${ortum_component_properties.data.labelName}</label>
                 </div>
-                <div class="input-group-append" style="margin-left:0">
+                <div class="input-group-append" style="margin-left:0;display: none" id="ortum_file_append_${ortum_component_properties.data.uuid}">
                     <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
-                        onclick="javascript:${ortum_component_properties.data.ortumPreviewFile && Function('return ' + ortum_component_properties.data.ortumPreviewFile)(ortum_component_properties.data.name)}">预览</button>
+                        id="ortumPreviewFile_${ortum_component_properties.data.uuid}">预览</button>
                     <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
-                        onclick="javascript:${ortum_component_properties.data.ortumDownFile && Function('return ' + ortum_component_properties.data.ortumDownFile)(ortum_component_properties.data.name)}">下载</button>
+                        id="ortumDownFile_${ortum_component_properties.data.uuid}">下载</button>
                     <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
-                        onclick="javascript:${ortum_component_properties.data.ortumDelFile && Function('return ' + ortum_component_properties.data.ortumDelFile)(ortum_component_properties.data.name)}">删除</button>
+                        id="ortumDelFile_${ortum_component_properties.data.uuid}" >删除</button>
                 </div>
             </div>
             <div class="progress" style="height: 5px;margin-top:5px;display:none">
@@ -231,21 +257,25 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         //change事件修改labelName
         scriptStr = `
-        let ortum_bootstrap_file_changeLabelName = ${changeLabelName.toString()};
-        !function(fileDomName){
-            $('input[name='+fileDomName+']').off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName);
-        }('${ortum_component_properties.data.name}');
+        let ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${changeLabelName.toString()};
+        $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")});
+        ${ortum_component_properties.data.onCallBack ? "let ortum_bootstrap_file_onCallBack_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onCallBack+";" : ''} 
+        ${ortum_component_properties.data.onSuccess ? "let ortum_bootstrap_file_onSuccess_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onSuccess+";" : ''} 
+        ${ortum_component_properties.data.onError ? "let ortum_bootstrap_file_onError_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onError+";" : ''} 
+        ${(ortum_component_properties.data.ortumDelFile && typeof ortum_component_properties.data.ortumDelFile === "function") ? '$("#ortumDelFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDelFile +');' : ''}
+        ${(ortum_component_properties.data.ortumDownFile && typeof ortum_component_properties.data.ortumDownFile === "function") ? '$("#ortumDownFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDownFile +');' : ''}
+        ${(ortum_component_properties.data.ortumPreviewFile && typeof ortum_component_properties.data.ortumPreviewFile === "function") ? '$("#ortumPreviewFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumPreviewFile +');' : ''}
+        ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0));' : ''}
+        ${(ortum_component_properties.data.onChange && typeof ortum_component_properties.data.onChange === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +');' : ''}
         `;
 
+        //绑定自动上传函数
         if(generateDom && ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
             //函数生成script节点中
             //change事件自动上传
             scriptStr +=`
-                let ortum_bootstrap_file_uploadFile = ${uploadFile.toString()};
-                !function(fileDomName){
-                    $('input[name='+fileDomName+']').off("change.automatic").on("change.automatic",ortum_bootstrap_file_uploadFile)
-                }('${ortum_component_properties.data.name}');
-
+                let ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${uploadFile.toString()};
+                $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.automatic").on("change.automatic",ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")})
             `
         }
         scriptDom = $(`
@@ -453,11 +483,35 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }else{
             setStr += "\n//预览\nortumPreviewFile:function(){},"
         }
+
         if(evenProperties.data.ortumDownFile){
             setStr += "\n//下载\nortumDownFile:"+ evenProperties.data.ortumDownFile.toString() + ",";
         }else{
             setStr += "\n//下载\nortumDownFile:function(){},"
         }
+        if(evenProperties.data.onChange){
+            setStr += "\n//change事件\nonChange:"+ evenProperties.data.onChange.toString() + ",";
+        }else{
+            setStr += "\n//change事件\nonChange:function(){},"
+        };
+        if(evenProperties.data.onSuccess){
+            setStr += "\n//上传成功后回调\nonSuccess:"+ evenProperties.data.onSuccess.toString() + ",";
+        }else{
+            setStr += "\n//上传成功后回调\nonSuccess:function(){},"
+        };
+        if(evenProperties.data.onError){
+            setStr += "\n//上传失败后回调\nonError:"+ evenProperties.data.onError.toString() + ",";
+        }else{
+            setStr += "\n//上传失败后回调\nonError:function(){},"
+        };
+
+        if(evenProperties.data.onCallBack){
+            setStr += "\n//上传后回调\nonCallBack:"+ evenProperties.data.onCallBack.toString() + ",";
+        }else{
+            setStr += "\n//上传后回调\nonCallBack:function(){},"
+        };
+
+
         setStr +="\n};";
         //格式化
         setStr = js_beautify(setStr,2);
@@ -482,6 +536,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             evenProperties.data.ortumDelFile = ortum_BootstrapFile_setJs.ortumDelFile;
             evenProperties.data.ortumPreviewFile = ortum_BootstrapFile_setJs.ortumPreviewFile;
             evenProperties.data.ortumDownFile = ortum_BootstrapFile_setJs.ortumDownFile;
+            evenProperties.data.onChange = ortum_BootstrapFile_setJs.onChange;
+            evenProperties.data.onCallBack = ortum_BootstrapFile_setJs.onCallBack;
+            evenProperties.data.onSuccess = ortum_BootstrapFile_setJs.onSuccess;
+            evenProperties.data.onError = ortum_BootstrapFile_setJs.onError;
         }catch (e) {
             console.error("设置input的js有误，请重新设置");
         }

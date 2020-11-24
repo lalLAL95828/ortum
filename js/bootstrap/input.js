@@ -171,10 +171,10 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let scriptDom ='';
         if(createJson){
             scriptDom = $(`<script>
-                    ${(ortum_component_properties.data.onClick && typeof ortum_component_properties.data.onClick === "function") ? '$("input[name='+ ortum_component_properties.data.name +']").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onClick +');' : ''}
-                    ${(ortum_component_properties.data.onBlur && typeof ortum_component_properties.data.onBlur === "function") ? '$("input[name='+ ortum_component_properties.data.name +']").off("blur.ortum").on("blur.ortum",'+ ortum_component_properties.data.onBlur +');' : ''}
-                    ${(ortum_component_properties.data.onInput && typeof ortum_component_properties.data.onInput === "function") ? '$("input[name='+ ortum_component_properties.data.name +']").off("input.ortum").on("input.ortum",'+ ortum_component_properties.data.onInput +');' : ''}
-                    ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("input[name='+ ortum_component_properties.data.name +']").eq(0));' : ''}
+                    ${(ortum_component_properties.data.onClick && typeof ortum_component_properties.data.onClick === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onClick +');' : ''}
+                    ${(ortum_component_properties.data.onBlur && typeof ortum_component_properties.data.onBlur === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("blur.ortum").on("blur.ortum",'+ ortum_component_properties.data.onBlur +');' : ''}
+                    ${(ortum_component_properties.data.onInput && typeof ortum_component_properties.data.onInput === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("input.ortum").on("input.ortum",'+ ortum_component_properties.data.onInput +');' : ''}
+                    ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0));' : ''}
                 </script>`);
         }
 
@@ -462,6 +462,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             // globalComponent.find("input").attr("onblur","javascript: Function('return ' "+ evenProperties.data.onBlur +")()");
             // globalComponent.find("input").attr("oninput","javascript: Function('return ' "+ evenProperties.data.onInput +")()");
         }catch (e) {
+            console.error(e);
             console.error("设置input的js有误，请重新设置");
         }
     };
