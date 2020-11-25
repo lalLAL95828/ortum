@@ -86,6 +86,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         $(outerDom).append($(`   
             <${ortum_component_properties.data.titleType} class="${ortum_component_properties.data.cssClass}" 
+                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }
                 ${ortum_component_properties.data.bindComponentName ? "ortum_bindcomponentname="+ortum_component_properties.data.bindComponentName : '' } >
                 ${ortum_component_properties.data.defaultVal}
             </${ortum_component_properties.data.titleType}>
@@ -249,6 +250,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 evenProperties.data[property] = val;
                 $(globalComponent).html($(`   
                     <${val} class="${evenProperties.data.cssClass}" 
+                        ${evenProperties.data.id ? "id="+evenProperties.data.id : '' }
                         ${evenProperties.data.bindComponentName ? "ortum_bindcomponentname="+evenProperties.data.bindComponentName : '' } >
                         ${evenProperties.data.defaultVal}
                     </${val}>

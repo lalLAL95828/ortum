@@ -280,7 +280,10 @@ define(['require'],function(require){
         let shadowDiv= $(`
             <div id="ortum_shadow">
             </div>
-        `)
+        `);
+
+
+
 
         //bootstrap_grid
         if($(this).hasClass('ortum_bootstrap_grid')){

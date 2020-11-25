@@ -230,3 +230,22 @@ input::-webkit-calendar-picker-indicator{
 .custom-file-label{
     text-align: left;
 }
+.ortum_file_hideName{
+    width: 60px;
+    border-radius:0!important;
+    text-align: center;
+    border-width: 0px;
+}
+.ortum_file_hideName::after{
+    width: 100%!important;
+    border: 0px!important;
+}
+.custom-file{
+    min-width: 60px!important;
+}
+.custom-file-flexGrow{
+    flex-grow: 0!important;
+}
+.custom-file-input{
+    display: none!important;
+}

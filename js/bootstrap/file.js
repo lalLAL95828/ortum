@@ -29,7 +29,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             accept:"*/*",//接收类型
             browse:"上传",//浏览
             multiple:false,//多个文件
-            onChange:changeLabelName,//文件改变，修改labelName
+            onChangeName:changeLabelName,//文件改变，修改labelName
             onChangeUpload:'',//自动上传文件的函数，默认绑定uploadFile
             // uploadUrl:"http://localhost:3000/uploadfile",//自动上传的url
             uploadUrl:"/catarc_infoSys/api/sys/file/uploadMultipartFiles",//自动上传的url
@@ -39,6 +39,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             ortumDelFile:function(e){$(this).parents('.input-group-append').eq(0).hide()},//删除
             ortumPreviewFile:"",//预览
             ortumDownFile:"",//下载
+
             onChange:"",//change事件
             onCallBack:'',//上传后回调
             onSuccess:'',//上传成功
@@ -46,10 +47,16 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             onBefore:"",
             onAfter:"",
 
+            showFileName:true,
+            showPrevBtn:true,
+            showDownBtn:true,
+            showDelBtn:true,
+
+
             uuid:"",
         },
         inputChange:["id","name","accept","verification","cssClass","labelName","formName","uploadUrl","title"],//input事件修改值
-        clickChange:["authority","multiple","automatic"],
+        clickChange:["authority","multiple","automatic","showFileName","showPrevBtn","showDownBtn","showDelBtn"],
         purview:{//属性编辑权限
             id:3,//id
             name:3,
@@ -71,11 +78,20 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             formName:3,//form的name
             automatic:3,//自动上传
             title:3,
+
+            showFileName:3,
+            showPrevBtn:3,
+            showDownBtn:3,
+            showDelBtn:3,
         },
         dataShowType:{
             multiple:'switch',
             automatic:"switch",
             authority:"checkbox",
+            showFileName:'switch',
+            showPrevBtn:'switch',
+            showDownBtn:'switch',
+            showDelBtn:'switch',
         },
         verify:{//编辑属性时的验证
             automatic:{
@@ -198,7 +214,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let outerDom=$(
             `
-            <div class="form-group ortum_item" data-frame="Bootstrap" 
+            <div class="form-group ortum_item ortum_bootstrap_file" data-frame="Bootstrap" 
             data-componentKey="fileDom">
                
             </div>
@@ -222,7 +238,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         $(outerDom).append($(`
             <div class="input-group">
-                <div class="custom-file">
+                <div class="custom-file ${!ortum_component_properties.data.showFileName && 'custom-file-flexGrow'}">
                     <input type="file" class="${ortum_component_properties.data.cssClass}" required
                     name="${ortum_component_properties.data.name}" 
                     ${ortum_component_properties.data.formName ? "data-formname="+ortum_component_properties.data.formName : ""}
@@ -232,16 +248,16 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     id="${ortum_component_properties.data.id ? ortum_component_properties.data.id : ortum_component_properties.data.name}" 
                     accept="${ortum_component_properties.data.accept}" 
                     />
-                    <label class="custom-file-label" data-browse="${ortum_component_properties.data.browse}"
+                    <label class="custom-file-label ${!ortum_component_properties.data.showFileName && 'ortum_file_hideName'}" data-browse="${ortum_component_properties.data.browse}" 
                     for="${ortum_component_properties.data.id ? ortum_component_properties.data.id : ortum_component_properties.data.name}">
                     ${ortum_component_properties.data.labelName}</label>
                 </div>
                 <div class="input-group-append" style="margin-left:0;display: none" id="ortum_file_append_${ortum_component_properties.data.uuid}">
-                    <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
+                    <button class="btn btn-outline-secondary ${!ortum_component_properties.data.showPrevBtn && 'ortum_display_NONE'}" type="button" style="border-color: #ced4da;" 
                         id="ortumPreviewFile_${ortum_component_properties.data.uuid}">预览</button>
-                    <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
+                    <button class="btn btn-outline-secondary ${!ortum_component_properties.data.showDownBtn && 'ortum_display_NONE'}" type="button" style="border-color: #ced4da;" 
                         id="ortumDownFile_${ortum_component_properties.data.uuid}">下载</button>
-                    <button class="btn btn-outline-secondary" type="button" style="border-color: #ced4da;" 
+                    <button class="btn btn-outline-secondary ${!ortum_component_properties.data.showDelBtn && 'ortum_display_NONE'}" type="button" style="border-color: #ced4da;" 
                         id="ortumDelFile_${ortum_component_properties.data.uuid}" >删除</button>
                 </div>
             </div>
@@ -258,7 +274,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //change事件修改labelName
         scriptStr = `
         let ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${changeLabelName.toString()};
-        $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")});
+        ${ortum_component_properties.data.showFileName} && $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")});
         ${ortum_component_properties.data.onCallBack ? "let ortum_bootstrap_file_onCallBack_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onCallBack+";" : ''} 
         ${ortum_component_properties.data.onSuccess ? "let ortum_bootstrap_file_onSuccess_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onSuccess+";" : ''} 
         ${ortum_component_properties.data.onError ? "let ortum_bootstrap_file_onError_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onError+";" : ''} 
@@ -287,7 +303,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         if(!generateDom){
             //绑定文件onchange
-            $(outerDom).find('input').on('change.changeLabelname',ortum_component_properties.data.onChange)
+            ortum_component_properties.data.showFileName && $(outerDom).find('input').on('change.changeLabelname',ortum_component_properties.data.onChangeName)
             if(ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
                 $(outerDom).find('input').off("change.automatic").on("change.automatic",uploadFile)
             }else{
@@ -393,7 +409,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         //更新到dom属性上
         switch(property){
-            case "multiple":case "automatic":
+            case "multiple":case "automatic":case "showFileName":case "showPrevBtn":case "showDownBtn":case "showDelBtn":
                 evenProperties.data[property] = checked;
                 break;
             default:
@@ -418,13 +434,36 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
         let globalComponent =Global.ortum_edit_component.comObj;
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        let uuid = evenProperties.data.uuid;
         
         //判断值是否合理
         let vertifyPause = evenProperties.verify && evenProperties.verify[property] && evenProperties.verify[property]["click"] && evenProperties.verify[property]["click"](globalComponent,e,val,checked);
         if(vertifyPause){
             return false;
         }
+
         switch(property){
+            case "showFileName":
+                    if(checked){
+                        $(globalComponent).find('.custom-file-label').eq(0).removeClass("ortum_file_hideName")
+                        $(globalComponent).find('.custom-file').eq(0).removeClass("custom-file-flexGrow")
+                    }else{
+                        $(globalComponent).find('.custom-file-label').eq(0).addClass("ortum_file_hideName")
+                        $(globalComponent).find('.custom-file').eq(0).addClass("custom-file-flexGrow")
+                    }
+                break;
+            case "showPrevBtn":
+                uuid && checked && $(globalComponent).find('#ortumPreviewFile_'+uuid).removeClass("ortum_display_NONE")
+                uuid && !checked && $(globalComponent).find('#ortumPreviewFile_'+uuid).addClass("ortum_display_NONE")
+                break;
+            case "showDownBtn":
+                uuid && checked && $(globalComponent).find('#ortumDownFile_'+uuid).removeClass("ortum_display_NONE")
+                uuid && !checked && $(globalComponent).find('#ortumDownFile_'+uuid).addClass("ortum_display_NONE")
+                break;
+            case "showDelBtn":
+                uuid && checked && $(globalComponent).find('#ortumDelFile_'+uuid).removeClass("ortum_display_NONE")
+                uuid && !checked && $(globalComponent).find('#ortumDelFile_'+uuid).addClass("ortum_display_NONE")
+                break;
             case "automatic":
                 if(checked){
                     $(globalComponent).find('input').eq(0).off("change.automatic").on("change.automatic",uploadFile)
