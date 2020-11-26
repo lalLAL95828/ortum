@@ -126,6 +126,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let uploadUrl = $(this).attr("data-uploadurl");
         let itemParents = $(this).parents(".ortum_item").eq(0);
         let filelists = $(this).prop('files');
+        let name = $(this).attr("name");
 
         let uuid = $(this).parents(".ortum_item").eq(0).attr("ortum_uuid");
         let oldUUID = uuid;
@@ -153,13 +154,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 /*require("assist").infoTip("上传成功！");*/
                 /*alert("上传成功！");*/
                 $("#ortum_file_append_"+oldUUID).show();
-
-                uuid && Function("if(typeof "+ onSuccess +" == 'function')return "+ onSuccess + "()")();
+                uuid && Function("if(typeof "+ onSuccess +" == 'function')return "+ onSuccess + "("+ xhr.responseText +",'"+ name +"')")();
             },
             "error":(xhr,e)=>{
                 /*require("assist").dangerTip("上传失败！");*/
                 /*alert("上传失败！");*/
-                uuid && Function("if(typeof "+ onError +" == 'function')return "+ onError + "()")();
+                uuid && Function("if(typeof "+ onError +" == 'function')return "+ onError + "("+ xhr.responseText +",'"+ name +"')")();
             },
             progress:(xhr,e)=>{
                 let pro = e.loaded/e.total * 100;
@@ -172,7 +172,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     $(itemParents).find(".progress-bar").eq(0).css("width","0%");
                     $(itemParents).find(".progress-bar").eq(0).attr("aria-valuenow", 0);
                 },200);
-                uuid && Function("if(typeof "+ callBack +" == 'function')return "+ callBack + "()")();
+                uuid && Function("if(typeof "+ callBack +" == 'function')return "+ callBack + "("+ xhr.responseText +",'"+ name +"')")();
             }
         });
     }
@@ -536,18 +536,18 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         if(evenProperties.data.onSuccess){
             setStr += "\n//上传成功后回调\nonSuccess:"+ evenProperties.data.onSuccess.toString() + ",";
         }else{
-            setStr += "\n//上传成功后回调\nonSuccess:function(){},"
+            setStr += "\n//上传成功后回调\nonSuccess:function(res,name){},"
         };
         if(evenProperties.data.onError){
             setStr += "\n//上传失败后回调\nonError:"+ evenProperties.data.onError.toString() + ",";
         }else{
-            setStr += "\n//上传失败后回调\nonError:function(){},"
+            setStr += "\n//上传失败后回调\nonError:function(res,name){},"
         };
 
         if(evenProperties.data.onCallBack){
             setStr += "\n//上传后回调\nonCallBack:"+ evenProperties.data.onCallBack.toString() + ",";
         }else{
-            setStr += "\n//上传后回调\nonCallBack:function(){},"
+            setStr += "\n//上传后回调\nonCallBack:function(res,name){},"
         };
 
 

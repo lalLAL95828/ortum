@@ -216,7 +216,13 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                                         "iconName":"icon-jiahao",
                                         "customProps":customProps || item.customProps,
                                     });
-                                    tableTbodyAddTrLine(createDom,tbodyDom,moreProps);
+                                    // tableTbodyAddTrLine(createDom,tbodyDom,moreProps);
+                                    //绑定新增事件
+                                    tableActAddTrLine(createDom,tbodyDom,moreProps);
+                                    //绑定组件属性
+                                    item.customProps = $(createDom).prop("ortum_component_properties");
+                                    item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
+
                                     tdDom && (
                                         tdDom.html(createDom).attr("data-type","act")
                                     );
@@ -231,7 +237,11 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                                         "iconName":"icon-shanchu",
                                         "customProps":customProps || item.customProps,
                                     });
-                                    tableActDelLine(createDom,moreProps);
+                                    //绑定删除事件
+                                    tableActDelTrLine(createDom,moreProps);
+                                    //绑定组件属性
+                                    item.customProps = $(createDom).prop("ortum_component_properties");
+                                    item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
                                     tdDom && (
                                         tdDom.html(createDom).attr("data-type","act")
                                     );
