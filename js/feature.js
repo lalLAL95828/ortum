@@ -113,6 +113,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         ele.ondrop = function(e){
             if(!Global.ortumNowDragObj)return;
 
+            if($(Global.ortumNowDragObj).attr("id") && $(Global.ortumNowDragObj).attr("id") === "ortum_shadow"){
+                console.log(Global.ortumNowDragObj);
+                debugger;
+                //清空正在拖拽的对象
+                Global.ortumNowDragObj = null;
+                return false;
+            }
+
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
 

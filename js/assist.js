@@ -281,7 +281,8 @@ define(['require'],function(require){
             <div id="ortum_shadow">
             </div>
         `);
-
+        //绑定拖拽事件
+        componentsBindDrag(shadowDiv);
 
 
 
@@ -367,6 +368,18 @@ define(['require'],function(require){
         return false;
     }
 
+
+    /**
+     * 功能：给可拖拽组件添加事件
+     *  */
+    let componentsBindDrag = function(ele){
+        ele.ondragstart = function(e){//我被拖动时，开始的那一刻
+            require("global").ortumNowDragObj = e.target;
+            // console.log(Global.ortumNowDragObj);
+            //e.dataTransfer.setData("dragTarget",this);//不能存储对象，因为会进行toString转化
+        }
+    };
+
     /**
      * 功能：创建组件的name时间戳
      * @param {*} e
@@ -417,5 +430,6 @@ define(['require'],function(require){
 
         resetSetPropertyCom,
 
+        componentsBindDrag,
     }
 })

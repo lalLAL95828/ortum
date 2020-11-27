@@ -124,7 +124,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             
             let newDom = $(`
             <div class="form-check ${ortum_component_properties.data.inline?'form-check-inline':''}">
-                <input class="${ortum_component_properties.data.cssClass}" ${choose ? "checked" :""} type="checkbox" name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
+                <input class="${ortum_component_properties.data.cssClass}" ${choose ? "checked" :""} type="checkbox" 
+                ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : ''} 
+                name="${ortum_component_properties.data.name}" id="${ortum_component_properties.data.name+"_"+i}" value="${ortum_component_properties.data.items[i].value}">
                 <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.name+"_"+i}">
                     ${ortum_component_properties.data.items[i].label}
                 </label>

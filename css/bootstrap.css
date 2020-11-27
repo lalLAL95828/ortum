@@ -246,6 +246,6 @@ input::-webkit-calendar-picker-indicator{
 .custom-file-flexGrow{
     flex-grow: 0!important;
 }
-.custom-file-input{
-    display: none!important;
+.custom-file-flexGrow .custom-file-input{
+    overflow: hidden!important;
 }
