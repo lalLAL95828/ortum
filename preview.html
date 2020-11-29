@@ -257,7 +257,7 @@
 
     <script>
         let prevArrJSON = window.opener.require("feature").getFormContentJson("id",{id:"ortum_field",win:window.opener.document});
-        console.log(prevArrJSON)
+        console.log(prevArrJSON);
 
         let prevDom = $('<div id="ortum_field_preview"></div>');
 
@@ -383,32 +383,6 @@
         rendPowerArr.forEach(function(item){
             setQ(item.dom,item.name,purviewJson)
         });
-
-        /*$("#ortum_form_Modal_body").append(`
-            <div class="optionContainer">
-                <div class="row">
-                    <div class="col-3 optionTitle">
-                        <span style="display: block">投资与运营管理部意见</span>
-                    </div>
-                    <div class="col optionContent">
-                        <div class="optionText"><span class="optionSpan">同意</span></div>
-                        <div class="optionTimeAndName">
-                            <div style="text-align: center">
-                                <span class="optionSpan optionTime">路爱丽丝</span>
-                                <span class="optionSpan optionName">2020-11-12 09:51:14</span>
-                            </div>
-                        </div>
-                        <div class="optionText"><span class="optionSpan">同意</span></div>
-                        <div class="optionTimeAndName">
-                            <div style="text-align: center">
-                                <span class="optionSpan optionTime">路爱丽丝</span>
-                                <span class="optionSpan optionName">2020-11-12 09:51:14</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `);*/
     </script>
 
 </body>

@@ -19,8 +19,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         
         let ortumField = document.createElement("div");
         ortumField.id = 'ortum_field';
-        ortumField.className = 'ortum_field_originState';
-        ortumField.innerHTML="<div class='originState'>组件拖拽</div>";
+
+
         Global.ortumField = ortumField;
         bindFeatureToOrtumField(ortumField);
 
@@ -105,17 +105,24 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
      * 功能：给表单区域添加事件
      *  */
     let bindFeatureToOrtumField = function(ele){
+        // let ortum_dragenter = undefined;
+
         ele.ondragover = function(e){
             e.preventDefault();//ondrop事件才能触发
-            // console.log("我是ondragover")
-            // console.log(this)
         }
+        ele.ondragenter = function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
+            if(!Global.ortumNowDragObj)return false;
+            ortumDragShadow(e,"enter",{That:this,addWay:"append"});
+            return false;
+        };
+
         ele.ondrop = function(e){
+            ortumDragShadow(e,"drop",{That:this});
+
             if(!Global.ortumNowDragObj)return;
 
             if($(Global.ortumNowDragObj).attr("id") && $(Global.ortumNowDragObj).attr("id") === "ortum_shadow"){
                 console.log(Global.ortumNowDragObj);
-                debugger;
                 //清空正在拖拽的对象
                 Global.ortumNowDragObj = null;
                 return false;
@@ -131,14 +138,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 return false;
             }
 
-
             e.preventDefault();//阻值浏览器对拖拽对象进行处理
             // var dropData = e.dataTransfer.getData("dragTarget");
+            
+            $("#originState").addClass("originStateHide");
 
-            if($(this).hasClass('ortum_field_originState')){
-                $(this).removeClass('ortum_field_originState')
-                this.innerHTML = "";
-            }
 
             //执行对应的生成组件的函数
             CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
@@ -252,28 +256,25 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             let contenHtml = JSON.parse(jsonInfo.contentHtml);
             if(jsonInfo.id){
                 switchTableAct("edit",{formId:jsonInfo.id,version:jsonInfo.version,formName:jsonInfo.formName,formCode:jsonInfo.formCode})
-                $('#ortum_field').removeClass("ortum_field_originState").html('');
+
+                $("#ortum_field").empty();
+                $("#originState").removeClass("originStateHide");
+
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;
                 Global.ortum_life_function = contenHtml.ortumJS;
                 Global.ortum_life_Css = contenHtml.ortumCss;
             }else{
                 switchTableAct("new");
-                $('#ortum_field').removeClass("ortum_field_originState").html('');
+
+                $("#ortum_field").empty();
+                $("#originState").removeClass("originStateHide");
+
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;
                 Global.ortum_life_function = contenHtml.ortumJS;
                 Global.ortum_life_Css = contenHtml.ortumCss;
             }
-
-            // let domArr = $(this.result);
-            // for(let i of domArr){
-            //     // console.log($(domArr[i]))
-            //     if($(i).attr('id') =='ortum_body'){
-            //         $('#ortum_field').removeClass("ortum_field_originState")
-            //         $('#ortum_field').html($(i).find('#ortum_field').html())
-            //     }
-            // }
         }
     }
     let exportJsonFileListen = function(e){
@@ -605,9 +606,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                         let bootstrapGridSonArr = getFormContentHtml(mode="dom",{dom:$(item),win:datas.win})
                         appendDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                             customProps:$(item).prop('ortum_component_properties'),
-                            generateDom:true,
                             clickChangeAttrs:false,
-                            createWaitSpan:false,
                             bindDropEvent:false,
                         })
                         $(appendDom).find(".ortum_boot_col_default").each(function (index2,item2) {
@@ -621,7 +620,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     frame && componentKey && !appendDom && (
                         prevHtml.append(CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                             customProps:$(item).prop('ortum_component_properties'),
-                            generateDom:true,
                             clickChangeAttrs:false,
                         }))
                     )
@@ -645,7 +643,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     frame && componentKey && (
                         prevHtmlArr[index] = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                             customProps:$(OrtumItem).prop('ortum_component_properties'),
-                            generateDom:true,
                             clickChangeAttrs:false,
                         })
                     )
@@ -656,6 +653,39 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 break;
         }
     } */
+
+    /**
+     * 功能: 根据html获取组件的json数组
+     * TODO 待完善该方法
+     * @param {*} mode 
+     * @param {*} datas 
+     */
+    let getFormHTMLToJson  = function(mode="id",datas={"win":window}){
+        let parentsJson = [];
+        if(datas && datas.parentsJson){
+            parentsJson = datas.parentsJson;
+        }
+        !datas.win && (datas.win = window.document);
+        $(datas.win).find('#'+datas.id).find(".ortum_item").each(function(index,item){
+            let parentOne = $(item).parent();
+            let parentOrtumItem =$(item).parents(".ortum_item").eq(0);
+            if(parentOrtumItem.length){
+                parentsJson.push({
+                    // "frame":frame,
+                    // "children":[],
+                    // "ortumItem":$(item),
+                    // "componentKey":componentKey,
+                    // "customProps":$(item).prop('ortum_component_properties'),
+                });
+
+            }else{
+
+            }
+
+        })
+
+    }
+
     /**
      * 功能: 获取win下表单信息,生成对应的dom数组
      * @param {*} id
@@ -693,12 +723,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
 
                     let comDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                         customProps:$(item).prop('ortum_component_properties'),
+                        ortumItemDom:$(item),
                         createJson:true,//生成对应的json
-                        generateDom:true,
-                        clickChangeAttrs:false,
-                        bindDropEvent:false,
-                        createWaitSpan:false,
-                        HasProperties:HasProperties,
+                        clickChangeAttrs:false,//点击修改属性
+                        bindDropEvent:false,//绑定拖拽事件
+                        HasProperties:HasProperties,//保存组件属性
                         ortumChildren:ortumChildren,
                     });
                     parentsJson.push(Object.assign({
@@ -712,11 +741,15 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                         return true;
                     };
                     let parentsJsonLength = parentsJson.length;
-                    $(item).find(".ortum_item").each(function(index2,html2){
-                        let ortumChildrenOrder = $(html2).parent().attr("data-children");
+                    $(item).find(".ortum_item").each(function(index2,item2){
+                        if($(item2).parents(".ortum_item")[0] !== $(item)[0]){
+                            return true;
+                        };
+
+                        let ortumChildrenOrder = $(item2).parent().attr("data-children");
                         !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
                         getFormContentJson(mode="dom",{
-                            "dom":$(html2),
+                            "dom":$(item2),
                             "win":datas.win,
                             "parent":parentsJson[parentsJsonLength-1],
                             "HasProperties":HasProperties,
@@ -738,11 +771,10 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
 
                 let comDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                     customProps:$(datas.dom).prop('ortum_component_properties'),
+                    ortumItemDom:$(datas.dom),
                     createJson:true,//生成对应的json
-                    generateDom:true,
                     clickChangeAttrs:false,
                     bindDropEvent:false,
-                    createWaitSpan:false,
                     HasProperties:HasProperties,
                     ortumChildren:ortumChildren,
                 });
@@ -759,11 +791,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 };
 
                 let length = datas.parent.children.length;
-                $(datas.dom).find(".ortum_item").each(function(index2,html2){
-                    let ortumChildrenOrder = $(html2).parent().attr("data-order");
+                $(datas.dom).find(".ortum_item").each(function(index2,item2){
+                    if($(item2).parents(".ortum_item")[0] !== $(datas.dom)[0]){
+                        return true;
+                    };
+                    let ortumChildrenOrder = $(item2).parent().attr("data-order");
                     !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
                     getFormContentJson(mode="dom",{
-                        "dom":$(html2),
+                        "dom":$(item2),
                         "win":datas.win,
                         "parent":datas.parent.children[length-1],
                         "HasProperties":HasProperties,
@@ -883,18 +918,33 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
     let bindDropEventToOrtumItem = function(ele){
         $(ele).on('dragover.firstbind',function(e){
             return false;
-        })
+        });
+
+        $(ele).on("dragenter.firstbind",function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
+            if(!Global.ortumNowDragObj)return false;
+           
+            let parentsItemLength = $(this).parents(".ortum_item").length;
+            if(parentsItemLength){
+                ortumDragShadow(e,"enter",{That:$(this).parents(".ortum_item").eq(parentsItemLength-1),addWay:"before"})
+            }else{
+                ortumDragShadow(e,"enter",{That:this,addWay:"before"})
+            }
+            return false;
+        });
+        
         $(ele).on('drop.firstbind',function(e){
+            ortumDragShadow(e,"drop",{That:this});
+
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
             if(!componentKey){//不存在对应key
                 return false;
-            }
+            };
 
             if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
                 require("assist").dangerTip();
                 return false;
-            }
+            };
 
             //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
             let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
@@ -943,6 +993,43 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             nameArr:nameArr,
         };
     };
+    /**
+     * 功能 拖拽组件显示虚拟插入位置
+     * TODO 完善鼠标拖拽组件移除时的移出 绘制区域的情况
+     * @param {*} way 
+     * @param {*} e 
+     */
+    let ortumDragShadow = function(e,way="enter",position={That:this,addWay:"append"}){
+        let shadowEnterDom = $(".ortum_dragenter");
+        if(shadowEnterDom.length){
+            shadowEnterDom = shadowEnterDom.eq(0)
+        }else{
+            shadowEnterDom = $('<div class="ortum_dragenter"></div>');
+        }
+       
+        if(way == "enter"){
+            if(position && position.addWay){
+                switch (position.addWay){
+                    case "addClass":
+                        $(".ortum_dragenter_bgc").removeClass("ortum_dragenter_bgc");
+                        $(".ortum_dragenter").remove();
+                        $(position.That)[position.addWay]("ortum_dragenter_bgc");
+                        break;
+                    default:
+                        $(".ortum_dragenter_bgc").removeClass("ortum_dragenter_bgc");
+                        $(position.That)[position.addWay](shadowEnterDom);
+                        break;
+                }
+            }
+        }
+        if(way == "leave"){
+            
+        }
+        if(way == 'drop'){
+            $(".ortum_dragenter").remove();
+            $(".ortum_dragenter_bgc").removeClass("ortum_dragenter_bgc")
+        }
+    }
 
     return {
         createContextMenuObj:createContextMenuObj,
@@ -965,9 +1052,12 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         JsonPropsRenderDom,//props生成dom
         JsonHtmlRenderDom,//dom数组生成dom
         getFormContentJson,//生成dom数组
+        getFormHTMLToJson,//生成dom数组 方法二
 
         bindDropEventToOrtumItem,//ortum_item的拖拽事件
 
         getTitleAndNameFun,
+
+        ortumDragShadow,
     }
 })

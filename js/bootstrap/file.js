@@ -204,7 +204,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      */
     let FileDom = function(parentDom,moreProps=null){
         let customProps = null;
-        let generateDom =  null;
+        // let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
@@ -215,7 +215,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
@@ -283,35 +283,33 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //scriptDom
         let scriptDom ='';
         let scriptStr = "";
-        //change事件修改labelName
-        scriptStr = `
-        let ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${changeLabelName.toString()};
-        ${ortum_component_properties.data.showFileName} && $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")});
-        ${ortum_component_properties.data.onCallBack ? "let ortum_bootstrap_file_onCallBack_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onCallBack+";" : ''} 
-        ${ortum_component_properties.data.onSuccess ? "let ortum_bootstrap_file_onSuccess_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onSuccess+";" : ''} 
-        ${ortum_component_properties.data.onError ? "let ortum_bootstrap_file_onError_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onError+";" : ''} 
-        ${(ortum_component_properties.data.ortumDelFile && typeof ortum_component_properties.data.ortumDelFile === "function") ? '$("#ortumDelFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDelFile +');' : ''}
-        ${(ortum_component_properties.data.ortumDownFile && typeof ortum_component_properties.data.ortumDownFile === "function") ? '$("#ortumDownFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDownFile +');' : ''}
-        ${(ortum_component_properties.data.ortumPreviewFile && typeof ortum_component_properties.data.ortumPreviewFile === "function") ? '$("#ortumPreviewFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumPreviewFile +');' : ''}
-        ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0));' : ''}
-        ${(ortum_component_properties.data.onChange && typeof ortum_component_properties.data.onChange === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +');' : ''}
-        ${(ortum_component_properties.data.onLabelClick && typeof ortum_component_properties.data.onLabelClick === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("label").eq(0).off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onLabelClick +');' : ''}
-        `;
-
-        //绑定自动上传函数
-        if(generateDom && ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
-            //函数生成script节点中
-            //change事件自动上传
-            scriptStr +=`
-                let ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${uploadFile.toString()};
-                $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.automatic").on("change.automatic",ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")})
-            `
+        if(createJson){
+            scriptStr = `
+            let ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${changeLabelName.toString()};
+            ${ortum_component_properties.data.showFileName} && $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")});
+            ${ortum_component_properties.data.onCallBack ? "let ortum_bootstrap_file_onCallBack_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onCallBack+";" : ''} 
+            ${ortum_component_properties.data.onSuccess ? "let ortum_bootstrap_file_onSuccess_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onSuccess+";" : ''} 
+            ${ortum_component_properties.data.onError ? "let ortum_bootstrap_file_onError_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onError+";" : ''} 
+            ${(ortum_component_properties.data.ortumDelFile && typeof ortum_component_properties.data.ortumDelFile === "function") ? '$("#ortumDelFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDelFile +');' : ''}
+            ${(ortum_component_properties.data.ortumDownFile && typeof ortum_component_properties.data.ortumDownFile === "function") ? '$("#ortumDownFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDownFile +');' : ''}
+            ${(ortum_component_properties.data.ortumPreviewFile && typeof ortum_component_properties.data.ortumPreviewFile === "function") ? '$("#ortumPreviewFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumPreviewFile +');' : ''}
+            ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0));' : ''}
+            ${(ortum_component_properties.data.onChange && typeof ortum_component_properties.data.onChange === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +');' : ''}
+            ${(ortum_component_properties.data.onLabelClick && typeof ortum_component_properties.data.onLabelClick === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("label").eq(0).off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onLabelClick +');' : ''}
+            `;
+            if(ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
+                //绑定自动上传函数
+                //change事件自动上传
+                scriptStr +=`
+                    let ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${uploadFile.toString()};
+                    $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.automatic").on("change.automatic",ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")})
+                `
+            }
+            //生成script节点字符串
+            scriptDom = $(`
+                <script>${scriptStr}<\/script>
+            `);
         }
-        scriptDom = $(`
-            <script>${scriptStr}<\/script>
-        `)
-
-
 
         //TODO 后渲染的关联组件，可能无法正常控制权限
         switch (ortum_component_properties.data.authority) {
@@ -345,18 +343,17 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //给onChangeUpload绑定函数
         HasProperties && (ortum_component_properties.data.onChangeUpload = uploadFile)
 
-        if(!generateDom){
-            //绑定文件onchange
-            ortum_component_properties.data.showFileName && $(outerDom).find('input').on('change.changeLabelname',ortum_component_properties.data.onChangeName)
-            if(ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
-                $(outerDom).find('input').off("change.automatic").on("change.automatic",uploadFile)
-            }else{
-                $(outerDom).find('input').off("change.automatic")
-            }
-        }  
-
+        // if(!createJson){
+        //     //绑定文件onchange
+        //     ortum_component_properties.data.showFileName && $(outerDom).find('input').on('change.changeLabelname',ortum_component_properties.data.onChangeName)
+        //     if(ortum_component_properties.data.automatic && ortum_component_properties.data.uploadUrl && ortum_component_properties.data.formName){
+        //         $(outerDom).find('input').off("change.automatic").on("change.automatic",uploadFile)
+        //     }else{
+        //         $(outerDom).find('input').off("change.automatic")
+        //     }
+        // }  
         //插入script
-        generateDom && scriptDom && !createJson && $(outerDom).append(scriptDom)
+        // scriptDom && !createJson && $(outerDom).append(scriptDom)
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','file']);

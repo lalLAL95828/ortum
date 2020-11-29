@@ -74,14 +74,12 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let tdCssClass = '';
 
         let bindDropEvent = true;//绑定拖拽事件
-        let createWaitSpan = true;//提示插入
         let createJson = false;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             moreProps.trCssClass !== undefined && moreProps.trCssClass !== null && (trCssClass = moreProps.trCssClass);
             moreProps.tdCssClass !== undefined && moreProps.tdCssClass !== null && (tdCssClass = moreProps.tdCssClass);
             moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null && (bindDropEvent = moreProps.bindDropEvent);
-            moreProps.createWaitSpan !== undefined && moreProps.createWaitSpan !== null && (createWaitSpan = moreProps.createWaitSpan);
             moreProps.createJson !== undefined && moreProps.createJson !== null && (createJson = moreProps.createJson);
         };
 
@@ -108,7 +106,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     bindDropEvent && tdDom.prop("ortum_tableTd_item",item);
 
                     //编辑table状态，并且有对应的组件
-                    if(createWaitSpan && item.frame && item.componentKey && require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn]){
+                    if(bindDropEvent && item.frame && item.componentKey && require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn]){
                         //创建组件的属性
                         let createComponentProp = Object.assign({
                             customName:moreProps.tableName+ "_" + "tfoot" + "_" + index + "-"+ indexArr,
@@ -126,11 +124,11 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
 
                         //当是按钮组的时候
                         tdDom && (tdDom.append(createDom));
-                    }else if(createWaitSpan){
+                    }else if(bindDropEvent){
                         tdDom && (
                             tdDom.append(tableTdAddTip()).addClass("ortum_boot_td_waitInsert")
                         )
-                    }else if(!createWaitSpan && createJson){//创建js
+                    }else if(!bindDropEvent && createJson){//创建js
                         tdDom && (
                             tdDom.append(`
                             <ortum_children data-order="tfoot${index+ "-"+ indexArr}"></ortum_children>
@@ -157,7 +155,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let tdCssClass='';
 
         let bindDropEvent = true;//绑定拖拽事件
-        let createWaitSpan = true;//提示插入
         let createJson = false;
 
         let tbodyTrNum = 0;//tbody的tr数量
@@ -168,7 +165,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             moreProps.trCssClass !== undefined && moreProps.trCssClass !== null && (trCssClass = moreProps.trCssClass);
             moreProps.tdCssClass !== undefined && moreProps.tdCssClass !== null && (tdCssClass = moreProps.tdCssClass);
             moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null && (bindDropEvent = moreProps.bindDropEvent);
-            moreProps.createWaitSpan !== undefined && moreProps.createWaitSpan !== null && (createWaitSpan = moreProps.createWaitSpan);
             moreProps.createJson !== undefined && moreProps.createJson !== null && (createJson = moreProps.createJson);
         };
         let trInfoArr= [];
@@ -183,7 +179,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     let colspan = 1;
                     let rowspan = 1;
                     (item.colspan && /(^[1-9]\d*$)/.test(item.colspan)) && (colspan = item.colspan);
-                    (item.rowspan && /(^[1-9]\d*$)/.test(item.rowspan)) && (colspan = item.rowspan);
+                    (item.rowspan && /(^[1-9]\d*$)/.test(item.rowspan)) && (rowspan = item.rowspan);
                     let tdDom = $(`
                     <td 
                     colspan="${colspan}" 
@@ -196,7 +192,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     bindDropEvent && tdDom.prop("ortum_tableTd_item",item);
 
                     //编辑table状态，并且有对应的组件
-                    if(createWaitSpan && item.type){
+                    if(bindDropEvent && item.type){
                         switch (item.type) {
                             case "order":
                                 tdDom && (
@@ -251,7 +247,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                                 console.error("type类型不正确")
                                 break;
                         }
-                    }else if(createWaitSpan && item.frame && item.componentKey && require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn]){
+                    }else if(bindDropEvent && item.frame && item.componentKey && require('createDom')[Settings.menuListDataJSON[item.componentKey].createFn]){
                         //创建组件的属性
                         let createComponentProp = Object.assign({
                             customName:moreProps.tableName+"_" + index + "-"+ indexArr + "_" + order,//order代表行号
@@ -270,11 +266,11 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
 
                         //当是按钮组的时候
                         tdDom && (tdDom.append(createDom));
-                    }else if(createWaitSpan){
+                    }else if(bindDropEvent){
                         tdDom && (
                             tdDom.append(tableTdAddTip()).addClass("ortum_boot_td_waitInsert")
                         )
-                    }else if(!createWaitSpan && createJson){//创建js
+                    }else if(!bindDropEvent && createJson){//创建js
                         switch (item.type) {
                             case "order":
                                 tdDom && (
@@ -367,8 +363,30 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
     let bindDropEventToBootstrapTable = function(ele,item){
         $(ele).on('dragover.firstbind',function(e){
             return false;
-        })
+        });
+
+        $(ele).on("dragenter.firstbind",function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
+            if(!Global.ortumNowDragObj)return false;
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            //不存在对应key
+            if(!componentKey){return false;}
+            if(componentKey == "gridDom" || componentKey == "tableDom" || componentKey == "buttonGroupDom"){//如果拖拽上來的是grid,则不进行创建
+               
+            }else{
+                if($(this).hasClass('ortum_boot_td_waitInsert')){
+                    require("feature").ortumDragShadow(e,"enter",{That:this,addWay:"addClass"})
+                    return false;
+                }else{
+                    //TODO 确定是否替换
+                    // return false;
+                }
+            }
+        });
+
         $(ele).on('drop.firstbind',function(e){
+            require("feature").ortumDragShadow(e,"drop",{That:this})
+
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
             if(!componentKey){//不存在对应key
@@ -431,8 +449,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     Global.ortumNowDragObj = null;
                 }
 
-
-
                 return false;
             }
         })
@@ -444,13 +460,11 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
      */
     let tipAddComponentFn = function(createOrtumItem=true,moreProps=null){
         let bindDropEvent = true;//绑定拖拽事件
-        let createWaitSpan = true;//创建待拖入提示
         let classValue = "col";
         let createJson = false;
         let ortumChildren = null;
         if(Assist.getDetailType(moreProps) == "Object"){
             (moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null) && (bindDropEvent = moreProps.bindDropEvent);
-            (moreProps.createWaitSpan !== undefined && moreProps.createWaitSpan !== null) && (createWaitSpan = moreProps.createWaitSpan);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             (moreProps.classValue !== undefined && moreProps.classValue !== null) && (classValue = moreProps.classValue);
             (moreProps.ortumChildren !== undefined && moreProps.ortumChildren !== null) && (ortumChildren = moreProps.ortumChildren);
@@ -464,7 +478,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             `);
             bindDropEvent && bindDropEventToBootstrapGrid(col);//绑定拖拽事件
         }
-        if(createWaitSpan){
+        if(bindDropEvent){
             col && (
                 $(col).append(`
                     <div class="ortum_boot_col_waitInsert">
@@ -481,7 +495,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             )
         }
 
-        if(!createWaitSpan && createJson){
+        if(!bindDropEvent && createJson){
             col && (
                 $(col).append(`
                     <ortum_children ${(ortumChildren || ortumChildren === 0) ? "data-order="+ortumChildren : ''}></ortum_children>
@@ -502,8 +516,30 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
     let bindDropEventToBootstrapGrid = function(ele){
         $(ele).on('dragover.firstbind',function(e){
             return false;
-        })
+        });
+
+        $(ele).on("dragenter.firstbind",function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
+            if(!Global.ortumNowDragObj)return false;
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            //不存在对应key
+            if(!componentKey){return false;}
+            if(componentKey == "gridDom"){//如果拖拽上來的是grid,则不进行创建
+               
+            }else{
+                if($(this).find(".ortum_boot_col_waitInsert")){
+                    require("feature").ortumDragShadow(e,"enter",{That:$(this).find(".ortum_boot_col_waitInsert").eq(0),addWay:"addClass"})
+                    return false;
+                }else{
+                    //TODO 确定是否替换
+                    // return false;
+                }
+            }
+        });
+
         $(ele).on('drop.firstbind',function(e){
+            require("feature").ortumDragShadow(e,"drop",{That:this})
+
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
             if(!componentKey){//不存在对应key
@@ -539,21 +575,10 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                             
                 //把拖拽对象制空
                 Global.ortumNowDragObj = null;
-
                 return false;
             }
             
         })
-
-        //右键事件
-        // ele.oncontextmenu = function(e){
-        //     e.preventDefault();
-        //     createContextMenuObj(e)
-        //     if(!e){
-        //         window.event.returnValue =false;//IE
-        //     }
-        //     return false
-        // }
     }
     /**
      * 设置组件属性

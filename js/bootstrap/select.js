@@ -119,7 +119,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      */
     let SelectDom = function(parentDom,moreProps=null){
         let customProps = null;
-        let generateDom =  null;
+        // let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
@@ -130,7 +130,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
@@ -189,30 +189,24 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         `)
         
         //scriptDom
-        let scriptDom ='<script>';
-        if(ortum_component_properties.data.useRemote && Assist.getDetailType(ortum_component_properties.data.customGetOptions) == "Function"){
-            //函数生成script节点中
-            if(generateDom){
-                scriptDom += `${ortum_component_properties.data.customGetOptions.toString()};getOptions_${ortum_component_properties.data.name}("${ortum_component_properties.data.name}",ortumReq);
-                `;
-            }
-            if(!generateDom){
-                //返回TODO
-                let optionArr =ortum_component_properties.data.customGetOptions(ortum_component_properties.data.name,ortumReq)
-                if(optionArr && Array.isArray(optionArr)){//存在返回数组
-                    //插入selectDom中
-                }
-            }    
-        }
+        let scriptDom ='';
+        let scriptStr = "";
+
         if(createJson){
-            scriptDom +=`
+            scriptStr +=`
                 ${(ortum_component_properties.data.onChange && typeof ortum_component_properties.data.onChange === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("select").eq(0).off("change.ortum").on("change.ortum",'+ ortum_component_properties.data.onChange +');' : ''}
                 ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("select").eq(0),"'+ ortum_component_properties.data.name +'");' : ''}
             `;
-        };
-        scriptDom += "</script>";
-        scriptDom = $(scriptDom);
-
+            if(ortum_component_properties.data.useRemote && Assist.getDetailType(ortum_component_properties.data.customGetOptions) == "Function"){
+                //远程获取option
+                scriptDom += `${ortum_component_properties.data.customGetOptions.toString()};getOptions_${ortum_component_properties.data.name}("${ortum_component_properties.data.name}",ortumReq);
+                    `; 
+            }
+            //生成script节点字符串
+            scriptDom = $(`
+                <script>${scriptStr}<\/script>
+            `);
+        }
 
         if(!ortum_component_properties.data.useRemote){
             //循环生成option
@@ -234,12 +228,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
         `))
+
         //插入select
-        $(outerDom).append(selectDom)
-
-        //插入script
-        generateDom && scriptDom && !createJson && $(outerDom).append(scriptDom)
-
+        $(outerDom).append(selectDom);
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','select']);

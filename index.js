@@ -158,7 +158,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             $('#ortum_collapseOne input[type=radio]').removeProp("checked");
             $('#ortum_collapseOne input[type=checkbox]').removeProp("checked");
             $('#ortum_collapseOne select').val('');
-            $("#ortum_field").empty().addClass("ortum_field_originState").html("<div class='originState'>组件拖拽</div>");
+            $("#ortum_field").empty();
+            $("#originState").removeClass("originStateHide");
         })
         return;
     }
@@ -174,12 +175,10 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
 
             if(!tableName){
                 Assist.dangerTip("表单名称不可为空")
-                // alert('表单名称不可为空');
                 return;
             }
             if(!tableCode){
                 Assist.dangerTip("表单编号不可为空")
-                // alert('表单编号不可为空');
                 return;
             }
             let ortumJson = Feature.getFormContentJson("id",{id:"ortum_field",HasProperties:true});

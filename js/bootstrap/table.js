@@ -94,38 +94,32 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             ],//tbody信息
             tfootColumnsArr:[
                 [
-                    /*{
-                        "colspan":4,
-                        "rowspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"hDom",
-                    },
                     {
-                        "colspan":1,
                         "rowspan":1,
+                        "colspan":1,
                         "frame":"Bootstrap",
                         "componentKey":"inputDom",
                     },
                     {
-                        "colspan":1,
                         "rowspan":1,
+                        "colspan":1,
+                        "frame":"Bootstrap",
+                        "componentKey":"inputDom",
+                    },
+                ],
+                [
+                    {
+                        "rowspan":1,
+                        "colspan":1,
                         "frame":"Bootstrap",
                         "componentKey":"inputDom",
                     },
                     {
-                        "colspan":3,
                         "rowspan":1,
-                    },
-                    {
                         "colspan":1,
-                        "rowspan":1,
                         "frame":"Bootstrap",
                         "componentKey":"inputDom",
                     },
-                    {
-                        "colspan":1,
-                        "rowspan":1,
-                    },*/
                 ],
             ],
 
@@ -177,10 +171,11 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.ortumItemDom 编辑器中item对象
      */
     let TableDom = function(parentDom,moreProps=null){
         let customProps = null;
-        let generateDom =  null;
+        // let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
@@ -188,16 +183,18 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         let createJson = false;
         let HasProperties = false;
         let ortumChildren = null;
+        let ortumItemDom = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
+            moreProps.ortumItemDom !== null && moreProps.ortumItemDom !== undefined && (ortumItemDom =moreProps.ortumItemDom);
         };
 
         let outerDom=$(
@@ -461,14 +458,14 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     ortumTableDom_delLine_${ortum_component_properties.data.name}.call(this,false,false,true);
                 });
             `;
-
-            //创建tfoot的td的json信息
-            ortum_component_properties.data.tfootColumnsArr.forEach(function(itemArr,indexArr){
+            //创建tfoot的td的json信息 方法一
+            /* ortum_component_properties.data.tfootColumnsArr.forEach(function(itemArr,indexArr){
                 itemArr.forEach(function (item,index) {
+                    console.log("方法一",indexArr,index)
                     //创建组件的属性
                     let createDomProp = Object.assign({
                         HasProperties:HasProperties,
-                        customName:ortum_component_properties.data.name+"_"+"tfoot" + "_" + index + "-"+ indexArr,//1代表第一行
+                        customName:ortum_component_properties.data.name+"_"+"tfoot" + "_" + index + "-"+ indexArr,
                     },moreProps);
 
                     Object.assign(createDomProp,item);
@@ -485,7 +482,34 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         },comDom));
                     };
                 })
+            }); */
+
+            //创建tfoot的td的json信息 方法二
+            ortumItemDom && $(ortumItemDom).find("tfoot").eq(0).find(".ortum_item").each(function(domIndex,domItem){
+                if($(domItem).parents(".ortum_item")[0] !== $(ortumItemDom)[0]){
+                    return true;
+                };
+                let frame= $(domItem).attr("data-frame");
+                let componentKey = $(domItem).attr("data-componentKey");
+                let rowIndex = $(domItem).parents("tr").eq(0).index();
+                let colIndex = $(domItem).parents("td").eq(0).index();
+                // console.log("方法二",rowIndex,colIndex)
+
+                //创建组件的属性
+                let createDomProp = Object.assign({},moreProps);
+                createDomProp.customProps = $(domItem).prop('ortum_component_properties');
+                createDomProp.ortumChildren = "tfoot"+colIndex+"-"+rowIndex;//插入第几个ortum_children
+                createDomProp.HasProperties = HasProperties;
+                let comDom = require("createDom")[Settings.menuListDataJSON[componentKey].createFn](null,frame,createDomProp);
+                children.push(Object.assign({
+                    "frame":frame,
+                    "componentKey":componentKey,
+                    "children":[],
+                },comDom));
+                //TODO 完善子ortumItem
             });
+
+            
             //创建td中组件的json信息
             ortum_component_properties.data.tbodyColumnsArr.forEach(function(itemArr,indexArr){
                 itemArr.forEach(function(item,index){

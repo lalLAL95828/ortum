@@ -48,7 +48,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      */
     let ButtonDom = function(parentDom,moreProps=null){
         let customProps = null;
-        let generateDom =  null;
+        // let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
@@ -59,7 +59,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);

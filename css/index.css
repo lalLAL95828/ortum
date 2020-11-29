@@ -41,7 +41,6 @@
 }
 
 
-
 .ortum_components{
     display: flex;
     flex-wrap: wrap;
@@ -57,20 +56,37 @@
     position: relative;
     padding-bottom: 200px;
 }
+#ortum_body{
+    position: relative;
+}
+#originState{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    bottom: 0;
+    margin: auto;
+    text-align: center;
+    line-height: 60px;
+    height: 60px;
+}
+.originStateHide{
+    z-index: -20;
+    display: none;
+}
 
-#ortum_field .originState{
+/* #ortum_field .originState{
     text-align: center;
     line-height: 398px;
-}
+} */
 /* 预览id */
 #ortum_field_preview{
     margin:auto;
     position: relative;
 }
-#ortum_field_preview .originState{
+/* #ortum_field_preview .originState{
     text-align: center;
     line-height: 398px;
-}
+} */
 
 /* 表单操作 */
 #ortum_table_act{
@@ -245,4 +261,16 @@
     justify-content: center;
     background-color: #29252566;
     z-index:20201123;
+}
+
+
+/* 拖拽对象的虚拟插入位置 */
+.ortum_dragenter{
+    height: 10px;
+    width: 100%;
+    background-color: #dbe62f!important;
+    pointer-events: none;
+}
+.ortum_dragenter_bgc{
+    background-color: #dbe62f!important;
 }

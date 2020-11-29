@@ -32,7 +32,21 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
     let bindDropEventToButtonGroup = function(ele){
         $(ele).on('dragover.firstbind',function(e){
             return false;
-        })
+        });
+
+        $(ele).on("dragenter.firstbind",function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            if(!componentKey){//不存在对应key
+                return false;
+            }
+
+            if(componentKey == "buttonDom" || componentKey == "iconButtonDom"){
+                require("feature").ortumDragShadow(e,"enter",{That:this,addWay:"addClass"})
+                return false;
+            }
+        });
+
         $(ele).on('drop.firstbind',function(e){
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
@@ -56,19 +70,8 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                 Global.ortumNowDragObj = null;
 
                 return false;
-            }else{
-                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
-                let parentsItemLength = $(this).parents(".ortum_item").length;
-                if(parentsItemLength){
-                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
-                }else{
-                    $(this).before(createDom)
-                }
-                //把拖拽对象制空
-                Global.ortumNowDragObj = null;
-                return false;
             }
-        })
+        });
     }
 
     /**
@@ -86,7 +89,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      */
     let ButtonGroupDom = function(parentDom,moreProps=null){
         let customProps = null;
-        let generateDom =  null;
+        // let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
@@ -98,7 +101,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
+            // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);

@@ -278,13 +278,11 @@ define(['require'],function(require){
         $(this).addClass('selectedShadow');
 
         let shadowDiv= $(`
-            <div id="ortum_shadow">
+            <div id="ortum_shadow" draggable="true">
             </div>
         `);
         //绑定拖拽事件
         componentsBindDrag(shadowDiv);
-
-
 
         //bootstrap_grid
         if($(this).hasClass('ortum_bootstrap_grid')){

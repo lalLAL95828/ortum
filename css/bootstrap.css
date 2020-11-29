@@ -21,6 +21,7 @@
 .ortum_bootstrap_grid{
     margin: 0!important;
     padding:0!important;
+    overflow: hidden;
 }
 .selectedShadow #ortum_shadow .ortum_shadow_bootstrapGrid_settings{
     position: absolute;
