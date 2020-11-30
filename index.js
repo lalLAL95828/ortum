@@ -45,6 +45,14 @@ function showOrtumLoading(show){
     }
 }
 
+// 绘制区组件替换关闭事件监听
+$('#ortum_replaceItem_model').on('hidden.bs.modal', function (e) {
+    require(['feature','global'],function(Feature,Global){
+
+
+    })
+})
+
 //获取location信息，决定编辑状态
 $(function(){
     let search = window.location.search;

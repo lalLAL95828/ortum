@@ -274,3 +274,7 @@
 .ortum_dragenter_bgc{
     background-color: #dbe62f!important;
 }
+/*组件拖拽时样式*/
+.ortum_componentsDragStyle{
+    background-color: #007bff6e!important;
+}

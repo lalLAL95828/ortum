@@ -74,7 +74,7 @@ require(['feature','assist','global'],function(Feature,Assist,Global){
                     $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version);
                     //清空编辑区域
                     $('#ortum_field').html('');
-                    $("#originState").removeClass("originStateHide");
+                    $("#originState").addClass("originStateHide");
 
                     Feature.JsonPropsRenderDom(tableContent.ortumJson,$("#ortum_field"),"append");
                     Global.ortum_life_json = tableContent.ortumSet;

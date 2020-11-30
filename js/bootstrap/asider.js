@@ -196,7 +196,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                         switch (item.type) {
                             case "order":
                                 tdDom && (
-                                    $(tdDom).html(`<span>${order}</span>`).attr("data-type","order")
+                                    $(tdDom).html(`<span class="ortum_item ortum_item_custom">${order}</span>`).attr("data-type","order")
                                 );
                                 break;
                             case "act":
@@ -371,7 +371,8 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
             //不存在对应key
             if(!componentKey){return false;}
-            if(componentKey == "gridDom" || componentKey == "tableDom" || componentKey == "buttonGroupDom"){//如果拖拽上來的是grid,则不进行创建
+            //componentKey == "gridDom" ||
+            if(componentKey == "tableDom"){//如果拖拽上來的是grid,则不进行创建
                
             }else{
                 if($(this).hasClass('ortum_boot_td_waitInsert')){
@@ -396,7 +397,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                 Assist.dangerTip();
                 return false;
             }
-            if(componentKey == "gridDom" || componentKey == "tableDom" || componentKey == "buttonGroupDom"){
+            if(componentKey == "tableDom"){
                 let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
                 let parentsItemLength = $(this).parents(".ortum_item").length;
                 if(parentsItemLength){

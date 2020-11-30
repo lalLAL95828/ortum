@@ -7,7 +7,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let names = [];
         for(let file of filelists){
             names.push(file.name);
-        }
+        };
         names.length && $(this).next("label").text(names);
     }
 
@@ -142,7 +142,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let uuid = $(this).parents(".ortum_item").eq(0).attr("ortum_uuid");
         let oldUUID = uuid;
-        uuid && (uuid = uuid.replaceAll("-",''));
+        uuid && (uuid = uuid.replace(/-/g,''));
         let callBack = 'ortum_bootstrap_file_onCallBack_' + uuid;
         let onSuccess = 'ortum_bootstrap_file_onSuccess_' + uuid;
         let onError = 'ortum_bootstrap_file_onError_' + uuid;
@@ -285,11 +285,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let scriptStr = "";
         if(createJson){
             scriptStr = `
-            let ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${changeLabelName.toString()};
-            ${ortum_component_properties.data.showFileName} && $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replaceAll("-","")});
-            ${ortum_component_properties.data.onCallBack ? "let ortum_bootstrap_file_onCallBack_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onCallBack+";" : ''} 
-            ${ortum_component_properties.data.onSuccess ? "let ortum_bootstrap_file_onSuccess_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onSuccess+";" : ''} 
-            ${ortum_component_properties.data.onError ? "let ortum_bootstrap_file_onError_"+ ortum_component_properties.data.uuid.replaceAll("-","") +" = " + ortum_component_properties.data.onError+";" : ''} 
+            let ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replace(/-/g,"")} = ${changeLabelName.toString()};
+            ${ortum_component_properties.data.showFileName} && $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.changeLabelname").on("change.changeLabelname",ortum_bootstrap_file_changeLabelName_${ortum_component_properties.data.uuid.replace(/-/g,"")});
+            ${ortum_component_properties.data.onCallBack ? "let ortum_bootstrap_file_onCallBack_"+ ortum_component_properties.data.uuid.replace(/-/g,"") +" = " + ortum_component_properties.data.onCallBack+";" : ''} 
+            ${ortum_component_properties.data.onSuccess ? "let ortum_bootstrap_file_onSuccess_"+ ortum_component_properties.data.uuid.replace(/-/g,"") +" = " + ortum_component_properties.data.onSuccess+";" : ''} 
+            ${ortum_component_properties.data.onError ? "let ortum_bootstrap_file_onError_"+ ortum_component_properties.data.uuid.replace(/-/g,"") +" = " + ortum_component_properties.data.onError+";" : ''} 
             ${(ortum_component_properties.data.ortumDelFile && typeof ortum_component_properties.data.ortumDelFile === "function") ? '$("#ortumDelFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDelFile +');' : ''}
             ${(ortum_component_properties.data.ortumDownFile && typeof ortum_component_properties.data.ortumDownFile === "function") ? '$("#ortumDownFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumDownFile +');' : ''}
             ${(ortum_component_properties.data.ortumPreviewFile && typeof ortum_component_properties.data.ortumPreviewFile === "function") ? '$("#ortumPreviewFile_'+ ortum_component_properties.data.uuid +'").off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.ortumPreviewFile +');' : ''}
@@ -301,8 +301,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 //绑定自动上传函数
                 //change事件自动上传
                 scriptStr +=`
-                    let ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")} = ${uploadFile.toString()};
-                    $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.automatic").on("change.automatic",ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replaceAll("-","")})
+                    let ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replace(/-/g,"")} = ${uploadFile.toString()};
+                    $("*[ortum_uuid=${ortum_component_properties.data.uuid}]").find("input").eq(0).off("change.automatic").on("change.automatic",ortum_bootstrap_file_uploadFile_${ortum_component_properties.data.uuid.replace(/-/g,"")})
                 `
             }
             //生成script节点字符串

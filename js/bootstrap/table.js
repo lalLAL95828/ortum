@@ -56,11 +56,11 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             ],//thead信息
             tbodyColumnsArr:[
                 [
-                    /*{
+                    {
                         "type":"order",
                         "rowspan":1,
                         "colspan":1,
-                    },*/
+                    },
                     {
                         "rowspan":1,
                         "colspan":1,
@@ -493,7 +493,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                 let componentKey = $(domItem).attr("data-componentKey");
                 let rowIndex = $(domItem).parents("tr").eq(0).index();
                 let colIndex = $(domItem).parents("td").eq(0).index();
-                // console.log("方法二",rowIndex,colIndex)
 
                 //创建组件的属性
                 let createDomProp = Object.assign({},moreProps);
@@ -506,12 +505,123 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     "componentKey":componentKey,
                     "children":[],
                 },comDom));
-                //TODO 完善子ortumItem
+                //寻找子组件
+                $(domItem).find(".ortum_item").each(function (sonIndex,sonItem) {
+                    if($(sonItem).parents(".ortum_item")[0] !== $(domItem)[0]){
+                        return true;
+                    };
+                    let ortumChildrenOrder = $(sonItem).parent().attr("data-order");
+                    !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = sonIndex);
+                    require("feature").getFormContentJson("dom",{
+                        "dom":$(sonItem),
+                        "parent":children[children.length-1],
+                        "HasProperties":HasProperties,
+                        "ortumChildren":ortumChildrenOrder,
+                    });
+                });
+            });
+
+            //创建tbody中td中组件的json信息 方法二
+            ortumItemDom && $(ortumItemDom).find("tbody").eq(0).find(".ortum_item").each(function(domIndex,domItem){
+                if($(domItem).parents(".ortum_item")[0] !== $(ortumItemDom)[0]){
+                    return true;
+                };
+                let frame= $(domItem).attr("data-frame");
+                let componentKey = $(domItem).attr("data-componentKey");
+                let rowIndex = $(domItem).parents("tr").eq(0).index();
+                let tdParent = $(domItem).parents("td").eq(0);
+                let colIndex = tdParent.index();
+                let tdType = tdParent.attr("data-type");
+                let comDom;
+
+                //创建组件的属性
+                let createDomProp = Object.assign({},moreProps);
+                // Object.assign(createDomProp,item);
+                createDomProp.customProps = $(domItem).prop('ortum_component_properties');
+                createDomProp.HasProperties = HasProperties;
+                createDomProp.customName = ortum_component_properties.data.name+"_"+colIndex+"-"+rowIndex  + "_" + 1;//1代表第一行
+
+                switch (tdType){
+                    case "order":
+                        comDom ={
+                            "html":`<span class="ortum_item ortum_item_custom">1</span>`,
+                            "ortumChildren":colIndex+"-"+rowIndex,//插入第几个ortum_children
+                        };
+                        children.push(Object.assign({
+                            "frame":null,
+                            "componentKey":null,
+                            "children":[],
+                        },comDom));
+                        break;
+                    case "act":
+                        createDomProp.ortumChildren= colIndex+"-"+rowIndex;//插入第几个ortum_children
+                        //新增
+                        let addComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
+                            "iconName":"icon-jiahao",
+                        },createDomProp));
+                        //删除
+                        let delComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
+                            "iconName":"icon-shanchu",
+                        },createDomProp));
+                        comDom = {
+                            "childrenType":"choose",
+                            "chooseFun":function (parents,sureOrder=false) {
+                                let order = 0;
+                                if(sureOrder !== false){
+                                    order = sureOrder;
+                                }else{
+                                    let tbodyDom = parents.find('tbody').eq(0);
+                                    order = $(tbodyDom).find("tr").length;
+                                }
+                                if(order == 1){
+                                    return this.addComDom;
+                                }else{
+                                    return this.delComDom;
+                                };
+                            }.toString(),
+                            "delComDom":delComDom,
+                            "addComDom":addComDom,
+                            "name":createDomProp.customName,
+                            "title": "操作",
+                        };
+                        children.push(Object.assign({
+                            "frame":null,
+                            "componentKey":null,
+                            "children":[],
+                        },comDom));
+                        break;
+                    default:
+                        if(frame && componentKey){
+                            createDomProp.ortumChildren=colIndex+"-"+rowIndex;//插入第几个ortum_children
+                            comDom =require("createDom")[Settings.menuListDataJSON[componentKey].createFn](null,frame,createDomProp);
+                            children.push(Object.assign({
+                                "frame":frame,
+                                "componentKey":componentKey,
+                                "children":[],
+                            },comDom));
+                        };
+                        //寻找子组件
+                        $(domItem).find(".ortum_item").each(function (sonIndex,sonItem) {
+                            if($(sonItem).parents(".ortum_item")[0] !== $(domItem)[0]){
+                                return true;
+                            };
+                            let ortumChildrenOrder = $(sonItem).parent().attr("data-order");
+                            !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = sonIndex);
+                            require("feature").getFormContentJson("dom",{
+                                "dom":$(sonItem),
+                                "parent":children[children.length-1],
+                                "HasProperties":HasProperties,
+                                "ortumChildren":ortumChildrenOrder,
+                            });
+                        });
+                        break;
+
+                }
             });
 
             
-            //创建td中组件的json信息
-            ortum_component_properties.data.tbodyColumnsArr.forEach(function(itemArr,indexArr){
+            //创建tbody中td中组件的json信息 方法一
+            /*ortum_component_properties.data.tbodyColumnsArr.forEach(function(itemArr,indexArr){
                 itemArr.forEach(function(item,index){
                     //创建组件的属性
                     let createDomProp = Object.assign({
@@ -584,8 +694,8 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         }
                     }
                 });
+            });*/
 
-            });
 
             // if(ortum_component_properties.data.onBefore && typeof ortum_component_properties.data.onBefore === "function"){
             //

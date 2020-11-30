@@ -371,11 +371,15 @@ define(['require'],function(require){
      * 功能：给可拖拽组件添加事件
      *  */
     let componentsBindDrag = function(ele){
-        ele.ondragstart = function(e){//我被拖动时，开始的那一刻
-            require("global").ortumNowDragObj = e.target;
-            // console.log(Global.ortumNowDragObj);
+        $(ele).on("dragstart",function (e) {
+            $(this).addClass("ortum_componentsDragStyle");
+            require("global").ortumNowDragObj = $(this).parents(".ortum_item").eq(0);
             //e.dataTransfer.setData("dragTarget",this);//不能存储对象，因为会进行toString转化
-        }
+        });
+        $(ele).on("dragend",function (e) {
+            $(this).removeClass("ortum_componentsDragStyle");
+            require("global").ortumNowDragObj = null;
+        });
     };
 
     /**
