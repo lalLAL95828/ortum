@@ -592,7 +592,7 @@
     </div>
     <!--绘制区组件替换-->
     <div class="modal" id="ortum_replaceItem_model" tabindex="-1" role="dialog" aria-labelledby="ortum_middle_dialog" aria-hidden="true" data-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div id="ortum_replaceItem_model_content">
                     <div class="modal-header">
@@ -601,10 +601,18 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div style="text-align: center;margin:50px;">
-                            <button type="button" class="btn btn-warning">替换</button>
-                            <button type="button" class="btn btn-primary">交换</button>
+                    <div class="modal-body" style="padding: 0px;">
+                        <div style="text-align: center;margin:10px 0px 20px 0px;display: flex;justify-content: center;">
+                            <div class="ortum_itemDragAct" id="ortum_repalceItemBtn">
+                                <img src="./image/replace.png" alt="" class="ortum_itemDragAct_img">
+                                <span class="ortum_itemDragAct_span">替换</span>
+                            </div>
+                            <div class="ortum_itemDragAct" id="ortum_exchangeItemBtn">
+                                <img src="./image/exchange.png" alt="" class="ortum_itemDragAct_img">
+                                <span class="ortum_itemDragAct_span">交换</span>
+                            </div>
+                            <!-- <button type="button" class="btn btn-warning" id="ortum_repalceItemBtn">替换</button>
+                            <button type="button" class="btn btn-primary" id="ortum_exchangeItemBtn">交换</button> -->
                         </div>
                     </div>
                 </div>

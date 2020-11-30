@@ -940,9 +940,10 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             //拖拽的是绘制区的组件
             let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
             if(hasOrtumItem){
+                Global.ortum_replace_item = $(this);
+                Global.ortum_active_item = $(Global.ortumNowDragObj);
                 $('#ortum_replaceItem_model').modal({
                     "backdrop":"static",
-                    // "focus":false,
                     "keyboard":false,
                 });
             }else if(componentKey){

@@ -29,6 +29,9 @@ define([],function(){
     let ortum_codemirrorCSS_setVal;
     let ortum_codemirrorCSS_save;
 
+    let ortum_replace_item=null;//被替换对象
+    let ortum_active_item=null;//替换对象
+
 
 
     return{
@@ -52,5 +55,8 @@ define([],function(){
         ortum_life_Css:ortum_life_Css,
         ortum_codemirrorCSS_setVal:ortum_codemirrorCSS_setVal,
         ortum_codemirrorCSS_save:ortum_codemirrorCSS_save,
+
+        ortum_replace_item:ortum_replace_item,
+        ortum_active_item:ortum_active_item,
     }
 })

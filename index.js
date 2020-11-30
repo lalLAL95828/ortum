@@ -48,10 +48,30 @@ function showOrtumLoading(show){
 // 绘制区组件替换关闭事件监听
 $('#ortum_replaceItem_model').on('hidden.bs.modal', function (e) {
     require(['feature','global'],function(Feature,Global){
-
-
-    })
-})
+        Global.ortum_replace_item = null;
+        Global.ortum_active_item = null;
+    });
+});
+// 组件替换
+$("#ortum_repalceItemBtn").on("click",function(){
+    require(['feature','global'],function(Feature,Global){
+        $(Global.ortum_replace_item).eq(0).replaceWith(Global.ortum_active_item);
+        Global.ortum_replace_item = null;
+        Global.ortum_active_item = null;
+        $('#ortum_replaceItem_model').modal('hide');
+    });
+});
+// 组件交换
+$("#ortum_exchangeItemBtn").on("click",function(){
+    require(['feature','global'],function(Feature,Global){
+        $(Global.ortum_replace_item).eq(0).before("<div id='ortum_exchange_tempObj' class='ortum_display_NONE'></div>")
+        $(Global.ortum_active_item).eq(0).before(Global.ortum_replace_item);
+        $("#ortum_exchange_tempObj").eq(0).replaceWith(Global.ortum_active_item)
+        Global.ortum_replace_item = null;
+        Global.ortum_active_item = null;
+        $('#ortum_replaceItem_model').modal('hide');
+    });
+});
 
 //获取location信息，决定编辑状态
 $(function(){
