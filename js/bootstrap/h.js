@@ -10,6 +10,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             bindComponentName:"",//关联组件，label的权限由绑定组件一致
             defaultVal:"绑定",
             titleType:"h2",
+            uuid: "",
         },
         inputChange:["id","name","verification","cssClass","title","defaultVal"],//input事件修改值
         clickChange:["authority"],
@@ -79,6 +80,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('h'));

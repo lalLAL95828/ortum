@@ -25,24 +25,19 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
 
             theadColumnsArr:[
                 [
-                    /*{
+                    {
                         "type":"order",
                         "headHtml":"<span>序号</span>",
                         "rowspan":1,
                         "colspan":1,
-                    },*/
+                    },
                     {
-                        "headHtml":"<span>建筑名称</span>",
+                        "headHtml":"<span>年份</span>",
                         "rowspan":1,
                         "colspan":1,
                     },
                     {
-                        "headHtml":"<span>新增建筑面积（m²）</span>",
-                        "rowspan":1,
-                        "colspan":1,
-                    },
-                    {
-                        "headHtml":"<span>建筑工程费（万元）</span>",
+                        "headHtml":"<span>投资金额</span>",
                         "rowspan":1,
                         "colspan":1,
                     },
@@ -74,18 +69,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         "componentKey":"inputDom",
                     },
                     {
-                        "rowspan":1,
-                        "colspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },
-                    /*{
-                        "rowspan":1,
-                        "colspan":1,
-                        "frame":"Bootstrap",
-                        "componentKey":"inputDom",
-                    },*/
-                    {
                         "type":"act",//手动新增和删除
                         "rowspan":1,
                         "colspan":1,
@@ -93,7 +76,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                 ]
             ],//tbody信息
             tfootColumnsArr:[
-                [
+                /*[
                     {
                         "rowspan":1,
                         "colspan":1,
@@ -120,7 +103,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         "frame":"Bootstrap",
                         "componentKey":"inputDom",
                     },
-                ],
+                ],*/
             ],
 
             onBefore:"",
@@ -960,7 +943,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                 trCssClass:evenProperties.data.tbodyTrCssClass,
                 tdCssClass:evenProperties.data.tdCssClass,
                 tableName:evenProperties.data.name,
-            });
+            },settings="againEdit");
             $(tbodyDom).empty();//tbody 必须放在此处清空
             tbodyTrObj.forEach(function(item){
                 $(tbodyDom).append(item);

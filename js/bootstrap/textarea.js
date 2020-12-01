@@ -15,6 +15,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelCSS:"col-form-label col-2",//标签css类
             rows:3,//行数
             title:"",
+            attributesArr:{},//TODO 标签属性
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","rows","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -109,9 +110,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             }
         }
 
-        //生成inputDom
+        //TODO 完善maxlength 生成textareaDom
         let textareaDom = $(`
-            <textarea 
+            <textarea maxlength="200"
             ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
             ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
             ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 

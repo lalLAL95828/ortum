@@ -258,7 +258,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 switchTableAct("edit",{formId:jsonInfo.id,version:jsonInfo.version,formName:jsonInfo.formName,formCode:jsonInfo.formCode})
 
                 $("#ortum_field").empty();
-                $("#originState").removeClass("originStateHide");
+                $("#originState").addClass("originStateHide");
 
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;
@@ -268,7 +268,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 switchTableAct("new");
 
                 $("#ortum_field").empty();
-                $("#originState").removeClass("originStateHide");
+                $("#originState").addClass("originStateHide");
 
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;

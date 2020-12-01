@@ -258,7 +258,10 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             formId && axios.get("/catarc_infoSys/api/form/"+formId)
                 .then(function (res) {
                     if(res.data.ok){
-                        if((res.data.data.version)*1 > formVersion*1 ){
+                        if(!res.data.data){
+                            ajaxJsom.version = 1;
+                            return axios.post("/catarc_infoSys/api/form?_ts="+(new Date()).getTime(),ajaxJsom)
+                        }else if((res.data.data.version)*1 > formVersion*1 ){
                             Assist.dangerTip("当前版本号小于数据库的版本号！")
                             return Promise.reject({"noShowTip":true})
                         }else{
@@ -272,7 +275,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     if(res.data.ok){
                         Assist.infoTip("保存成功");
                         //更新版本号和formId
-                        $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version);
+                        // $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version);
+                        switchTableAct("edit",{formName:res.data.data.formName,formCode:res.data.data.formCode,formId:res.data.data.id,version:res.data.data.version})
                     }else{
                         Assist.dangerTip(res.data.message)
                     }
@@ -333,7 +337,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
     }
     //编辑js
     if($(this).hasClass('icon-js')){
-        require(["global"],function(Global){
+        require(["global","assist"],function(Global,Assist){
             $('#ortum_top_dialog_xl').modal({
                 "backdrop":"static",
                 // "focus":false,
@@ -369,7 +373,8 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
                     Global.ortum_life_function.submit_function=ortum_life_function.submit_function.toString().replace(/\n/g,'').replace(/(\s)+/g," ");
                     Global.ortum_life_json = ortum_life_json;
                 }catch(err){
-                    console.error("编辑有勿！")
+                    console.error(err);
+                    Assist.dangerTip("编辑失败，请查看控制台！")
                 }
                
             };

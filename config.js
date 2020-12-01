@@ -98,7 +98,7 @@ require(['feature','assist','global'],function(Feature,Assist,Global){
                         $("#ortum_table_code").val(response.data.formCode);
                         $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",response.data.version)
                         $("#ortum_field").empty();
-                        $("#originState").removeClass("originStateHide");
+                        $("#originState").addClass("originStateHide");
                         Feature.JsonPropsRenderDom(tableContent,$("#ortum_field"),"append")
                     }
                 }

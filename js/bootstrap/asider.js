@@ -148,9 +148,10 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
      * @param tbodyDom
      * @param tdInfo
      * @param moreProps
+     * @param settings 为 againEdit时，表示编辑tbody信息后再次重新生成
      * @returns {jQuery|HTMLElement}
      */
-    let tableTbodyAddTrLine = function(tbodyDom=null,tdInfo,moreProps = null){
+    let tableTbodyAddTrLine = function(tbodyDom=null,tdInfo,moreProps = null,settings=undefined){
         let trCssClass='';
         let tdCssClass='';
 
@@ -158,8 +159,10 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
         let createJson = false;
 
         let tbodyTrNum = 0;//tbody的tr数量
-        tbodyDom && (tbodyTrNum = $(tbodyDom).find("tr").length)
-        let order = tbodyTrNum +1;//
+        tbodyDom && (tbodyTrNum = $(tbodyDom).find("tr").length);
+        (settings === "againEdit") && (tbodyTrNum = 0);
+        let order = tbodyTrNum +1;
+
 
         if(Assist.getDetailType(moreProps) == "Object"){
             moreProps.trCssClass !== undefined && moreProps.trCssClass !== null && (trCssClass = moreProps.trCssClass);
@@ -435,7 +438,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     Global.ortumNowDragObj = null;
                 }else if($(this).parents("tfoot").length){
                     let cellIndex = this.cellIndex;
-                    // let rowIndex = $(this).parents("tr")[0].rowIndex;
+                    let rowIndex = $(this).parents("tr")[0].rowIndex;
                     let customName = $(this).parents("table").eq(0).attr("name")+"_" + "tfoot" + "_" + cellIndex+"-"+rowIndex;//rowIndex
                     let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
                         customName:customName,
