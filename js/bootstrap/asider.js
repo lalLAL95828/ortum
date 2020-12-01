@@ -390,70 +390,129 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
 
         $(ele).on('drop.firstbind',function(e){
             require("feature").ortumDragShadow(e,"drop",{That:this})
+            if(!Global.ortumNowDragObj){
+                return false;
+            }
 
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
-            if(!componentKey){//不存在对应key
-                return false;
-            }
-            if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
-                Assist.dangerTip();
-                return false;
-            }
-            if(componentKey == "tableDom"){
-                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
-                let parentsItemLength = $(this).parents(".ortum_item").length;
-                if(parentsItemLength){
-                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
-                }else{
-                    $(this).before(createDom)
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
+            //ctrl键是否按下
+            let ctrlKey = Global.ortum_keydown_event && Global.ortum_keydown_event.ctrlKey;
+
+            if(hasOrtumItem){
+                if(!$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_table")){
+                    let ItemProperties =$(Global.ortumNowDragObj).prop("ortum_component_properties");
+                    let componentKey = $(Global.ortumNowDragObj).attr("data-componentKey");
+                    let frame = $(Global.ortumNowDragObj).attr("data-frame");
+
+
+                    if($(this).parents("tbody").length){
+                        //cellIndex  第几列，从0开始
+                        //rowIndex 第几行，从1开始
+                        let cellIndex = this.cellIndex;
+                        let rowIndex = $(this).parents("tr")[0].rowIndex;
+                        let customName = $(this).parents("table").eq(0).attr("name")+"_" + cellIndex + "-"+ rowIndex +"_" + rowIndex;//rowIndex
+                        let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
+                            customName:customName,
+                            customProps:ItemProperties,
+                        });
+                        $(this).html(createDom);
+                        //将绑定的组件属性，绑定到td上
+                        item.customProps = $(createDom).prop("ortum_component_properties");
+                        item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
+                        item.frame =Global.ortum_createDom_frame;
+                        item.componentKey =componentKey;
+
+                        $(Global.ortumNowDragObj).remove();
+                        //把拖拽对象制空
+                        Global.ortumNowDragObj = null;
+                        return false;
+                    }else if($(this).parents("tfoot").length){
+                        let cellIndex = this.cellIndex;
+                        let rowIndex = $(this).parents("tr")[0].rowIndex;
+                        let customName = $(this).parents("table").eq(0).attr("name")+"_" + "tfoot" + "_" + cellIndex+"-"+rowIndex;//rowIndex
+                        let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
+                            customName:customName,
+                            customProps:ItemProperties,
+                        });
+                        $(this).html(createDom);
+                        //将绑定的组件属性，绑定到td上
+                        item.customProps = $(createDom).prop("ortum_component_properties");
+                        item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
+                        item.frame =Global.ortum_createDom_frame;
+                        item.componentKey =componentKey;
+
+                        $(Global.ortumNowDragObj).remove();
+                        //把拖拽对象制空
+                        Global.ortumNowDragObj = null;
+                        return false;
+                    }
                 }
-                //把拖拽对象制空
-                Global.ortumNowDragObj = null;
-                return false;
             }else{
-                if($(this).hasClass('ortum_boot_td_waitInsert')){
-                    $(this).removeClass('ortum_boot_td_waitInsert')
-                    this.innerHTML = "";
-                }else{
-                    //TODO 确定是否替换
+                if(!componentKey){//不存在对应key
                     return false;
                 }
-                if($(this).parents("tbody").length){
-                    //cellIndex  第几列，从0开始
-                    //rowIndex 第几行，从1开始
-                    let cellIndex = this.cellIndex;
-                    let rowIndex = $(this).parents("tr")[0].rowIndex;
-                    let customName = $(this).parents("table").eq(0).attr("name")+"_" + cellIndex + "-"+ rowIndex +"_" + rowIndex;//rowIndex
-                    let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
-                        customName:customName,
-                    });
-                    $(this).append(createDom);
-                    //将绑定的组件属性，绑定到td上
-                    item.customProps = $(createDom).prop("ortum_component_properties");
-                    item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
-                    item.frame =Global.ortum_createDom_frame;
-                    item.componentKey =componentKey;
-                    //把拖拽对象制空
-                    Global.ortumNowDragObj = null;
-                }else if($(this).parents("tfoot").length){
-                    let cellIndex = this.cellIndex;
-                    let rowIndex = $(this).parents("tr")[0].rowIndex;
-                    let customName = $(this).parents("table").eq(0).attr("name")+"_" + "tfoot" + "_" + cellIndex+"-"+rowIndex;//rowIndex
-                    let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
-                        customName:customName,
-                    });
-                    $(this).append(createDom);
-                    //将绑定的组件属性，绑定到td上
-                    item.customProps = $(createDom).prop("ortum_component_properties");
-                    item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
-                    item.frame =Global.ortum_createDom_frame;
-                    item.componentKey =componentKey;
-                    //把拖拽对象制空
-                    Global.ortumNowDragObj = null;
+                if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
+                    Assist.dangerTip();
+                    return false;
                 }
-
-                return false;
+                if(componentKey == "tableDom"){
+                    let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                    let parentsItemLength = $(this).parents(".ortum_item").length;
+                    if(parentsItemLength){
+                        $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+                    }else{
+                        $(this).before(createDom)
+                    }
+                    //把拖拽对象制空
+                    Global.ortumNowDragObj = null;
+                    return false;
+                }else{
+                    if($(this).hasClass('ortum_boot_td_waitInsert')){
+                        $(this).removeClass('ortum_boot_td_waitInsert')
+                        this.innerHTML = "";
+                    }else{
+                        //TODO 确定是否替换
+                        return false;
+                    }
+                    if($(this).parents("tbody").length){
+                        //cellIndex  第几列，从0开始
+                        //rowIndex 第几行，从1开始
+                        let cellIndex = this.cellIndex;
+                        let rowIndex = $(this).parents("tr")[0].rowIndex;
+                        let customName = $(this).parents("table").eq(0).attr("name")+"_" + cellIndex + "-"+ rowIndex +"_" + rowIndex;//rowIndex
+                        let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
+                            customName:customName,
+                        });
+                        $(this).append(createDom);
+                        //将绑定的组件属性，绑定到td上
+                        item.customProps = $(createDom).prop("ortum_component_properties");
+                        item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
+                        item.frame =Global.ortum_createDom_frame;
+                        item.componentKey =componentKey;
+                        //把拖拽对象制空
+                        Global.ortumNowDragObj = null;
+                        return false;
+                    }else if($(this).parents("tfoot").length){
+                        let cellIndex = this.cellIndex;
+                        let rowIndex = $(this).parents("tr")[0].rowIndex;
+                        let customName = $(this).parents("table").eq(0).attr("name")+"_" + "tfoot" + "_" + cellIndex+"-"+rowIndex;//rowIndex
+                        let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
+                            customName:customName,
+                        });
+                        $(this).append(createDom);
+                        //将绑定的组件属性，绑定到td上
+                        item.customProps = $(createDom).prop("ortum_component_properties");
+                        item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
+                        item.frame =Global.ortum_createDom_frame;
+                        item.componentKey =componentKey;
+                        //把拖拽对象制空
+                        Global.ortumNowDragObj = null;
+                        return false;
+                    }
+                }
             }
         })
     }
@@ -543,45 +602,59 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
 
         $(ele).on('drop.firstbind',function(e){
             require("feature").ortumDragShadow(e,"drop",{That:this})
+            if(!Global.ortumNowDragObj){
+                return false;
+            }
 
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
-            if(!componentKey){//不存在对应key
-                return false;
-            }
-            
-            if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
-                Assist.dangerTip();
-                return false;
-            }
 
-            if(componentKey == "gridDom"){//如果拖拽上來的是grid,则不进行创建
-                let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
-                let parentsItemLength = $(this).parents(".ortum_item").length;
-                if(parentsItemLength){
-                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
-                }else{
-                    $(this).before(createDom)
-                }
-                //把拖拽对象制空
-                Global.ortumNowDragObj = null;
-                return false;
-            }else{
-                if($(this).find(".ortum_boot_col_waitInsert")){
-                    this.innerHTML = "";
-                }else{
-                    //TODO 确定是否替换
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
+            //ctrl键是否按下
+            let ctrlKey = Global.ortum_keydown_event && Global.ortum_keydown_event.ctrlKey;
+
+            if(hasOrtumItem){
+                if(!$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_grid")){
+                    let createDom =$(Global.ortumNowDragObj);
+                    $(this).html(createDom);
+                    //把拖拽对象制空
+                    Global.ortumNowDragObj = null;
                     return false;
                 }
-
-                //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-                require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
-                            
-                //把拖拽对象制空
-                Global.ortumNowDragObj = null;
-                return false;
+            }else{
+                if(!componentKey){//不存在对应key
+                    return false;
+                }
+                if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
+                    Assist.dangerTip();
+                    return false;
+                }
+                if(componentKey == "gridDom"){//如果拖拽上來的是grid,则不进行创建
+                    let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                    let parentsItemLength = $(this).parents(".ortum_item").length;
+                    if(parentsItemLength){
+                        $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+                    }else{
+                        $(this).before(createDom)
+                    }
+                    //把拖拽对象制空
+                    Global.ortumNowDragObj = null;
+                    return false;
+                }else{
+                    if($(this).find(".ortum_boot_col_waitInsert")){
+                        this.innerHTML = "";
+                    }else{
+                        //TODO 确定是否替换
+                        return false;
+                    }
+                    //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
+                    require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame) 
+                    //把拖拽对象制空
+                    Global.ortumNowDragObj = null;
+                    return false;
+                }
             }
-            
         })
     }
     /**

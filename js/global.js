@@ -32,6 +32,8 @@ define([],function(){
     let ortum_replace_item=null;//被替换对象
     let ortum_active_item=null;//替换对象
 
+    let ortum_keydown_event = null;//键盘对象
+
 
 
     return{
@@ -58,5 +60,6 @@ define([],function(){
 
         ortum_replace_item:ortum_replace_item,
         ortum_active_item:ortum_active_item,
+        ortum_keydown_event:ortum_keydown_event,
     }
 })

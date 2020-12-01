@@ -48,29 +48,46 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         });
 
         $(ele).on('drop.firstbind',function(e){
-            //获取要创建的组件key
-            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
-            if(!componentKey){//不存在对应key
+            require("feature").ortumDragShadow(e,"drop",{That:this});
+            if(!Global.ortumNowDragObj){
                 return false;
             }
             
-            if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
-                Assist.dangerTip();
-                return false;
-            }
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
+        
 
-            if(componentKey == "buttonDom" || componentKey == "iconButtonDom"){
-                //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
-                let btnDom =require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
-                $(this).append(btnDom);
-                //设置childrenSlot
-                $(this).parents(".ortum_item").eq(0).prop("ortum_component_properties").data.childrenSlot++;
-
-                //把拖拽对象制空
-                Global.ortumNowDragObj = null;
-
-                return false;
-            }
+            if(hasOrtumItem){
+                if($(Global.ortumNowDragObj).hasClass("ortum_bootstrap_button") || $(Global.ortumNowDragObj).hasClass("ortum_bootstrap_iconButton")){
+                    let btnDom =$(Global.ortumNowDragObj);
+                    $(this).append(btnDom);
+                    //设置childrenSlot
+                    $(this).parents(".ortum_item").eq(0).prop("ortum_component_properties").data.childrenSlot++;
+                    return false;
+                }
+            }else{
+                if(!componentKey){//不存在对应key
+                    return false;
+                }
+                if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
+                    Assist.dangerTip();
+                    return false;
+                }
+                if(componentKey == "buttonDom" || componentKey == "iconButtonDom"){
+                    //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
+                    let btnDom =require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
+                    $(this).append(btnDom);
+                    //设置childrenSlot
+                    $(this).parents(".ortum_item").eq(0).prop("ortum_component_properties").data.childrenSlot++;
+    
+                    //把拖拽对象制空
+                    Global.ortumNowDragObj = null;
+    
+                    return false;
+                }
+            } 
         });
     }
 

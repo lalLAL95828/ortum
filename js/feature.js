@@ -59,6 +59,20 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         $('#ortum_import_file').on('change',importFileListen)
         propertiesSetListen();
 
+        //监听键盘事件
+        $(document).on("keydown",function(e){
+            Global.ortum_keydown_event = {
+                evenObj:e,
+                ctrlKey:e.ctrlKey,
+                keyCode:e.keyCode,
+                shiftKey:e.shiftKey,
+            }
+
+        });
+        $(document).on("keyup",function(e){
+            Global.ortum_keydown_event = null;
+        })
+
         //radio的选项新增行
         // $('#ortum_radio_add_newLine').on('click',function(e){
         //     console.log($('.ortum_radio_newValue_item'))
@@ -121,33 +135,29 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
 
             if(!Global.ortumNowDragObj)return;
 
-            if($(Global.ortumNowDragObj).attr("id") && $(Global.ortumNowDragObj).attr("id") === "ortum_shadow"){
-                console.log(Global.ortumNowDragObj);
-                //清空正在拖拽的对象
-                Global.ortumNowDragObj = null;
-                return false;
-            }
-
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
 
+            if(hasOrtumItem){
+                //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
+                let createDom =$(Global.ortumNowDragObj);
+                $(this).append(createDom)
+
+            }else{
+                if(!CreateDom[Settings.menuListDataJSON[componentKey].createFn] || !CreateDom[Settings.menuListDataJSON[componentKey].createFn]["ortum_"+Global.ortum_createDom_frame]){
+                    require("assist").dangerTip();
+                    return false;
+                };
+                $("#originState").addClass("originStateHide");
+                //执行对应的生成组件的函数
+                CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame);
+            }
             //清空正在拖拽的对象
             Global.ortumNowDragObj = null;
-            if(!CreateDom[Settings.menuListDataJSON[componentKey].createFn] || !CreateDom[Settings.menuListDataJSON[componentKey].createFn]["ortum_"+Global.ortum_createDom_frame]){
-                require("assist").dangerTip();
-                return false;
-            }
-
             e.preventDefault();//阻值浏览器对拖拽对象进行处理
             // var dropData = e.dataTransfer.getData("dragTarget");
-            
-            $("#originState").addClass("originStateHide");
-
-
-            //执行对应的生成组件的函数
-            CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
-           
-            //eval( CreateDom[Settings.menuListDataJSON[componentKey].createFn]+ "("+ this +","+ Global.ortum_createDom_frame +")");
             
             // this.appendChild(Global.ortumNowDragObj.cloneNode(true))//深copy
 
@@ -934,18 +944,32 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         
         $(ele).on('drop.firstbind',function(e){
             ortumDragShadow(e,"drop",{That:this});
+            if(!Global.ortumNowDragObj){
+                return false;
+            }
 
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
             //拖拽的是绘制区的组件
             let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
-            if(hasOrtumItem){
+            //ctrl键是否按下
+            let ctrlKey = Global.ortum_keydown_event && Global.ortum_keydown_event.ctrlKey;
+            if(hasOrtumItem && ctrlKey){
                 Global.ortum_replace_item = $(this);
                 Global.ortum_active_item = $(Global.ortumNowDragObj);
                 $('#ortum_replaceItem_model').modal({
                     "backdrop":"static",
                     "keyboard":false,
                 });
+            }else if(hasOrtumItem){
+                //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
+                let createDom =$(Global.ortumNowDragObj);
+                let parentsItemLength = $(this).parents(".ortum_item").length;
+                if(parentsItemLength){
+                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+                }else{
+                    $(this).before(createDom)
+                }
             }else if(componentKey){
                 if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
                     require("assist").dangerTip();
