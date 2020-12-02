@@ -32,6 +32,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             onBefore:"",//渲染之前的回调
             onAfter:"",//渲染之后的回调
             onClick:"",//点击事件的回调
+
+            uuid:"",
+            attributesArr:[],//属性数组
         },
         inputChange:["name","verification","cssClass","labelCSS"],//input事件修改值
         clickChange:["authority","inline"],
@@ -55,6 +58,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             authority:"checkbox",
             // inline:'switch',
         },
+        attributesArr:[],//属性数组
     }
 
     /**
@@ -139,6 +143,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 }
             }
             $(outerDom).append(newDom)
+        }
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
         }
 
 

@@ -23,14 +23,7 @@
     padding:0!important;
     overflow: hidden;
 }
-.selectedShadow #ortum_shadow .ortum_shadow_bootstrapGrid_settings{
-    position: absolute;
-    bottom: 0px;
-    color: #007bff;
-    right: 70px;
-    display: block;
-    font-size: 25px;
-}
+
 .ortum_boot_col_default{
     padding-left:0!important;
     padding-right:0!important;
@@ -68,14 +61,7 @@
 }
 
 
-.selectedShadow #ortum_shadow .ortum_shadow_bootstrapRadio_settings{
-    position: absolute;
-    bottom: 0px;
-    color: #007bff;
-    right: 70px;
-    display: block;
-    font-size: 25px;
-}
+
 
 /* checkbox */
 .ortum_bootstrap_checkbox{
@@ -83,23 +69,7 @@
     display: flex;
     align-items: center;
 }
-.selectedShadow #ortum_shadow .ortum_shadow_bootstrapCheckbox_settings{
-    position: absolute;
-    bottom: 0px;
-    color: #007bff;
-    right: 70px;
-    display: block;
-    font-size: 25px;
-}
-/* select */
-.selectedShadow #ortum_shadow .ortum_shadow_bootstrapSelect_settings{
-    position: absolute;
-    bottom: 0px;
-    color: #007bff;
-    right: 70px;
-    display: block;
-    font-size: 25px;
-}
+
 .ortum_boot_select_label_Right{
     text-align: end;
     display: block;
@@ -181,14 +151,7 @@ input::-webkit-calendar-picker-indicator{
 .ortum_bootstrap_td{
     border:1px solid gray;
 }
-.selectedShadow #ortum_shadow .ortum_shadow_bootstrapTable_settings{
-    position: absolute;
-    bottom: 0px;
-    color: #007bff;
-    right: 70px;
-    display: block;
-    font-size: 25px;
-}
+
 
 /* button */
 .ortum_bootstrap_button{

@@ -15,7 +15,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelCSS:"col-form-label col-2",//标签css类
             rows:3,//行数
             title:"",
-            attributesArr:{},//TODO 标签属性
+            uuid: "",
+            attributesArr:[{"maxlength":200}],//属性数组
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","rows","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -90,6 +91,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid);
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('textarea'));
@@ -110,9 +115,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             }
         }
 
-        //TODO 完善maxlength 生成textareaDom
         let textareaDom = $(`
-            <textarea maxlength="200"
+            <textarea 
             ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
             ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
             ${ortum_component_properties.data.defaultVal ? "value="+ortum_component_properties.data.defaultVal : '' } 
@@ -120,12 +124,18 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             class="${ortum_component_properties.data.cssClass}" 
             placeholder="${ortum_component_properties.data.placeholder}"
             rows="${ortum_component_properties.data.rows}"></textarea>
-        `)
+        `);
 
         //插入label
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
         `))
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                textareaDom.attr(item.label,item.value);
+            });
+        }
         //插入dom
         $(outerDom).append(textareaDom)
 

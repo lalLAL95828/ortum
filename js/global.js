@@ -34,6 +34,9 @@ define([],function(){
 
     let ortum_keydown_event = null;//键盘对象
 
+    let ortum_attributesArr_setVal;
+    let ortum_attributesArr_save;
+
 
 
     return{
@@ -61,5 +64,8 @@ define([],function(){
         ortum_replace_item:ortum_replace_item,
         ortum_active_item:ortum_active_item,
         ortum_keydown_event:ortum_keydown_event,
+
+        ortum_attributesArr_setVal:ortum_attributesArr_setVal,
+        ortum_attributesArr_save:ortum_attributesArr_save,
     }
 })

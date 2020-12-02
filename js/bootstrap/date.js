@@ -14,6 +14,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             labelPosition:"rowLeft",//标签位置
             // labelWidth:"",//标签宽度
             labelCSS:"col-form-label col-2",//标签css类
+
+            uuid: "",
+            attributesArr:[],//属性数组
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -91,6 +94,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         let ortum_component_properties = (customProps ? customProps : Assist.deepClone(component_properties));
 
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('input'));
@@ -134,6 +140,13 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         `))
         //插入dom
         $(outerDom).append(inputDom)
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','input']);

@@ -13,6 +13,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             onAfter:"",//渲染之后的回调
             onClick:"",//点击事件的回调
             uuid: "",
+            attributesArr:[],//属性数组
         },
         inputChange:["id","name","verification","cssClass","title","defaultVal"],//input事件修改值
         clickChange:["authority"],
@@ -98,6 +99,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             </button>
         `);
         $(outerDom).append(btn)
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
 
 
         //scriptDom
@@ -315,6 +322,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         }
     };
 
+
     return {
         ButtonDom,
 
@@ -327,5 +335,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         ortumComponentSetJs,
         ortumComponentSaveJs,
+
     }
 })

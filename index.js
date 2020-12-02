@@ -54,21 +54,51 @@ $('#ortum_replaceItem_model').on('hidden.bs.modal', function (e) {
 });
 // 组件替换
 $("#ortum_repalceItemBtn").on("click",function(){
-    require(['feature','global'],function(Feature,Global){
+    require(['feature','global',"BootstrapTable"],function(Feature,Global,BootstrapTable){
+        // let replaceItemParentDom =  $(Global.ortum_replace_item).parent();
+        let activeItemParentDom =  $(Global.ortum_active_item).parent();
+
         $(Global.ortum_replace_item).eq(0).replaceWith(Global.ortum_active_item);
         Global.ortum_replace_item = null;
         Global.ortum_active_item = null;
         $('#ortum_replaceItem_model').modal('hide');
+
+        if(activeItemParentDom.hasClass('ortum_bootstrap_td')){
+            BootstrapTable.sonOrtumItemDelete(activeItemParentDom);
+        }
     });
 });
 // 组件交换
 $("#ortum_exchangeItemBtn").on("click",function(){
-    require(['feature','global'],function(Feature,Global){
-        $(Global.ortum_replace_item).eq(0).before("<div id='ortum_exchange_tempObj' class='ortum_display_NONE'></div>")
-        $(Global.ortum_active_item).eq(0).before(Global.ortum_replace_item);
-        $("#ortum_exchange_tempObj").eq(0).replaceWith(Global.ortum_active_item)
+    require(['feature','global',"BootstrapTable"],function(Feature,Global,BootstrapTable){
+        let replaceItemParentDom =  $(Global.ortum_replace_item).parent();
+        let activeItemParentDom =  $(Global.ortum_active_item).parent();
+
+        if(activeItemParentDom.hasClass('ortum_bootstrap_td') && replaceItemParentDom.hasClass('ortum_bootstrap_td')){
+            BootstrapTable.sonOrtumItemNew(activeItemParentDom,$(Global.ortum_replace_item));
+            $(Global.ortum_replace_item).remove();//清除被替换组件
+            BootstrapTable.sonOrtumItemNew(replaceItemParentDom,$(Global.ortum_active_item));
+            $(Global.ortum_active_item).remove();//清除替换组件
+        }else if(!activeItemParentDom.hasClass('ortum_bootstrap_td') && replaceItemParentDom.hasClass('ortum_bootstrap_td')){
+            $(Global.ortum_active_item).eq(0).before("<div id='ortum_exchange_tempObj' class='ortum_display_NONE'></div>");
+            $("#ortum_exchange_tempObj").eq(0).replaceWith(Global.ortum_replace_item);
+            BootstrapTable.sonOrtumItemNew(replaceItemParentDom,$(Global.ortum_active_item));
+            $(Global.ortum_active_item).remove();//清除被替换组件
+        }else if(activeItemParentDom.hasClass('ortum_bootstrap_td') && !replaceItemParentDom.hasClass('ortum_bootstrap_td')){
+            $(Global.ortum_replace_item).eq(0).before("<div id='ortum_exchange_tempObj' class='ortum_display_NONE'></div>");
+            $("#ortum_exchange_tempObj").eq(0).replaceWith(Global.ortum_active_item)
+            BootstrapTable.sonOrtumItemNew(activeItemParentDom,$(Global.ortum_replace_item));
+            $(Global.ortum_replace_item).remove();//清除被替换组件
+        }else{
+            $(Global.ortum_replace_item).eq(0).before("<div id='ortum_exchangeA_tempObj' class='ortum_display_NONE'></div>");
+            $(Global.ortum_active_item).eq(0).before("<div id='ortum_exchangeB_tempObj' class='ortum_display_NONE'></div>");
+            $("#ortum_exchangeA_tempObj").eq(0).replaceWith(Global.ortum_active_item);
+            $("#ortum_exchangeB_tempObj").eq(0).replaceWith(Global.ortum_replace_item);
+        }
+
         Global.ortum_replace_item = null;
         Global.ortum_active_item = null;
+
         $('#ortum_replaceItem_model').modal('hide');
     });
 });

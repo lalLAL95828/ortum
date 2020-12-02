@@ -10,6 +10,11 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             iconName:"",
 
             uuid: "",
+            attributesArr:[],//属性数组
+
+            onBefore:"",//渲染之前的回调
+            onAfter:"",//渲染之后的回调
+            onClick:"",//点击事件的回调
         },
         inputChange:["id","name","verification","cssClass","title","iconName"],//input事件修改值
         clickChange:["authority"],
@@ -97,7 +102,23 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             name="${ortum_component_properties.data.name}" 
             ></span>
         `);
-        $(outerDom).append(spanBtn)
+        $(outerDom).append(spanBtn);
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
+
+
+        //scriptDom
+        let scriptDom ='';
+        if(createJson){
+            scriptDom = $(`<script>
+                    ${(ortum_component_properties.data.onClick && typeof ortum_component_properties.data.onClick === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find(".ortum_iconButton").eq(0).off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onClick +');' : ''}
+                    ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find(".ortum_iconButton").eq(0),"'+ ortum_component_properties.data.name +'");' : ''}
+                </script>`);
+        }
 
 
         //dom绑定property
@@ -113,6 +134,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
                 "ortumChildren":ortumChildren,
+                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," ").length >= 20 ? scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," ") : '',
             }
         }else{
             return outerDom
@@ -257,14 +279,57 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     /**
      * 功能：设置js
      */
-    let ortumComponentSetJs = function(){
-        
-    }
+    let ortumComponentSetJs = function(codeObj){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let setStr = "var ortum_BootstrapInput_setJs = {";
+        if(evenProperties.data.onBefore){
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+        }
+        if(evenProperties.data.onAfter){
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that,name){},"
+        }
+        if(evenProperties.data.onClick){
+            setStr += "\n//click事件\nonClick:"+ evenProperties.data.onClick.toString() + ",";
+        }else{
+            setStr += "\n//click事件\nonClick:function(){},"
+        }
+        setStr +="\n};";
+
+        //格式化
+        setStr = js_beautify(setStr,2);
+        codeObj.setValue(setStr)
+    };
     /**
      * 功能：保存js
      */
     let ortumComponentSaveJs = function(val){
-        
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let packer = new Packer;
+        let valFormat = packer.pack(val, 0, 0);
+        try{
+            eval(valFormat);
+            evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
+            evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
+            evenProperties.data.onClick = ortum_BootstrapInput_setJs.onClick;
+
+        }catch (e) {
+            console.error(e);
+            console.error("设置iconButton的js有误，请重新设置");
+        }
     };
 
     return {

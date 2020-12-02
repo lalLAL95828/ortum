@@ -11,6 +11,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             defaultVal:"绑定",
             titleType:"h2",
             uuid: "",
+            attributesArr:[],//属性数组
         },
         inputChange:["id","name","verification","cssClass","title","defaultVal"],//input事件修改值
         clickChange:["authority"],
@@ -95,7 +96,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 ${ortum_component_properties.data.bindComponentName ? "ortum_bindcomponentname="+ortum_component_properties.data.bindComponentName : '' } >
                 ${ortum_component_properties.data.defaultVal}
             </${ortum_component_properties.data.titleType}>
-        `))
+        `));
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','h']);
@@ -259,7 +267,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                         ${evenProperties.data.bindComponentName ? "ortum_bindcomponentname="+evenProperties.data.bindComponentName : '' } >
                         ${evenProperties.data.defaultVal}
                     </${val}>
-                `))
+                `));
+                //修改编辑的属性
+                if(Array.isArray(evenProperties.data.attributesArr)){
+                    evenProperties.data.attributesArr.forEach(function(item){
+                        $(globalComponent).find("*[name="+ evenProperties.data.name +"]").attr(item.label,item.value);
+                    });
+                }
+
                 break
             default:
                 if(evenProperties.changeChange.indexOf(property) != -1){

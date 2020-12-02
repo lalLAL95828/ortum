@@ -16,6 +16,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             labelPosition:"rowLeft",//标签位置
             labelCSS:"col-form-label col-2",//标签css类
             title:"",
+
+            uuid: "",
+            attributesArr:[],//属性数组
         },
         purview:{//属性编辑权限{1:不可见,2:仅读,3:可编辑,4:必填}
             id:3,//id
@@ -171,6 +174,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid);
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('rangeInput'));
@@ -201,6 +208,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             step="${ortum_component_properties.data.step}"
             max="${ortum_component_properties.data.max}" name="${ortum_component_properties.data.name}">
         `)
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                rangeInputDom.attr(item.label,item.value);
+            });
+        }
 
         //插入label
         $(outerDom).append($(`

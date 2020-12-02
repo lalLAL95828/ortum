@@ -8,6 +8,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             cssClass:"ortum_bootstrap_buttonGroup_div ortum_append",
             title:"",
             childrenSlot:0,//子button的个数
+
+            uuid: "",
+            attributesArr:[],//属性数组
         },
         inputChange:["id","name","verification","cssClass","title"],//input事件修改值
         clickChange:["authority"],
@@ -63,8 +66,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                 if($(Global.ortumNowDragObj).hasClass("ortum_bootstrap_button") || $(Global.ortumNowDragObj).hasClass("ortum_bootstrap_iconButton")){
                     let btnDom =$(Global.ortumNowDragObj);
                     $(this).append(btnDom);
-                    //设置childrenSlot
-                    $(this).parents(".ortum_item").eq(0).prop("ortum_component_properties").data.childrenSlot++;
                     return false;
                 }
             }else{
@@ -79,8 +80,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                     //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
                     let btnDom =require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame)
                     $(this).append(btnDom);
-                    //设置childrenSlot
-                    $(this).parents(".ortum_item").eq(0).prop("ortum_component_properties").data.childrenSlot++;
     
                     //把拖拽对象制空
                     Global.ortumNowDragObj = null;
@@ -103,6 +102,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.customName 自定义name
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
+     * @param {*} moreProps.ortumItemDom 编辑器中item对象
      */
     let ButtonGroupDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -115,6 +115,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let createJson = false;
         let HasProperties = false;
         let ortumChildren = null;
+        let ortumItemDom = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -125,6 +126,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
+            moreProps.ortumItemDom !== null && moreProps.ortumItemDom !== undefined && (ortumItemDom =moreProps.ortumItemDom);
         }
 
         let outerDom=$(
@@ -142,6 +144,10 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('buttonGroup'));
@@ -153,18 +159,38 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
             </div>
         `);
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
+
         //拖拽组件
         dropAddComponent !== false && bindDropEventToButtonGroup(divGroup);
         dropAddComponent !== false && $(divGroup).addClass("ortum_bootstrap_buttonGroup_drop_div");
         createJson && $(divGroup).addClass("ortum_append");//添加组件
 
-        if(ortum_component_properties.data.childrenSlot && /(^[1-9]\d*$)/.test(ortum_component_properties.data.childrenSlot)){//需要建立按钮插槽
+        if(createJson){
+            if(ortumItemDom){
+                ortum_component_properties.data.childrenSlot = $(ortumItemDom).find(".ortum_item").length;
+            }else{
+                ortum_component_properties.data.childrenSlot = 0;
+            }
             let slotNum = ortum_component_properties.data.childrenSlot;
             while (slotNum>0){
                 $(divGroup).append(`<ortum_children data-order=${ortum_component_properties.data.childrenSlot-slotNum}></ortum_children>`)
                 slotNum--;
             };
-        };
+        }
+
+        /*if(ortum_component_properties.data.childrenSlot && /(^[1-9]\d*$)/.test(ortum_component_properties.data.childrenSlot)){//需要建立按钮插槽
+            let slotNum = ortum_component_properties.data.childrenSlot;
+            while (slotNum>0){
+                $(divGroup).append(`<ortum_children data-order=${ortum_component_properties.data.childrenSlot-slotNum}></ortum_children>`)
+                slotNum--;
+            };
+        };*/
 
         $(outerDom).append(divGroup)
 

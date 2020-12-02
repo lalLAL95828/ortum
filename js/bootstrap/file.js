@@ -59,6 +59,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
 
             uuid:"",
+            attributesArr:[],//属性数组
         },
         inputChange:["id","name","accept","verification","cssClass","labelName","formName","uploadUrl","title","previewName","downName","delName"],//input事件修改值
         clickChange:["authority","multiple","automatic","showFileName","showPrevBtn","showDownBtn","showDelBtn","labelBindInput"],
@@ -279,6 +280,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             </div>
             
         `))
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
 
         //scriptDom
         let scriptDom ='';

@@ -38,6 +38,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             onAfter:"",//渲染之后的回调
             onChange:"",//change事件
             uuid: "",
+            attributesArr:[],//属性数组
 
         },
         inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS","serverUrl","title"],//input事件修改值
@@ -155,13 +156,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
-        //设定nameselect
-        customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('select'));
 
         //生成uuid
         ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
         outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
+        //设定nameselect
+        customName && (ortum_component_properties.data.name = customName);
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('select'));
+
+
         
         //控制标签
         if(ortum_component_properties.data.hideLabel){
@@ -186,7 +189,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             name="${ortum_component_properties.data.name}" 
             placeholder="${ortum_component_properties.data.placeholder}">
             </select>
-        `)
+        `);
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                selectDom.attr(item.label,item.value);
+            });
+        }
         
         //scriptDom
         let scriptDom ='';

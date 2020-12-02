@@ -27,6 +27,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                     "data-id":"hao",
                 },
             ],
+            uuid: "",
+            attributesArr:[],//属性数组
         },
         inputChange:["name","defaultVal","verification","cssClass","labelCSS","title"],//input事件修改值
         clickChange:["authority","inline"],
@@ -102,6 +104,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid);
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('radio'));
@@ -127,7 +133,15 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 }
             }
             $(outerDom).append(newDom)
+        };
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
         }
+
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','radio']);

@@ -11,6 +11,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             title:"",
             showSpan:true,//显示tip
             bindComponentName:"",//关联组件，label的权限由绑定组件一致
+
+            uuid: "",
+            attributesArr:[],//属性数组
         },
         inputChange:["id","name","verification","labelCSS","labelName","cssClass","title"],//input事件修改值
         clickChange:["authority","showSpan"],
@@ -82,6 +85,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid);
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('label'));
@@ -95,6 +102,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }>${ortum_component_properties.data.labelName}</label>
             </div>
         `))
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
+
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','label']);

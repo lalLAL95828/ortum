@@ -71,7 +71,10 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         });
         $(document).on("keyup",function(e){
             Global.ortum_keydown_event = null;
-        })
+        });
+
+
+
 
         //radio的选项新增行
         // $('#ortum_radio_add_newLine').on('click',function(e){
@@ -114,12 +117,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             // console.log(Global.ortumNowDragObj);
             //e.dataTransfer.setData("dragTarget",this);//不能存储对象，因为会进行toString转化
         }
+        ele.ondragend = function(e){//拖拽结束
+            ortumDragShadow(e,"dragend",{That:this});
+        }
     };
     /**
      * 功能：给表单区域添加事件
      *  */
     let bindFeatureToOrtumField = function(ele){
-        // let ortum_dragenter = undefined;
 
         ele.ondragover = function(e){
             e.preventDefault();//ondrop事件才能触发
@@ -1057,7 +1062,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         if(way == "leave"){
             
         }
-        if(way == 'drop'){
+        if(way == 'drop' || way=='dragend'){
             $(".ortum_dragenter").remove();
             $(".ortum_dragenter_bgc").removeClass("ortum_dragenter_bgc")
         }

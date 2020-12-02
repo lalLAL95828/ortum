@@ -196,8 +196,7 @@ define(['require'],function(require){
      */
     let deleteComponent = function(e){
         let delOrtumItem = $(this).parents('.ortum_item').eq(0)
-        let nextOrtumItem = delOrtumItem.parent()
-        let parentOrtumItem = delOrtumItem.parent(".ortum_item");
+        let parentDom = delOrtumItem.parent();
         
         require('global').ortum_edit_component = null;//清空正在编辑的组件
         
@@ -206,32 +205,17 @@ define(['require'],function(require){
 
         delOrtumItem.remove();
         //删除后的下一步处理方式
-        if(nextOrtumItem.length){
+        if(parentDom.length){
             //bootstrap的栅格col
-            if($(nextOrtumItem).hasClass('ortum_boot_col_default')){
-                // $(nextOrtumItem).addClass('ortum_boot_col_waitInsert')
-                $(nextOrtumItem).append(require('BootstrapAsider').tipAddComponentFn(false))//增加提示语
+            if($(parentDom).hasClass('ortum_boot_col_default')){
+                // $(parentDom).addClass('ortum_boot_col_waitInsert')
+                $(parentDom).append(require('BootstrapAsider').tipAddComponentFn(false))//增加提示语
             };
             //bootstrap的td
-            if($(nextOrtumItem).hasClass('ortum_bootstrap_td')){
-                $(nextOrtumItem).addClass('ortum_boot_td_waitInsert');
-                $(nextOrtumItem).append(require('BootstrapAsider').tableTdAddTip())//增加提示语
-                let tdItem = $(nextOrtumItem).prop("ortum_tableTd_item");
-                //去除item的组件属性
-                delete tdItem.frame;
-                delete tdItem.componentKey;
-                delete tdItem.type;
-                delete tdItem.customProps;
-                delete tdItem.uuid;
+            if($(parentDom).hasClass('ortum_bootstrap_td')){
+                require("BootstrapTable").sonOrtumItemDelete(parentDom);
             };
         };
-
-        if(parentOrtumItem.length){
-            //bootstrap的栅格buttonGroup
-            if(parentOrtumItem.eq(0).hasClass('ortum_bootstrap_buttonGroup')){
-                parentOrtumItem.prop("ortum_component_properties").data.childrenSlot--;
-            };
-        }
 
         return false;
     }
@@ -263,6 +247,101 @@ define(['require'],function(require){
         });
         return false;
     }
+
+    /**
+     * 功能：编辑组件的js
+     * @param {*} e
+     */
+    let ortumComponentSetAttr = function(e){
+        let editOrtumItem = $(this).parents('.ortum_item').eq(0);
+        let ortum_component_properties = editOrtumItem.prop("ortum_component_properties");
+        let ortum_component_type = editOrtumItem.prop("ortum_component_type");
+
+        //首字母大写
+        let s = ortum_component_type[1].slice(0,1).toUpperCase();
+        let h = ortum_component_type[1].slice(1);
+
+        $('#ortum_top_dialog').modal({
+            "backdrop":"static",
+            "keyboard":false,
+        });
+
+        if(require(ortum_component_type[0] + s + h).ortumComponentSetAttrs){
+            require('global').ortum_attributesArr_setVal = require(ortum_component_type[0] + s + h).ortumComponentSetAttrs;
+        }else{
+            require('global').ortum_attributesArr_setVal = ortumComponentSetAttrs
+        }
+        if(require(ortum_component_type[0] + s + h).ortumComponentSaveAttrs){
+            require('global').ortum_attributesArr_save = require(ortum_component_type[0] + s + h).ortumComponentSaveAttrs;
+        }else{
+            require('global').ortum_attributesArr_save = ortumComponentSaveAttrs;
+        }
+
+        $("#ortum_top_model_content").load("html/common/attributesArr.html",function(){
+            $('#ortum_top_model_wait').hide();
+        });
+        return false;
+    };
+
+    /**
+     * 功能: 设置标签属性
+     */
+    let ortumComponentSetAttrs = function (tableDom,addBtn) {
+        if(!require('global').ortum_edit_component || !require('global').ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =require('global').ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        let attributesArr = evenProperties.data.attributesArr;
+        if(Array.isArray(attributesArr)){
+            attributesArr.forEach(function(item,index){
+                if(index){$(addBtn).click();}
+                let trDom = tableDom.find('.ortum_order_dataTr').eq(index);
+                trDom && trDom.find(".ortum_attr_label").eq(0).val(item.label)
+                trDom && trDom.find(".ortum_attr_value").eq(0).val(item.value)
+            })
+        };
+    }
+    /**
+     * 功能: 保存标签属性
+     */
+    let ortumComponentSaveAttrs = function (valueArr) {
+        if(!require('global').ortum_edit_component || !require('global').ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =require('global').ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+        let attributesArr = evenProperties.data.attributesArr;
+        let name = evenProperties.data.name;
+        let componentDom = $(globalComponent).find("*[name="+name+"]");
+        let oldKeyArr = [];
+        let newKeyArr = [];
+        if(Array.isArray(attributesArr)){
+            attributesArr.forEach(function(item){
+                oldKeyArr.push(item.label)
+            });
+        }
+        if(Array.isArray(valueArr)){
+            valueArr.forEach(function(item){
+                newKeyArr.push(item.label)
+            });
+        }
+        //删除被清除的属性
+        oldKeyArr.forEach(function(item){
+            if(newKeyArr.indexOf(item) === -1){
+                componentDom.removeAttr(item);
+            }
+        })
+        //修改编辑的属性
+        valueArr.forEach(function(item){
+            componentDom.attr(item.label,item.value);
+        });
+        //绑定到组件属性上
+        evenProperties.data.attributesArr = valueArr;
+    };
+
+
+
 
 
     /**
@@ -315,11 +394,16 @@ define(['require'],function(require){
              `)
         }
 
-        shadowDiv.append(`
-            <span class="iconfont icon-shanchu  ortum_shadow_deleteImg"  title="删除"></span>
-        `)
+
         shadowDiv.append(`
             <span class="iconfont icon-js  ortum_shadow_editJs"  title="编辑js"></span>
+        `)
+        shadowDiv.append(`
+            <span class="iconfont icon-duixiangshuxingObjectAttributes18  ortum_shadow_editAttrs"  title="编辑属性"></span>
+        `)
+
+        shadowDiv.append(`
+            <span class="iconfont icon-shanchu  ortum_shadow_deleteImg"  title="删除"></span>
         `)
 
         $(this).append(shadowDiv)
@@ -328,6 +412,8 @@ define(['require'],function(require){
         $("#ortum_shadow .ortum_shadow_deleteImg").off('click.delete').on('click.delete',deleteComponent);
         //编辑js按钮绑定事件
         $("#ortum_shadow .ortum_shadow_editJs").off('click.editjs').on('click.editjs',ortumComponentSetJs);
+        //编辑属性按钮绑定事件
+        $("#ortum_shadow .ortum_shadow_editAttrs").off('click.editAttrs').on('click.editAttrs',ortumComponentSetAttr);
 
         //radio的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_radio')){
@@ -365,8 +451,6 @@ define(['require'],function(require){
         }
         return false;
     }
-
-
     /**
      * 功能：给可拖拽组件添加事件
      *  */
@@ -379,6 +463,7 @@ define(['require'],function(require){
         $(ele).on("dragend",function (e) {
             $(this).removeClass("ortum_componentsDragStyle");
             require("global").ortumNowDragObj = null;
+            require("feature").ortumDragShadow(e,"dragend",{That:this});
         });
     };
 

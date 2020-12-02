@@ -18,7 +18,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             onClick:"",//点击事件的回调
             onBlur:"",
             onInput:"",
+
             uuid: "",
+            attributesArr:[],//属性数组
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -98,7 +100,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         //生成uuid
         ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
-        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid);
 
         //设定name
         customName && (ortum_component_properties.data.name = customName);
@@ -135,8 +137,16 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         $(outerDom).append($(`
             <label class="${ortum_component_properties.data.labelCSS}">${ortum_component_properties.data.labelName}</label>
         `))
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                inputDom.attr(item.label,item.value);
+            });
+        }
+
         //插入dom
-        $(outerDom).append(inputDom)
+        $(outerDom).append(inputDom);
+
 
         //TODO 后渲染的关联组件，可能无法正常控制权限
         switch (ortum_component_properties.data.authority) {
@@ -174,10 +184,9 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                     ${(ortum_component_properties.data.onClick && typeof ortum_component_properties.data.onClick === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onClick +');' : ''}
                     ${(ortum_component_properties.data.onBlur && typeof ortum_component_properties.data.onBlur === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("blur.ortum").on("blur.ortum",'+ ortum_component_properties.data.onBlur +');' : ''}
                     ${(ortum_component_properties.data.onInput && typeof ortum_component_properties.data.onInput === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0).off("input.ortum").on("input.ortum",'+ ortum_component_properties.data.onInput +');' : ''}
-                    ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0));' : ''}
+                    ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("input").eq(0),"'+ ortum_component_properties.data.name +'");' : ''}
                 </script>`);
         }
-
 
 
         //dom绑定property
@@ -415,7 +424,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         if(evenProperties.data.onAfter){
             setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
         }else{
-            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that){},"
+            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that,name){},"
         }
         if(evenProperties.data.onClick){
             setStr += "\n//click事件\nonClick:"+ evenProperties.data.onClick.toString() + ",";
@@ -479,6 +488,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         ortumComponentSetJs,
         ortumComponentSaveJs,
+
 
     }
 })

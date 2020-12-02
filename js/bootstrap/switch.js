@@ -15,6 +15,8 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
             labelCSS:"custom-control-label",//标签css类,
             checked:true,//选中
             title:'',
+            uuid: "",
+            attributesArr:[],//属性数组
 
         },
         inputChange:["id","name","verification","cssClass","labelCSS","labelName","title"],//input事件修改值
@@ -89,6 +91,9 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
+        //生成uuid
+        ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('switch'));
@@ -104,6 +109,13 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
                 <label class="${ortum_component_properties.data.labelCSS}" for="${ortum_component_properties.data.id ? ortum_component_properties.data.id : ortum_component_properties.data.name}">${ortum_component_properties.data.labelName}</label>
             </div>
         `))
+
+        //修改编辑的属性
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+            ortum_component_properties.data.attributesArr.forEach(function(item){
+                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+            });
+        }
 
 
         //dom绑定property
