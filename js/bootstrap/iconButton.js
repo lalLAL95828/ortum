@@ -97,11 +97,19 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         ortum_component_properties.data.iconName = iconName;
 
         let spanBtn = $(`
-            <span class="${ortum_component_properties.data.cssClass} ${ortum_component_properties.data.iconName}" 
+            <button class="${ortum_component_properties.data.cssClass} ${ortum_component_properties.data.iconName}" 
             ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
             name="${ortum_component_properties.data.name}" 
-            ></span>
+            ></button>
         `);
+
+        /*let spanBtn = $(`
+            <span class="${ortum_component_properties.data.cssClass} ${ortum_component_properties.data.iconName}"
+            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }
+            name="${ortum_component_properties.data.name}"
+            ></span>
+        `);*/
+
         $(outerDom).append(spanBtn);
         //修改编辑的属性
         if(Array.isArray(ortum_component_properties.data.attributesArr)){

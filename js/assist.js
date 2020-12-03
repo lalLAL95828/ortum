@@ -206,11 +206,6 @@ define(['require'],function(require){
         delOrtumItem.remove();
         //删除后的下一步处理方式
         if(parentDom.length){
-            //bootstrap的栅格col
-            if($(parentDom).hasClass('ortum_boot_col_default')){
-                // $(parentDom).addClass('ortum_boot_col_waitInsert')
-                $(parentDom).append(require('BootstrapAsider').tipAddComponentFn(false))//增加提示语
-            };
             //bootstrap的td
             if($(parentDom).hasClass('ortum_bootstrap_td')){
                 require("BootstrapTable").sonOrtumItemDelete(parentDom);

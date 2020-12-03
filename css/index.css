@@ -68,10 +68,7 @@
     text-align: center;
     line-height: 60px;
     height: 60px;
-}
-.originStateHide{
-    z-index: -20;
-    display: none;
+    z-index: -50;
 }
 
 /* #ortum_field .originState{

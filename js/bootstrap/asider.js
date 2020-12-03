@@ -514,23 +514,21 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             if(!Global.ortumNowDragObj)return false;
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
-            //不存在对应key
-            if(!componentKey){return false;}
-            if(componentKey == "gridDom"){//如果拖拽上來的是grid,则不进行创建
-               
-            }else{
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
+
+            if(hasOrtumItem){
+                if(!$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_grid")){
+                    if(!$(this).find(".ortum_item").length){
+                        require("feature").ortumDragShadow(e,"enter",{That:$(this).find(".ortum_boot_col_waitInsert").eq(0),addWay:"addClass"})
+                        return false;
+                    }
+                }
+            }else if(componentKey && componentKey !== "gridDom"){
                 if(!$(this).find(".ortum_item").length){
                     require("feature").ortumDragShadow(e,"enter",{That:$(this).find(".ortum_boot_col_waitInsert").eq(0),addWay:"addClass"})
                     return false;
                 }
-
-                /*if($(this).find(".ortum_boot_col_waitInsert")){
-                    require("feature").ortumDragShadow(e,"enter",{That:$(this).find(".ortum_boot_col_waitInsert").eq(0),addWay:"addClass"})
-                    return false;
-                }else{
-                    //TODO 确定是否替换
-                    // return false;
-                }*/
             }
         });
 
@@ -542,7 +540,6 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
 
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
-
             //拖拽的是绘制区的组件
             let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
             //ctrl键是否按下
@@ -551,7 +548,7 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
             if(hasOrtumItem){
                 if(!$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_grid")){
                     let createDom =$(Global.ortumNowDragObj);
-                    $(this).html(createDom);
+                    $(this).append(createDom);
                     //把拖拽对象制空
                     Global.ortumNowDragObj = null;
                     return false;
@@ -577,20 +574,12 @@ define(['require','assist','global',"settings"],function(require,Assist,Global,S
                     return false;
                 }else{
                     if(!$(this).find(".ortum_item").length){
-                        $(this).empty();
                         //执行对应的生成组件的函数(此处要解决 grid.js 与createDom 循环依赖的问题)
                         require('createDom')[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame)
                         //把拖拽对象制空
                         Global.ortumNowDragObj = null;
                         return false;
                     }
-
-                    /*if($(this).find(".ortum_boot_col_waitInsert")){
-                        this.innerHTML = "";
-                    }else{
-                        //TODO 确定是否替换
-                        return false;
-                    }*/
 
                 }
             }

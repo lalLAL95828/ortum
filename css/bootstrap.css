@@ -16,7 +16,12 @@
     justify-content: center;
     align-items: center;
     height:100%;
-    color:rgba(166,166,166,0.8)
+    color:rgba(166,166,166,0.8);
+    position:absolute;
+    z-index: -1203;
+    width: 100%;
+    top: 0;
+    left: 0;
 }
 .ortum_bootstrap_grid{
     margin: 0!important;
@@ -168,6 +173,12 @@ input::-webkit-calendar-picker-indicator{
     color: #666666;
     font-size: 1.5rem!important;
     cursor: pointer;
+    border: 0px!important;
+    background-color: transparent!important;
+    display: inline!important;
+    padding: 0px!important;
+    height: auto!important;
+    line-height: normal!important;
 }
 /* buttonGroup */
 .ortum_bootstrap_buttonGroup_div{

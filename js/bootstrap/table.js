@@ -348,6 +348,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                             let read = false;
                             let required = false;
                             let verifyInfo = "";
+                            let tdHide = false;
                             nextHtml.find("*[name]").each(function(index2,item2){
                                 let nameValArr = $(item2).attr("name") && $(item2).attr("name").split("_");
                                 if(nameValArr && nameValArr.length && nameValArr[0] == "table"){
@@ -355,6 +356,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                                     if(tbodyFirstTr.length){
                                         let brotherDom = tbodyFirstTr.find("*[name="+ $(item2).attr("name") +"]").eq(0);
                                         brotherDom.parents(".ortum_item").eq(0).css("display") == "none" && (hide=true);
+                                        brotherDom.parents("td").eq(0).css("display") == "none" && (tdHide=true);
                                         brotherDom.attr("disabled") && (read=true);
                                         brotherDom.attr("ortum-verify") && (verifyInfo=brotherDom.attr("ortum-verify"));
                                     };
@@ -373,6 +375,8 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                             /*********设置权限**********/
                             if(hide){
                                 nextHtml.hide();
+                            };
+                            if(tdHide){
                                 nextHtml.parents("td").eq(0).hide();
                             };
                             if(read){

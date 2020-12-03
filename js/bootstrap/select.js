@@ -6,7 +6,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             defaultVal:["123"],//默认值
             verification:"",//校验
             authority:"3",//权限
-            placeholder:"请输入",
             cssClass:"custom-select col",//css类
             hideLabel:true,//是否隐藏标签
             labelName:"名称",//标签名称
@@ -41,7 +40,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             attributesArr:[],//属性数组
 
         },
-        inputChange:["id","name","verification","placeholder","cssClass","labelName","labelCSS","serverUrl","title"],//input事件修改值
+        inputChange:["id","name","verification","cssClass","labelName","labelCSS","serverUrl","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition","useRemote"],
         purview:{//属性编辑权限
             id:3,//id
@@ -49,7 +48,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             // defaultVal:3,
             verification:3,
             authority:1,//权限
-            placeholder:3,
             cssClass:3,//css类
             hideLabel:3,//是否隐藏标签
             labelName:3,//标签名称
@@ -186,8 +184,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             <select class="${ortum_component_properties.data.cssClass}" 
             ${ortum_component_properties.data.title ? "title="+ortum_component_properties.data.title : '' } 
             id="${ortum_component_properties.data.id}" 
-            name="${ortum_component_properties.data.name}" 
-            placeholder="${ortum_component_properties.data.placeholder}">
+            name="${ortum_component_properties.data.name}" >
             </select>
         `);
         //修改编辑的属性

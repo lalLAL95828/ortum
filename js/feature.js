@@ -53,7 +53,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         // ortumComponents.appendChild(fragment);
         // $(ortumLeft).append(ortumComponents)
 
-        $(ortumBody).append(ortumField)
+        $(ortumBody).append(ortumField);
+
+        $("#originState").removeClass("ortum_display_NONE");
 
         //事件监听注册
         $('#ortum_import_file').on('change',importFileListen)
@@ -155,7 +157,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     require("assist").dangerTip();
                     return false;
                 };
-                $("#originState").addClass("originStateHide");
+                $("#originState").addClass("ortum_display_NONE");
                 //执行对应的生成组件的函数
                 CreateDom[Settings.menuListDataJSON[componentKey].createFn](this,Global.ortum_createDom_frame);
             }
@@ -273,7 +275,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 switchTableAct("edit",{formId:jsonInfo.id,version:jsonInfo.version,formName:jsonInfo.formName,formCode:jsonInfo.formCode})
 
                 $("#ortum_field").empty();
-                $("#originState").addClass("originStateHide");
+                $("#originState").addClass("ortum_display_NONE");
 
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;
@@ -281,9 +283,8 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 Global.ortum_life_Css = contenHtml.ortumCss;
             }else{
                 switchTableAct("new");
-
                 $("#ortum_field").empty();
-                $("#originState").addClass("originStateHide");
+                $("#originState").addClass("ortum_display_NONE");
 
                 JsonPropsRenderDom(contenHtml.ortumJson,$("#ortum_field"),"append");
                 Global.ortum_life_json = contenHtml.ortumSet;

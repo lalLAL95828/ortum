@@ -40,11 +40,14 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         $(ele).on("dragenter.firstbind",function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
-            if(!componentKey){//不存在对应key
-                return false;
-            }
-
-            if(componentKey == "buttonDom" || componentKey == "iconButtonDom"){
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
+            if(hasOrtumItem){
+                if($(Global.ortumNowDragObj).hasClass("ortum_bootstrap_button") || $(Global.ortumNowDragObj).hasClass("ortum_bootstrap_iconButton")){
+                    require("feature").ortumDragShadow(e,"enter",{That:this,addWay:"addClass"})
+                    return false;
+                }
+            }else if(componentKey && (componentKey == "buttonDom" || componentKey == "iconButtonDom")){
                 require("feature").ortumDragShadow(e,"enter",{That:this,addWay:"addClass"})
                 return false;
             }
@@ -60,7 +63,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
             //拖拽的是绘制区的组件
             let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
-        
 
             if(hasOrtumItem){
                 if($(Global.ortumNowDragObj).hasClass("ortum_bootstrap_button") || $(Global.ortumNowDragObj).hasClass("ortum_bootstrap_iconButton")){

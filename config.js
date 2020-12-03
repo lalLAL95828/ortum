@@ -74,7 +74,7 @@ require(['feature','assist','global'],function(Feature,Assist,Global){
                     $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",res.data.data.version);
                     //清空编辑区域
                     $('#ortum_field').html('');
-                    $("#originState").addClass("originStateHide");
+                    $("#originState").addClass("ortum_display_NONE");
 
                     Feature.JsonPropsRenderDom(tableContent.ortumJson,$("#ortum_field"),"append");
                     Global.ortum_life_json = tableContent.ortumSet;
@@ -98,7 +98,7 @@ require(['feature','assist','global'],function(Feature,Assist,Global){
                         $("#ortum_table_code").val(response.data.formCode);
                         $("#ortum_table_info .ortum_table_method").eq(0).attr("data-version",response.data.version)
                         $("#ortum_field").empty();
-                        $("#originState").addClass("originStateHide");
+                        $("#originState").addClass("ortum_display_NONE");
                         Feature.JsonPropsRenderDom(tableContent,$("#ortum_field"),"append")
                     }
                 }

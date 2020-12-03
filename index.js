@@ -217,7 +217,7 @@ $('#ortum_table_act').on('click','.iconfont',function(e){
             $('#ortum_collapseOne input[type=checkbox]').removeProp("checked");
             $('#ortum_collapseOne select').val('');
             $("#ortum_field").empty();
-            $("#originState").removeClass("originStateHide");
+            $("#originState").removeClass("ortum_display_NONE");
         })
         return;
     }
