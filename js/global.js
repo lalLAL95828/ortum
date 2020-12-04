@@ -37,6 +37,8 @@ define([],function(){
     let ortum_attributesArr_setVal;
     let ortum_attributesArr_save;
 
+    let ortum_shadowDiv_actsMenu = null;//操作菜单栏
+
 
 
     return{
@@ -67,5 +69,7 @@ define([],function(){
 
         ortum_attributesArr_setVal:ortum_attributesArr_setVal,
         ortum_attributesArr_save:ortum_attributesArr_save,
+
+        ortum_shadowDiv_actsMenu:ortum_shadowDiv_actsMenu,
     }
 })

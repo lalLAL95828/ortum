@@ -175,7 +175,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         //右键事件
         // ele.oncontextmenu = function(e){
         //     e.preventDefault();
-        //     createContextMenuObj(e)
+        //     createContextMenuEvent(e)
         //     if(!e){
         //         window.event.returnValue =false;//IE
         //     }
@@ -184,10 +184,19 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
     };
 
     /**
+     * 功能：
+     * @param e
+     * @param That
+     */
+    let shadowDivContextMenuEvent = function(e,That){
+        
+    }
+
+    /**
      * //TODO
      * 功能：创建右键菜单
      *  */ 
-    let createContextMenuObj = function (e){
+    let createContextMenuEvent = function (e){
         let xClientAxis = e.clientX
         //获取当前浏览器可视大小
         let widInnerWidth = window.innerWidth;
@@ -1070,7 +1079,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
     }
 
     return {
-        createContextMenuObj:createContextMenuObj,
+        createContextMenuEvent:createContextMenuEvent,
         init:init,
         bindFeatureToOrtumField:bindFeatureToOrtumField,
         bindFeatureToComponents:bindFeatureToComponents,

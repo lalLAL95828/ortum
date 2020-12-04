@@ -204,6 +204,31 @@
     font-size: 25px;
     margin:0 3px;
 }
+.shadowDivActMenuSon{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #80808036;
+    margin: 0 5px;
+}
+.ortum_dropdown_menu{
+    position: absolute;
+    z-index: 1000;
+    /*min-width: 10rem;*/
+    width: 160px;
+    padding: .5rem 0;
+    margin: .125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+}
+.ortum_shadow_menu_allShow{
+    /*margin:0px!important;*/
+    line-height: normal!important;
+}
 
 .ortum_tip{
     position: absolute;

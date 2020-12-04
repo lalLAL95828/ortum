@@ -335,9 +335,32 @@ define(['require'],function(require){
         evenProperties.data.attributesArr = valueArr;
     };
 
+    /**
+     * 功能：监听拖拽阴影div的组件变化
+     * @param ele
+     */
+    let shadowDivMutationObserver = function(ele){
+        let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
+        let element = ele[0];
+        let observerObj = new MutationObserver(function(mutationList){
+            // for (let mutation of mutationList) {
+            //     console.log(mutation)
+            // }
+            let width = getComputedStyle(element).getPropertyValue('width');
+            // let height = getComputedStyle(element).getPropertyValue('height');
+            let spanswidth = $(ele).attr("data-spanswidth");
+            // console.log(width,height,spanswidth);
+            if(spanswidth*1 > parseFloat(width)){
+                $("#ortum_shadow > span").hide();
+                // $(".ortum_shadow_allActs_menu").eq(0).addClass("ortum_shadow_menu_allShow")
+            }else{
+                $("#ortum_shadow > span").show();
+                // $(".ortum_shadow_allActs_menu").eq(0).removeClass("ortum_shadow_menu_allShow")
+            }
 
-
-
+        })
+        observerObj.observe(element, { attributes: true, characterData:true, attributeOldValue: true,characterDataOldValue:true})
+    }
 
     /**
      * 功能：选中当前正在编辑的组件，进行属性编辑
@@ -347,61 +370,141 @@ define(['require'],function(require){
         //已经被选中，不在选中
         if($(this).hasClass('selectedShadow'))return;
         $('*').removeClass('selectedShadow');
-        $('#ortum_shadow').remove();
-
         $(this).addClass('selectedShadow');
 
-        let shadowDiv= $(`
-            <div id="ortum_shadow" draggable="true">
+        let shadowDiv = null;
+
+        if($("#ortum_shadow").length){
+            shadowDiv = $("#ortum_shadow").eq(0);
+            shadowDiv.empty();//清空
+        }else{
+            shadowDiv = $(`
+                <div id="ortum_shadow" draggable="true">
+                </div>
+            `);
+            //第一次创建 绑定拖拽事件
+            componentsBindDrag(shadowDiv);
+            //监听shadowDiv的变化
+            shadowDivMutationObserver(shadowDiv);
+        }
+        $(this).append(shadowDiv);
+
+        //操作数组集合
+        let shadowDivActArr  = [];
+
+        let shadowDivActMenu = $(`
+            <div id="ortum_shadowDiv_actsMenu">
+                <span class="iconfont icon-caidan ortum_shadow_allActs_menu" title="操作菜单" id="ortum_shadowDiv_caidan"></span>
+                <div class="ortum_dropdown_menu ortum_display_NONE" id="ortum_shadowDiv_menu">
+
+                </div>
             </div>
         `);
-        //绑定拖拽事件
-        componentsBindDrag(shadowDiv);
+        shadowDiv.append(shadowDivActMenu);
+        $("#ortum_shadowDiv_menu").off("mouseleave.menu").on("mouseleave.menu",function(){
+            require("global").ortum_shadowDiv_actsMenu.destroy();
+            let tooltip = document.querySelector('#ortum_shadowDiv_menu');
+            $(tooltip).addClass("ortum_display_NONE");
+        });
+        $("#ortum_shadowDiv_caidan").off("click.menu").on("click.menu",function(){
+            let button = document.querySelector('#ortum_shadowDiv_caidan');
+            let tooltip = document.querySelector('#ortum_shadowDiv_menu');
+            let ortumField = document.querySelector('#ortum_field');
+            if($(tooltip).hasClass("ortum_display_NONE")){
+                $(tooltip).removeClass("ortum_display_NONE");
+                require("global").ortum_shadowDiv_actsMenu = new Popper(button,tooltip,{
+                    placement: 'bottom',
+                    modifiers: {
+                        preventOverflow: {
+                            // priority: ['left'],
+                            boundariesElement:ortumField,
+                            padding:2,
+                        },
+                    }
+                });
+            }else{
+                require("global").ortum_shadowDiv_actsMenu.destroy();
+                $(tooltip).addClass("ortum_display_NONE");
+            }
+            return false;
+        })
+
+
 
         //bootstrap_grid
         if($(this).hasClass('ortum_bootstrap_grid')){
-            shadowDiv.append(`
-                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapGrid_settings" title="设置"></span>
-             `)
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapGrid_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            })
         }
         //bootstrap_radio
         if($(this).hasClass('ortum_bootstrap_radio')){
-            shadowDiv.append(`
-                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapRadio_settings" title="设置"></span>
-             `)
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapRadio_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            })
         }
         //bootstrap_checkbox
         if($(this).hasClass('ortum_bootstrap_checkbox')){
-            shadowDiv.append(`
-                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapCheckbox_settings" title="设置"></span>
-             `)
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapCheckbox_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            })
         }
         //bootstrap_select
         if($(this).hasClass('ortum_bootstrap_select')){
-            shadowDiv.append(`
-                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapSelect_settings" title="设置"></span>
-             `)
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapSelect_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            })
         }
         //bootstrap_table
         if($(this).hasClass('ortum_bootstrap_table')){
-            shadowDiv.append(`
-                <span class="iconfont icon-shezhi1  ortum_shadow_bootstrapTable_settings" title="设置"></span>
-             `)
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapTable_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            })
         }
+        shadowDivActArr.push({
+            title:"编辑js",
+            onlyClass:"ortum_shadow_editJs",
+            html:`<span class="iconfont icon-js"></span>`
+        },{
+            title:"编辑属性",
+            onlyClass:"ortum_shadow_editAttrs",
+            html:`<span class="iconfont icon-duixiangshuxingObjectAttributes18"></span>`
+        },{
+            title:"删除",
+            onlyClass:"ortum_shadow_deleteImg",
+            html:`<span class="iconfont icon-shanchu"></span>`
+        })
+
+        //插入各个操作span
+        shadowDivActArr.forEach(function(item){
+            let ActMenuSonDom = $(item.html);
+            let ActMenuSonDivDom = $(`<div class="shadowDivActMenuSon ${item.onlyClass}"></div>`)
+            ActMenuSonDivDom.append(ActMenuSonDom).append(`<span>${item.title}</span> `)
+            shadowDivActMenu.find(".ortum_dropdown_menu").eq(0).append(ActMenuSonDivDom);
+
+            let actDom = $(item.html);
+            actDom.addClass(item.onlyClass).attr("title",item.title)
+            shadowDiv.append(actDom);
+        });
+
+        //计算span的个数和宽度
+        let spanNum = shadowDiv.find("span").length;
+        let spanOuterWidth = parseFloat(shadowDiv.find("span").eq(0).outerWidth(true));
+        spanOuterWidth = spanOuterWidth ? Math.ceil(spanOuterWidth) : 0 ;
+        shadowDiv.attr("data-spanlength",spanNum);
+        shadowDiv.attr("data-spanswidth",spanNum*spanOuterWidth);
 
 
-        shadowDiv.append(`
-            <span class="iconfont icon-js  ortum_shadow_editJs"  title="编辑js"></span>
-        `)
-        shadowDiv.append(`
-            <span class="iconfont icon-duixiangshuxingObjectAttributes18  ortum_shadow_editAttrs"  title="编辑属性"></span>
-        `)
-
-        shadowDiv.append(`
-            <span class="iconfont icon-shanchu  ortum_shadow_deleteImg"  title="删除"></span>
-        `)
-
-        $(this).append(shadowDiv)
 
         //删除按钮绑定事件
         $("#ortum_shadow .ortum_shadow_deleteImg").off('click.delete').on('click.delete',deleteComponent);
