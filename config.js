@@ -19,6 +19,7 @@ require.config({
         "BootstrapAsider":"js/bootstrap/asider",
         "BootstrapInput":"js/bootstrap/input",
         "BootstrapGrid":"js/bootstrap/grid",
+        "BootstrapMultiGrid":"js/bootstrap/multiGrid",
         "BootstrapRangeInput":"js/bootstrap/rangeInput",
         "BootstrapRadio":"js/bootstrap/radio",
         "BootstrapCheckbox":"js/bootstrap/checkbox",

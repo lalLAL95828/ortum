@@ -178,6 +178,15 @@ define(['assist'],function(Assist){
         },
     },
     {
+        key:"multiGridDom",
+        name:"多行栅格",
+        sort:"layout",
+        createFn:"createMultiGridDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
         key:"labelDom",
         name:"标签",
         sort:"decorate",//修饰组件

@@ -8,11 +8,11 @@ define(["BootstrapGrid","BootstrapInput","BootstrapRangeInput","BootstrapRadio",
 "BootstrapLabel",
 "BootstrapDate",
 "BootstrapTable", "BootstrapButton","BootstrapButtonGroup",
-"BootstrapIconButton","BootstrapH",
+"BootstrapIconButton","BootstrapH","BootstrapMultiGrid"
 ],
 function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,BootstrapTextarea,BootstrapCheckbox,
     BootstrapFile,BootstrapSwitch,BootstrapSelect,BootstrapLabel,BootstrapDate,BootstrapTable,BootstrapButton,BootstrapButtonGroup,
-    BootstrapIconButton,BootstrapH){
+    BootstrapIconButton,BootstrapH,BootstrapMultiGrid){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -225,6 +225,21 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
         }
     }
 
+
+    /**
+     * 创建多行柵格
+     * @param {*} type
+     */
+    let createMultiGridDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootstrapMultiGrid.MultiGridDom(parentDom,moreProps)
+                break;
+            default:
+        }
+    }
+
+
     //设置对应Bootstrap框架 生成组件的函数是否开启
     createGridDom.ortum_Bootstrap = true;
     createInputDom.ortum_Bootstrap = true;
@@ -242,6 +257,7 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
     createButtonGroupDom.ortum_Bootstrap = true;
     createIconButtonDom.ortum_Bootstrap = true;
     createHDom.ortum_Bootstrap = true;
+    createMultiGridDom.ortum_Bootstrap = true;
     return {
         createGridDom,
         createInputDom,
@@ -259,5 +275,6 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
         createButtonGroupDom,
         createIconButtonDom,
         createHDom,
+        createMultiGridDom,
     }
 })

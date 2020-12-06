@@ -4,33 +4,33 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
             id:"",//id
             name:'',//name
             cssClass:"row",//css类
-            columns:4,//多少列
-            columnsArr:[//
-                {
-                    "classValue":"col-2",
-                },
-                {
-                    "classValue":"col",
-                },
-                {
-                    "classValue":"col-2",
-                },
-                {
-                    "classValue":"col",
-                },
+            gridArr:[
+                [
+                    {
+                        "classValue":"col-2",
+                    },
+                    {
+                        "classValue":"col",
+                    },
+                    {
+                        "classValue":"col-2",
+                    },
+                    {
+                        "classValue":"col",
+                    }
+                ]
             ],
             title:"名称",
 
             uuid:"",
             attributesArr:[],//属性数组
         },
-        inputChange:["id","name","cssClass","columns","title"],//input事件修改值
+        inputChange:["id","name","cssClass","title"],//input事件修改值
         clickChange:[],
         purview:{//属性编辑权限
             id:3,//id
             name:3,
             cssClass:2,//css类
-            columns:3,
             title:3,
         },
     }
@@ -45,7 +45,7 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
      */
-    let GridDom = function(parentDom,moreProps=null){
+    let MultiGridDom = function(parentDom,moreProps=null){
         let customProps = null;
         // let generateDom =  null;
         let clickChangeAttrs = true;
@@ -65,7 +65,7 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
         }
 
-        let outerDom= $('<div class="ortum_item ortum_bootstrap_grid" data-frame="Bootstrap" data-componentKey="gridDom"></div>');
+        let outerDom= $('<div class="ortum_item ortum_bootstrap_multiGrid" data-frame="Bootstrap" data-componentKey="multiGridDom"></div>');
         //点击事件，修改属性
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
 
@@ -76,36 +76,41 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('grid'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('multiGrid'));
 
+        ortum_component_properties.data.id && outerDom.attr("id", ortum_component_properties.data.id);
 
-        let row = $(`
-            <div class="${ortum_component_properties.data.cssClass}" 
-            style="margin: 0"
-            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : ''} 
-            ></div>
-        `)
-        for(let i=0;i<ortum_component_properties.data.columns;i++){
-            if(moreProps){
-                moreProps.classValue = ortum_component_properties.data.columnsArr[i] && ortum_component_properties.data.columnsArr[i].classValue
-            }else{
-                moreProps={
-                    "classValue" :ortum_component_properties.data.columnsArr[i] && ortum_component_properties.data.columnsArr[i].classValue
+        let rowDomArr = [];
+        ortum_component_properties.data.gridArr.forEach(function(rowItem,rowIndex){
+            let row = $(`
+                <div class="${ortum_component_properties.data.cssClass}" 
+                style="margin: 0"></div>
+            `);
+            rowItem.forEach(function(columnItem,columnIndex){
+                if(moreProps){
+                    moreProps.classValue = columnItem.classValue
+                }else{
+                    moreProps={
+                        "classValue":columnItem.classValue 
+                    }
                 }
-            }
-            moreProps.ortumChildren = i;
-            let col=BootstrapAsider.tipAddComponentFn(true,moreProps)
-            $(row).append(col);
-        }
+                moreProps.ortumChildren = rowIndex+"-"+columnIndex;
+                let col=BootstrapAsider.tipAddComponentFn(true,moreProps)
+                $(row).append(col);
+            })
+            rowDomArr.push(row);
+        });
 
-        outerDom.append(row);
+        rowDomArr.forEach(function(rowItem){
+            outerDom.append(rowItem);
+        })
 
-        //修改编辑的属性
-        if(Array.isArray(ortum_component_properties.data.attributesArr)){
+        //TODO 修改编辑的属性
+        /* if(Array.isArray(ortum_component_properties.data.attributesArr)){
             ortum_component_properties.data.attributesArr.forEach(function(item){
                 outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
             });
-        }
+        } */
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','grid']);
@@ -149,31 +154,15 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         //更新到dom属性上
         // evenProperties.data[property] = val;
         switch(property){
-            case "columns":
-
-                let cloumLength = $(globalComponent).find(".row").eq(0).children().length;
-                if(cloumLength > val*1){
-                    for(let i =0;i<(cloumLength -(val*1));i++){
-                        $(globalComponent).find(".row").eq(0).children().last().remove();
-                        evenProperties.data.columnsArr.pop();
-                    }
-                }
-                if(cloumLength < val*1){
-                    for(let i =0;i<(val*1 - cloumLength);i++){
-                        let col=BootstrapAsider.tipAddComponentFn(true,{ortumChildren:cloumLength+i})
-                        $(globalComponent).find(".row").eq(0).append(col)
-                        evenProperties.data.columnsArr.push({
-                            "classValue":"col"
-                        });
-                    }
-                }
-                break; 
             case "cssClass":
                 $(globalComponent).find(".row").attr('class',val)
                 break; 
+            case "id":
+                $(globalComponent).attr('id',val);
+                break; 
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find(".row").eq(0).attr(property,val)
+                    $(globalComponent).find(".row").attr(property,val)
                 }
                 break;
         }
@@ -238,7 +227,7 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         switch(property){
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find(".row").eq(0).attr(property,val)
+                    $(globalComponent).find(".row").attr(property,val)
                 }
                 break;
         }
@@ -300,8 +289,85 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         
     };
 
+    /**
+     * 保存对multiGrid的列设置
+     */
+    let saveMultiGridColumns = function (val) {
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let tbodyDom = globalComponent.find("tbody").eq(0);
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let packer = new Packer;
+        let valFormat = packer.pack(val, 0, 0);
+        try{
+            eval(valFormat);
+            let editColumnArr = eval("MultiGridClumns");
+
+            let tbodyTrObj =BootstrapAsider.tableTbodyAddTrLine(tbodyDom,editColumnArr,{
+                trCssClass:evenProperties.data.tbodyTrCssClass,
+                tdCssClass:evenProperties.data.tdCssClass,
+                tableName:evenProperties.data.name,
+            },settings="againEdit");
+            $(tbodyDom).empty();//tbody 必须放在此处清空
+            tbodyTrObj.forEach(function(item){
+                $(tbodyDom).append(item);
+            });
+
+
+
+            //替换table上的属性值
+            evenProperties.data.tbodyColumnsArr = editColumnArr;
+
+
+        }catch (e) {
+            console.error(e);
+            console.error("编辑table的column信息错误");
+        }
+    };
+
+    let setMultiGridColumns = function(){
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        Global.ortum_codemirrorJS_setVal = function(codeObj){
+            let columnsArr = [];
+            evenProperties.data.gridArr.forEach(function (itemArr,indexArr) {
+                let pushArr = [];
+                itemArr.forEach(function (item,index) {
+                    let pushItem = {};
+                    for(let key in item){
+                        if(item.hasOwnProperty(key)){
+                            key !== "customProps" && (pushItem[key] = item[key]);
+                        }
+                    };
+                    pushArr.push(pushItem);
+                })
+                columnsArr.push(pushArr)
+            });
+
+
+            //格式化
+            let columnsArrStr = js_beautify(JSON.stringify(columnsArr),2);
+
+
+            codeObj.setValue(`//编辑multiGrid的柵格信息信息\nvar MultiGridClumns = ${columnsArrStr};
+                `)
+        }
+
+        $('#ortum_top_dialog_xl').modal({
+            "backdrop":"static",
+            "keyboard":false,
+        });
+        //编辑js保存后执行的函数
+        Global.ortum_codemirrorJS_save = saveMultiGridColumns;
+        $("#ortum_top_model_xl_content").load("html/common/codemirror.html",function(){
+            $('#ortum_top_model_xl_wait').hide();
+        });
+        return false;
+    }
+
     return {
-        GridDom,
+        MultiGridDom,
 
         inputSetProperties,
         blurSetProperties,
@@ -309,6 +375,8 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
+
+        setMultiGridColumns,
 
         setGridItems,
         showGridItems,

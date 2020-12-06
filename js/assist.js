@@ -452,6 +452,16 @@ define(['require'],function(require){
                 html:`<span class="iconfont icon-shezhi1" ></span>`
             })
         }
+        //bootstrap_multiGrid
+        if($(this).hasClass('ortum_bootstrap_multiGrid')){
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapGrid_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            })
+        }
+
+
         //bootstrap_radio
         if($(this).hasClass('ortum_bootstrap_radio')){
             shadowDivActArr.push({
@@ -534,6 +544,11 @@ define(['require'],function(require){
         if($(this).hasClass('ortum_bootstrap_grid')){
             $("#ortum_shadow .ortum_shadow_bootstrapGrid_settings").off('click.setting').on('click.setting',require('BootstrapGrid').showGridItems);
         }
+        //grid的设置按钮绑定事件
+        if($(this).hasClass('ortum_bootstrap_MultiGrid')){
+            $("#ortum_shadow .ortum_shadow_bootstrapGrid_settings").off('click.setting').on('click.setting',require('BootstrapMultiGrid').setMultiGridColumns);
+        }
+
         //checkbox的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_checkbox')){
             $("#ortum_shadow .ortum_shadow_bootstrapCheckbox_settings").off('click.setting').on('click.setting',require('BootstrapCheckbox').showCheckboxItems);
