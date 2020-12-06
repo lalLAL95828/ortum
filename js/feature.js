@@ -8,6 +8,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         let ortumMain = document.getElementById(mainId)
         let ortumLeft = $(ortumMain).find('#ortum_left').eq(0);//左边部分
         let ortumBody = $(ortumMain).find('#ortum_body').eq(0);//中间部分
+        let ortumField = document.getElementById("ortum_field");//绘制区
 
         let formComponents = $(".ortum_components[data-type=form]").eq(0);
         let layoutComponents = $(".ortum_components[data-type=layout]").eq(0);
@@ -17,8 +18,10 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         // ortumComponents.className = 'ortum_components';
         // Global.ortumComponents = ortumComponents;
         
-        let ortumField = document.createElement("div");
-        ortumField.id = 'ortum_field';
+        // let ortumField = document.createElement("div");
+        // ortumField.id = 'ortum_field';
+        // ortumField.className="demo";
+        
 
 
         Global.ortumField = ortumField;
@@ -53,7 +56,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         // ortumComponents.appendChild(fragment);
         // $(ortumLeft).append(ortumComponents)
 
-        $(ortumBody).append(ortumField);
+        // $(ortumBody).append(ortumField);
 
         $("#originState").removeClass("ortum_display_NONE");
 

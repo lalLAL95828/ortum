@@ -401,11 +401,24 @@ define(['require'],function(require){
             </div>
         `);
         shadowDiv.append(shadowDivActMenu);
-        $("#ortum_shadowDiv_menu").off("mouseleave.menu").on("mouseleave.menu",function(){
+
+        /* $("#ortum_shadowDiv_menu").off("mouseleave.menu").on("mouseleave.menu",function(){
             require("global").ortum_shadowDiv_actsMenu.destroy();
             let tooltip = document.querySelector('#ortum_shadowDiv_menu');
             $(tooltip).addClass("ortum_display_NONE");
-        });
+        }); */
+
+        //添加函数到点击事件执行队列中去
+        require("global").ortum_clickWillDo["destroy_shadowDiv_actsMenu"] = function(e){
+            // console.log(e)
+            if(require("global").ortum_shadowDiv_actsMenu){
+                require("global").ortum_shadowDiv_actsMenu.destroy();
+                let tooltip = document.querySelector('#ortum_shadowDiv_menu');
+                $(tooltip).addClass("ortum_display_NONE");
+                require("global").ortum_shadowDiv_actsMenu = null;
+            };
+        }
+
         $("#ortum_shadowDiv_caidan").off("click.menu").on("click.menu",function(){
             let button = document.querySelector('#ortum_shadowDiv_caidan');
             let tooltip = document.querySelector('#ortum_shadowDiv_menu');

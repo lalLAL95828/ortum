@@ -39,6 +39,8 @@ define([],function(){
 
     let ortum_shadowDiv_actsMenu = null;//操作菜单栏
 
+    let ortum_clickWillDo = {};//只要触发点击事件，就会执行
+
 
 
     return{
@@ -71,5 +73,7 @@ define([],function(){
         ortum_attributesArr_save:ortum_attributesArr_save,
 
         ortum_shadowDiv_actsMenu:ortum_shadowDiv_actsMenu,
+
+        ortum_clickWillDo:ortum_clickWillDo,
     }
 })

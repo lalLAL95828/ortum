@@ -31,6 +31,9 @@ function switchTableAct(act="edit",settings={}){
             break;
     }
 };
+
+
+
 function showOrtumLoading(show){
     if(show === false){
         $(".ortum_loading").eq(0).css("display","none");
@@ -130,9 +133,26 @@ $(function(){
             switchTableAct("new");
         }
     });
+
+    //设置滚动条
+    $(".ortum_mCustomScrollbar").mCustomScrollbar({
+        theme:"dark-3",
+        scrollInertia:0,//将滚动动量的量设置为动画持续时间（以毫秒为单位）
+        scrollButtons:{enable:true,},//滚动按钮，滚动量
+        mouseWheel:{deltaFactor:10},//鼠标滚动量
+    });
+
+    //只要触发点击事件，就会执行Global.ortum_clickWillDo中的函数
+    $(document).on("click.all","*",function(e){
+        require(['feature','global'],function(Feature,Global){
+            for(let fun in Global.ortum_clickWillDo){
+                if(Global.ortum_clickWillDo.hasOwnProperty(fun)){
+                    Global.ortum_clickWillDo[fun](e);
+                }
+            }
+        })
+    });
 })
-
-
 
 //getFormContentJson函数的返回值 从数组中获取 name和title数组
 /*function getTitleAndNameFun(arr){

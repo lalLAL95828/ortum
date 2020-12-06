@@ -8,10 +8,14 @@
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/iconfont.css">
+     <!-- 滚动条css -->
+    <link rel="stylesheet" href="lib/mCustonScrollbar/jquery.mCustomScrollbar.css">
     <!-- 引入bootstrap css-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     
     <script src="lib/jquery.min.js"></script>
+    <!-- 滚动条js -->
+    <script src="lib/mCustonScrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
     <!-- <script src="https://unpkg.com/jshint@2.12.0/dist/jshint.js"></script> -->
     <script src="lib/jshint.js"></script>
     <script src="lib/ortumReq.js"></script>
@@ -42,7 +46,7 @@
             <div class='row'>
                 <div class="col-2 p-0" style="display: flex;flex-direction: column;height: 100vh;">
                     <div style="text-align: center;font-weight: 800;line-height:20px;letter-spacing: 5px;padding: 10px 0;">组件选择</div>
-                    <div id="ortum_left">
+                    <div id="ortum_left" class="ortum_mCustomScrollbar">
                         <div class="shadow-none p-1 bg-info text-white pl-2">表单组件</div>
                         <div class="ortum_components mb-2" data-type="form"></div>
                         <div class="shadow-none p-1 bg-info text-white pl-2">修饰组件</div>
@@ -86,11 +90,12 @@
                     </div>
                     <div id="ortum_body">
                         <div id='originState' class="ortum_display_NONE">组件拖拽</div>
+                        <div id="ortum_field"></div>
                     </div>
                 </div>
                 <div class="col-2 no-gutters" style="height: 100vh;overflow: auto;padding:0;">
                     <div style="text-align: center;font-weight: 800;letter-spacing: 5px;padding: 10px 0;line-height:20px;">参数配置</div>
-                    <div id="ortum_right">
+                    <div id="ortum_right" class="ortum_mCustomScrollbar" >
                         <div class="accordion">
                             <div class="card">
                                 <div class="card-header p-0" id="headingOne">
