@@ -115,6 +115,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let SelectDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -126,6 +127,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let createJson = false;
         let HasProperties = false;
         let ortumChildren = null;
+        let nameSuffix = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -136,6 +138,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom=$(
@@ -161,6 +164,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定nameselect
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('select'));
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+        }
 
 
         
@@ -564,14 +573,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let setStr = "var ortum_BootstrapSelect_setJs = {";
         if(evenProperties.data.onBefore){
-            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
         }else{
-            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:function(){},"
         };
         if(evenProperties.data.onAfter){
-            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
         }else{
-            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that,name){},"
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:function(that,name){},"
         };
         if(evenProperties.data.onChange){
             setStr += "\n//change事件\nonChange:"+ evenProperties.data.onChange.toString() + ",";

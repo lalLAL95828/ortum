@@ -17,6 +17,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             title:"",
             uuid: "",
             attributesArr:[{"maxlength":200}],//属性数组
+
+            onBefore:"",//渲染之前的回调
+            onAfter:"",//渲染之后的回调
+            onClick:"",//点击事件的回调
+            onBlur:"",
+            onInput:"",
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","rows","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],
@@ -55,6 +61,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let TextareaDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -66,6 +73,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let ortumChildren = null;
         let customName = '';//自定义name
 
+        let nameSuffix = null;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
@@ -75,6 +84,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom=$(
@@ -98,6 +108,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('textarea'));
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+        }
 
         //控制标签
         if(ortum_component_properties.data.hideLabel){
@@ -140,6 +156,18 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         $(outerDom).append(textareaDom)
 
 
+        //scriptDom
+        let scriptDom ='';
+        if(createJson){
+            scriptDom = $(`<script>
+                    ${(ortum_component_properties.data.onClick && typeof ortum_component_properties.data.onClick === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("textarea").eq(0).off("click.ortum").on("click.ortum",'+ ortum_component_properties.data.onClick +');' : ''}
+                    ${(ortum_component_properties.data.onBlur && typeof ortum_component_properties.data.onBlur === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("textarea").eq(0).off("blur.ortum").on("blur.ortum",'+ ortum_component_properties.data.onBlur +');' : ''}
+                    ${(ortum_component_properties.data.onInput && typeof ortum_component_properties.data.onInput === "function") ? '$("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("textarea").eq(0).off("input.ortum").on("input.ortum",'+ ortum_component_properties.data.onInput +');' : ''}
+                    ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'($("*[ortum_uuid='+ ortum_component_properties.data.uuid +']").find("textarea").eq(0),"'+ ortum_component_properties.data.name +'");' : ''}
+                </script>`);
+        }
+
+
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','textarea']);
         if(parentDom){
@@ -151,6 +179,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
                 "ortumChildren":ortumChildren,
+                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," ").length >= 20 ? scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," ") : '',
             }
         }else{
             return outerDom
@@ -343,14 +372,69 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     /**
      * 功能：设置js
      */
-    let ortumComponentSetJs = function(){
-        
-    }
+    let ortumComponentSetJs = function(codeObj){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let setStr = "var ortum_BootstrapInput_setJs = {";
+        if(evenProperties.data.onBefore){
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:function(){},"
+        }
+        if(evenProperties.data.onAfter){
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:function(that,name){},"
+        }
+        if(evenProperties.data.onClick){
+            setStr += "\n//click事件\nonClick:"+ evenProperties.data.onClick.toString() + ",";
+        }else{
+            setStr += "\n//click事件\nonClick:function(){},"
+        }
+        if(evenProperties.data.onBlur){
+            setStr += "\n//blur事件\nonBlur:"+ evenProperties.data.onBlur.toString() + ",";
+        }else{
+            setStr += "\n//blur事件\nonBlur:function(){},"
+        }
+        if(evenProperties.data.onInput){
+            setStr += "\n//input事件\nonInput:"+ evenProperties.data.onInput.toString() + ",";
+        }else{
+            setStr += "\n//input事件\nonInput:function(){},"
+        }
+        setStr +="\n};";
+
+        //格式化
+        setStr = js_beautify(setStr,2);
+        codeObj.setValue(setStr)
+    };
     /**
      * 功能：保存js
      */
     let ortumComponentSaveJs = function(val){
-        
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let packer = new Packer;
+        let valFormat = packer.pack(val, 0, 0);
+        try{
+            eval(valFormat);
+            evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
+            evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
+            evenProperties.data.onClick = ortum_BootstrapInput_setJs.onClick;
+            evenProperties.data.onBlur = ortum_BootstrapInput_setJs.onBlur;
+            evenProperties.data.onInput = ortum_BootstrapInput_setJs.onInput;
+
+        }catch (e) {
+            console.error(e);
+            console.error("设置input的js有误，请重新设置");
+        }
     };
 
     return {

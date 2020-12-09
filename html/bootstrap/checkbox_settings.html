@@ -36,7 +36,7 @@
                         操作
                     </td>
                 </tr>
-                <tr class="ortum_order_dataTr" data-line="1">
+                <tr class="ortum_order_dataTr" ortum-line="1">
                     <td name="'span'" style="text-align: center;">
                         <span class="ortum_checkbox_order">1</span>
                     </td>
@@ -75,11 +75,11 @@
             //父级
             let parentTr = $(this).parents('tr').eq(0);
             //行号
-            let line = $(parentTr).attr('data-line');
+            let line = $(parentTr).attr('ortum-line');
             //修改下级行号
             let nextTr = $(parentTr).nextAll('tr.ortum_order_dataTr');
             nextTr.each(function(index,item){
-                $(item).attr('data-line',line);
+                $(item).attr('ortum-line',line);
                 $(item).find(".ortum_checkbox_order").eq(0).html(line);
                 line = line*1 + 1;
             });
@@ -97,7 +97,7 @@
             order = (order*1 + 1);
     
             $(this).parents('tr').eq(0).before(`
-                <tr class="ortum_order_dataTr" data-line=${order}>
+                <tr class="ortum_order_dataTr" ortum-line=${order}>
                     <td name="span" style="text-align: center;">
                         <span class="ortum_checkbox_order">${order}</span>
                     </td>

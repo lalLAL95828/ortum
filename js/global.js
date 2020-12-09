@@ -29,6 +29,9 @@ define([],function(){
     let ortum_codemirrorCSS_setVal;
     let ortum_codemirrorCSS_save;
 
+    let ortum_codemirrorHTML_setVal;
+    let ortum_codemirrorHTML_save;
+
     let ortum_replace_item=null;//被替换对象
     let ortum_active_item=null;//替换对象
 
@@ -75,5 +78,9 @@ define([],function(){
         ortum_shadowDiv_actsMenu:ortum_shadowDiv_actsMenu,
 
         ortum_clickWillDo:ortum_clickWillDo,
+
+
+        ortum_codemirrorHTML_setVal:ortum_codemirrorHTML_setVal,
+        ortum_codemirrorHTML_save:ortum_codemirrorHTML_save,
     }
 })

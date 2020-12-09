@@ -24,7 +24,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             showTfoot:true,
 
             theadColumnsArr:[
-                /*[
+                [
                     {
                         "type":"order",
                         "headHtml":"<span>序号</span>",
@@ -47,7 +47,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         "rowspan":1,
                         "colspan":1,
                     },
-                ]*/
+                ]
             ],//thead信息
             tbodyColumnsArr:[
                 [
@@ -59,17 +59,13 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     {
                         "rowspan": 1,
                         "colspan": 1,
-                        "frame": "Bootstrap",
-                        "componentKey": "inputDom",
                     },
                     {
                         "rowspan": 1,
                         "colspan": 1,
-                        "frame": "Bootstrap",
-                        "componentKey": "inputDom",
                     },
                     {
-                        // "type":"act",
+                        "type":"act",
                         "rowspan": 3,
                         "colspan": 1,
                     }
@@ -78,28 +74,20 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     {
                         "rowspan": 1,
                         "colspan": 1,
-                        "frame": "Bootstrap",
-                        "componentKey": "inputDom",
                     },
                     {
                         "rowspan": 1,
                         "colspan": 1,
-                        "frame": "Bootstrap",
-                        "componentKey": "inputDom",
                     },
                 ],
                 [
                     {
                         "rowspan": 1,
                         "colspan": 1,
-                        "frame": "Bootstrap",
-                        "componentKey": "inputDom",
                     },
                     {
                         "rowspan": 1,
                         "colspan": 1,
-                        "frame": "Bootstrap",
-                        "componentKey": "inputDom",
                     },
                 ]
             ],//tbody信息
@@ -176,6 +164,560 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             authority:"checkbox",
         },
     }
+    /**
+     * 自带新增行逻辑
+     * @param tableId
+     * @param tableVal
+     * @param setValueFun
+     * @returns {boolean}
+     */
+    let ortumNewTableDom_addLine = function(tableId=undefined,tableVal=null,setValueFun=null){
+        let tableDom;
+        let rendPowerArr=[];
+        tableId && (tableDom = $("table[name="+ tableId +"]"));
+        !tableId && (tableDom = $(this).parents("table").eq(0));
+        if(!tableDom.length){
+            console.error("缺少table信息");
+            return false;
+        };
+        let tdInfoArr =tableDom.parents(".ortum_item").eq(0).prop("ortum-childrenArr-info");
+        let addlineTr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTr_info");
+        /*对应的行*/
+        let tbodyFirstTr = tableDom.find("tbody tr:nth-of-type(1)");
+        let maxRowspan = addlineTr.length || 1;
+        let tbodyTrLength = tableDom.find('tbody tr').length;
+        /*组号*/
+        let order = maxRowspan && (tbodyTrLength/maxRowspan);
+        function ortum_BootstraptableDom_addLine(arr,trDom){
+            arr.forEach(function(item){
+                let itemDom = item;
+                if(item.childrenType == "choose"){
+                    itemDom = item.chooseFun(null,order+1);
+                };
+                let nextHtml = $(itemDom.html);
+                let hide = false;
+                let read = false;
+                let required = false;
+                let verifyInfo = "";
+                let tdHide = false;
+                nextHtml.find("*[name]").each(function(index2,item2){
+                    let nameValArr = $(item2).attr("name") && $(item2).attr("name").split("_");
+                    if(nameValArr && nameValArr.length){
+                        /*********获取权限**********/
+                        if(tbodyFirstTr.length){
+                            let brotherDom = tbodyFirstTr.find("*[name="+ $(item2).attr("name") +"]").eq(0);
+                            brotherDom.parents(".ortum_item").eq(0).css("display") == "none" && (hide=true);
+                            brotherDom.parents("td").eq(0).css("display") == "none" && (tdHide=true);
+                            brotherDom.attr("disabled") && (read=true);
+                            brotherDom.attr("ortum-verify") && (verifyInfo=brotherDom.attr("ortum-verify"));
+                        };
+                        nameValArr[nameValArr.length - 1] = order+1;
+                    };
+                    $(item2).attr("name",nameValArr.join("_"));
+                });
+                $(trDom).find("ortum_children[data-order="+ itemDom.ortumChildren +"]").eq(0).replaceWith(nextHtml);
+                /*********渲染子集children*********/
+                if(itemDom.children && itemDom.children.length){
+                    ortum_BootstraptableDom_addLine(itemDom.children,nextHtml);
+                };
+                rendPowerArr.push({
+                    dom:nextHtml,
+                    name:nextHtml.find("*[name]").attr("name")
+                });
+                /*********设置权限**********/
+                if(hide){
+                    nextHtml.hide();
+                };
+                if(tdHide){
+                    nextHtml.parents("td").eq(0).hide();
+                };
+                if(read){
+                    nextHtml.find("*[name]").attr("disabled","disabled");
+                };
+                if(required){
+                    nextHtml.find("*[name]").attr("ortum-verify","required");
+                };
+                if(verifyInfo){
+                    nextHtml.attr("ortum_authority","verifyInfo");
+                };
+                /*********设置值**********/
+                tableVal && (typeof setValueFun == "function") && rendPowerArr.forEach(function(item){
+                    setValueFun(item.dom,item.name,tableVal);
+                });
+            });
+        };
+        let nextArrTr = [];
+        addlineTr.forEach(function(item,index){
+            let nextTr = $(item);
+            tbodyFirstTr = tableDom.find("tbody tr:nth-of-type("+ (index+1) +")");
+            ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
+            nextTr.find("td[ortum_td_type=order] span").text(order+1+index);
+            tableDom.find("tbody").eq(0).append(nextTr);
+            nextArrTr.push(nextTr);
+        });
+        return nextArrTr;
+    };
+
+    /**
+     * 自带删除行逻辑
+     * @param tableId
+     * @param order 删除的组号
+     * @param act
+     * @returns {boolean}
+     */
+    let ortumNewTableDom_delLine = function(tableId=undefined,group=false,act=false){
+        let tableDom;
+        tableId && (tableDom = $("table[id="+ tableId +"]"));
+        !tableId && (tableDom = $(this).parents("table").eq(0));
+        if(!tableDom.length){
+            console.error("缺少table信息");
+            return false;
+        };
+        let tbodyDom = tableDom.find("tbody").eq(0);
+        if(act){
+            let tbodyDom = $(this).parents("tbody").eq(0);
+            let trFather = $(this).parents("tr").eq(0);
+            let rowspan = $(this).parents("td").eq(0).attr("ortum-grouplength") || $(this).parents("td").eq(0).attr("rowspan") || 1;
+            $(trFather).nextAll("tr").each(function(index,item){
+                if(index < (rowspan-1)){
+                    return true;
+                };
+                $(this).find("*[name]").each(function(index2,item2){
+                    let name = $(item2).attr("name");
+                    let nameArr = name.split("_");
+
+                    let oldOrder = nameArr.pop();
+                    nameArr.push(--oldOrder);
+
+                    $(item2).attr("name",nameArr.join("_"));
+                });
+            });
+            $(trFather).nextAll("tr").each(function(index,item){
+                if(index < (rowspan-1)){
+                    $(this).remove();
+                    return true;
+                }else{
+                    return false;
+                }
+            });
+            $(this).parents("tr").eq(0).remove();
+            $(tbodyDom).find("td[ortum_td_type=order]").each(function(index,item){
+                $(item).find("span").eq(0).text(index+1);
+            });
+        }else if(/^[1-9]\d*$/.test(group)){
+            let delTr = tbodyDom.find("tr:nth-of-type("+ group +")");
+            let tbodyDom = $(delTr).parents("tbody").eq(0);
+            let rowspan = $(delTr).find("td").eq(0).attr("ortum-grouplength") || $(delTr).find("td").eq(0).attr("rowspan") || 1;
+            $(delTr).nextAll("tr").each(function(index,item){
+                if(index < (rowspan-1)){
+                    return true;
+                };
+                $(this).find("*[name]").each(function(index2,item2){
+                    let name = $(item2).attr("name");
+                    let nameArr = name.split("_");
+                    if(nameArr[0] === "table"){
+                        let oldOrder = nameArr.pop();
+                        nameArr.push(--oldOrder);
+                    };
+                    $(item2).attr("name",nameArr.join("_"));
+                });
+            });
+            $(delTr).nextAll("tr").each(function(index,item){
+                if(index < (rowspan-1)){
+                    $(this).remove();
+                    return true;
+                }else{
+                    return false;
+                }
+            });
+            $(this).parents("tr").eq(0).remove();
+            $(tbodyDom).find("td[ortum_td_type=order]").each(function(index,item){
+                $(item).find("span").eq(0).text(index+1);
+            });
+        };
+    };
+
+    /**
+     * table的td添加拖拽提示语
+     */
+    let newTableTdAddTip = function(dataOrder){
+        let tdWaitInsert = $(`
+            <div class="ortum_table_td_waitInsert" >
+                  <span>插入</span>              
+            </div>
+        `);
+        return tdWaitInsert;
+    }
+    /**
+     * 给td绑定拖拽事件
+     * @param ele
+     * @param item
+     */
+    let bindDropEventToBootstrapNewTable = function(ele,item){
+        $(ele).on('dragover.firstbind',function(e){
+            return false;
+        });
+        $(ele).on("dragenter.firstbind",function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
+            if(!Global.ortumNowDragObj)return false;
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
+
+            if(hasOrtumItem){
+                if(!$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_table") && !$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_newTable")){
+                    if(!$(this).find(".ortum_item").length){
+                        require("feature").ortumDragShadow(e,"enter",{That:this,addWay:"addClass"})
+                        return false;
+                    }
+                }
+            }else if(componentKey){
+                if(componentKey !== "tableDom" && componentKey !== "newTableDom"){//如果拖拽上來的是grid,则不进行创建
+                    if(!$(this).find(".ortum_item").length){
+                        require("feature").ortumDragShadow(e,"enter",{That:this,addWay:"addClass"})
+                        return false;
+                    }
+                }
+            }
+        });
+        $(ele).on('drop.firstbind',function(e){
+            require("feature").ortumDragShadow(e,"drop",{That:this})
+            if(!Global.ortumNowDragObj){
+                return false;
+            };
+            //获取要创建的组件key
+            let componentKey = $(Global.ortumNowDragObj).attr('data-key');
+            //拖拽的是绘制区的组件
+            let hasOrtumItem = $(Global.ortumNowDragObj).hasClass("ortum_item");
+            //已有组件替换
+            if(hasOrtumItem){
+                if(!$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_table") && !$(Global.ortumNowDragObj).hasClass("ortum_bootstrap_newTable")){
+                    if($(this).parents("tbody").length || $(this).parents("tfoot").length){
+                        if(!$(this).find(".ortum_item").length){
+                            sonOrtumItemNew($(this),Global.ortumNowDragObj ? $(Global.ortumNowDragObj) : $(Global.ortum_active_item));
+                            //把拖拽对象制空
+                            Global.ortumNowDragObj = null;
+                            return false;
+                        }
+                    }
+                }
+            }else{
+                if(!componentKey){//不存在对应key
+                    return false;
+                };
+                if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){
+                    Assist.dangerTip();
+                    return false;
+                }
+                if(componentKey == "tableDom" || componentKey == "newTableDom"){
+                    let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame);
+                    let parentsItemLength = $(this).parents(".ortum_item").length;
+                    if(parentsItemLength){
+                        $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+                    }else{
+                        $(this).before(createDom)
+                    }
+                    //把拖拽对象制空
+                    Global.ortumNowDragObj = null;
+                    return false;
+                }else{
+                    if(!$(this).find(".ortum_item").length){//没有插入
+                        sonOrtumItemNew($(this),null,{
+                            componentKey:componentKey,
+                            frame:Global.ortum_createDom_frame,
+                        });
+                        if($(this).parents("tbody").length || $(this).parents("tfoot").length){
+                            //把拖拽对象制空
+                            Global.ortumNowDragObj = null;
+                            return false;
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    /**
+     * table的新增tr
+     * @param tbodyDom
+     * @param tbodyInfo
+     * @param moreProps
+     * @param defaultGroup 是否默认为第一组
+     * @returns {[]}
+     */
+    let newTableTbodyAddTrLine = function(tbodyDom=null,tbodyInfo, moreProps = null,defaultGroup = false){
+        let trCssClass='';
+        let tdCssClass='';
+
+        let bindDropEvent = true;//绑定拖拽事件
+        let createJson = false;
+
+        let prevGroupNum = 0;//上一组的组号(默认没有上一组)
+        let maxRowspan = tbodyInfo.length;
+        if(tbodyDom){
+            let tbodyTrNum = 0;//tbody的tr数量
+            tbodyTrNum = $(tbodyDom).find("tr").length;
+            prevGroupNum = tbodyTrNum/maxRowspan;
+        }
+
+        //group 为组号，可能是一行为一组， 也可能是多行为一组;
+        defaultGroup && (prevGroupNum = 0);
+        let group = prevGroupNum +1;
+
+        if(Assist.getDetailType(moreProps) == "Object"){
+            moreProps.trCssClass !== undefined && moreProps.trCssClass !== null && (trCssClass = moreProps.trCssClass);
+            moreProps.tdCssClass !== undefined && moreProps.tdCssClass !== null && (tdCssClass = moreProps.tdCssClass);
+            moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null && (bindDropEvent = moreProps.bindDropEvent);
+            moreProps.createJson !== undefined && moreProps.createJson !== null && (createJson = moreProps.createJson);
+        };
+        let trInfoArr= [];
+
+        if(Assist.getDetailType(tbodyInfo) == "Array"){
+            tbodyInfo.forEach(function(itemArr,rowIndex){
+                let trInfo = $(`<tr ${trCssClass ? "class="+trCssClass : '' } ></tr>`);
+                trInfoArr.push(trInfo);
+                itemArr.forEach(function (item,cellIndex) {
+                    let colspan = 1;
+                    let rowspan = 1;
+                    (item.colspan && /(^[1-9]\d*$)/.test(item.colspan)) && (colspan = item.colspan);
+                    (item.rowspan && /(^[1-9]\d*$)/.test(item.rowspan)) && (rowspan = item.rowspan);
+                    let tdDom = $(`
+                    <td 
+                    colspan="${colspan}" 
+                    rowspan="${rowspan}" 
+                    class="${tdCssClass}">
+                    </td>
+                `);
+                    //绑定拖拽事件
+                    bindDropEvent && bindDropEventToBootstrapNewTable(tdDom,item);
+                    bindDropEvent && tdDom.prop("ortum_tableTd_item",item);
+                    bindDropEvent && tdDom.prop("ortum_tableTd_cellOrder",cellIndex);
+                    bindDropEvent && tdDom.prop("ortum_tableTd_rowOrder",rowIndex);
+
+                    let dataOrder = cellIndex + "-"+ rowIndex +"_"+ group;
+                    //子组件的name后缀
+                    tdDom.attr("ortum-name-suffix",dataOrder).attr("data-order",dataOrder);
+
+                    //编辑table状态，并且有对应的组件
+                    if(bindDropEvent && item.type){
+                        tdDom.append(newTableTdAddTip()).addClass("ortum_bootstrap_td_waitInsert").attr("ortum-grouplength",maxRowspan);
+                        switch (item.type) {
+                            case "order":
+                                let hasOrtumItem = null;
+                                if(item.uuid){
+                                    hasOrtumItem = $("*[ortum_uuid="+ item.uuid +"]").eq(0);
+                                }else{
+                                    let customUUID= Assist.getUUId();
+                                    hasOrtumItem = `<span class="ortum_item ortum_item_custom" ortum_uuid="${customUUID}">${group + (rowIndex*rowspan)}</span>`;
+                                    item.uuid = customUUID;
+                                };
+                                if(hasOrtumItem && hasOrtumItem.length && tdDom){
+                                    tdDom.append(hasOrtumItem).attr("ortum_td_type","order");
+                                };
+
+                                break;
+                            case "act":
+                                if(group == 1){//第一组
+                                    let hasOrtumItem = null;
+                                    if(item.uuid){
+                                        hasOrtumItem = $("*[ortum_uuid="+ item.uuid +"]").eq(0);
+                                    }else{
+                                        hasOrtumItem = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,{
+                                            "iconName":"icon-jiahao",
+                                            "nameSuffix":"_"+dataOrder,
+                                        });
+                                        item.uuid = $(hasOrtumItem).prop("ortum_component_properties").data.uuid;
+                                    };
+
+                                    if(hasOrtumItem && hasOrtumItem.length && tdDom){
+                                        tdDom.append(hasOrtumItem).attr("ortum_td_type","act");
+                                    };
+                                }else{
+                                    let hasOrtumItem = null;
+                                    if(item.uuid){
+                                        hasOrtumItem = $("*[ortum_uuid="+ item.uuid +"]").eq(0);
+                                    }else{
+                                        hasOrtumItem = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,{
+                                            "iconName":"icon-shanchu",
+                                            "nameSuffix":"_"+dataOrder,
+                                        });
+                                        item.uuid = $(hasOrtumItem).prop("ortum_component_properties").data.uuid;
+                                    }
+                                    if(hasOrtumItem && hasOrtumItem.length && tdDom){
+                                        tdDom.append(hasOrtumItem).attr("ortum_td_type","act");
+                                    }
+                                }
+                                break;
+                            default:
+                                console.error("type类型不正确")
+                                break;
+                        }
+                    }else if(bindDropEvent){
+                        tdDom.append(newTableTdAddTip()).addClass("ortum_bootstrap_td_waitInsert").attr("ortum-grouplength",maxRowspan);
+                        let hasOrtumItem = null;
+                        if(item.uuid){
+                            hasOrtumItem = $("*[ortum_uuid="+ item.uuid +"]").eq(0);
+                        }
+                        if(hasOrtumItem && hasOrtumItem.length){
+                            //绑定组件属性
+                            tdDom.append(hasOrtumItem)
+                        }
+                    }else if(!bindDropEvent && createJson){//创建js
+                        switch (item.type) {
+                            case "order":
+                                tdDom && (
+                                    tdDom.append(`
+                                        <ortum_children data-order="${dataOrder}"></ortum_children>
+                                    `).attr("ortum_td_type","order").attr("ortum-grouplength",maxRowspan)
+                                );
+                                break;
+                            case "act":
+                                tdDom && (
+                                    tdDom.append(`
+                                        <ortum_children data-order="${dataOrder}"></ortum_children>
+                                    `).attr("ortum_td_type","act").attr("ortum-grouplength",maxRowspan)
+                                );
+                                break;
+                            default:
+                                tdDom && (
+                                    tdDom.append(`
+                                        <ortum_children data-order="${dataOrder}"></ortum_children>
+                                    `).attr("ortum-grouplength",maxRowspan)
+                                );
+                                break;
+                        }
+                    }
+                    trInfo.append(tdDom);
+                })
+            });
+        };
+        return trInfoArr;
+    };
+    /**
+     * 功能：table的thead新增行
+     */
+    let newTableTheadAddTrLine = function(thInfo,moreProps=null){
+        let trCssClass='';
+        let thCssClass='';
+        if(Assist.getDetailType(moreProps) == "Object"){
+            (moreProps.trCssClass !== undefined && moreProps.trCssClass !== null) && (trCssClass = moreProps.trCssClass);
+            (moreProps.thCssClass !== undefined && moreProps.thCssClass !== null) && (thCssClass = moreProps.thCssClass);
+        };
+        let trInfoArr = [];
+        if(Assist.getDetailType(thInfo) == "Array"){
+            thInfo.forEach(function(itemArr,rowIndex){
+                let trInfo = $(`
+                    <tr
+                    ${trCssClass ? "class="+trCssClass : '' } 
+                    ></tr>
+                `);
+                trInfoArr.push(trInfo);
+                itemArr.forEach(function(item,cellIndex){
+                    let headHtml= "";
+                    let type = '';
+                    let colspan = 1;
+                    let rowspan = 1;
+                    (item.headHtml !== undefined && item.headHtml !== null) && (headHtml = item.headHtml);
+                    (item.type !== undefined && item.type !== null) && (type = item.type);
+                    (item.colspan && /(^[1-9]\d*$)/.test(item.colspan)) && (colspan = item.colspan);
+                    (item.rowspan && /(^[1-9]\d*$)/.test(item.rowspan)) && (rowspan = item.rowspan);
+
+                    //序号
+                    if(type == "order"){
+                        headHtml= "<span>序号</span>";
+                    }
+                    //操作
+                    if(type == "act"){
+                        headHtml= "<span>操作</span>";
+                    };
+
+                    $(trInfo).append(`
+                        <th
+                        colspan="${colspan}" 
+                        rowspan="${rowspan}" 
+                        ${thCssClass ? "class="+thCssClass : '' } 
+                        > ${headHtml} </th>
+                     `);
+                });
+            })
+        }
+        return trInfoArr;
+    };
+
+    /**
+     * 创建tfoot
+     * @param tbodyDom
+     * @param tdInfo
+     * @param moreProps
+     * @returns {[]}
+     */
+    let newTableTfootAddTrLine = function(tdInfo,moreProps = null){
+        let trCssClass = '';
+        let tdCssClass = '';
+
+        let bindDropEvent = true;//绑定拖拽事件
+        let createJson = false;
+
+        if(Assist.getDetailType(moreProps) == "Object"){
+            moreProps.trCssClass !== undefined && moreProps.trCssClass !== null && (trCssClass = moreProps.trCssClass);
+            moreProps.tdCssClass !== undefined && moreProps.tdCssClass !== null && (tdCssClass = moreProps.tdCssClass);
+            moreProps.bindDropEvent !== undefined && moreProps.bindDropEvent !== null && (bindDropEvent = moreProps.bindDropEvent);
+            moreProps.createJson !== undefined && moreProps.createJson !== null && (createJson = moreProps.createJson);
+        };
+
+        let trInfoArr = [];
+
+        if(Assist.getDetailType(tdInfo) == "Array"){
+            tdInfo.forEach(function(itemArr,rowIndex){
+                let trInfo = $(`<tr ${trCssClass ? "class="+trCssClass : '' } ></tr>`);
+                trInfoArr.push(trInfo);
+
+                itemArr.forEach(function (item,cellIndex) {
+                    let headColspan = 1;
+                    (item.headColspan && /(^[1-9]\d*$)/.test(item.headColspan)) && (headColspan = item.headColspan);
+
+                    let tdDom = $(`
+                        <td 
+                        colspan="${item.colspan}" 
+                        rowspan="${item.rowspan}"
+                        class="${tdCssClass}">
+                        </td>
+                    `);
+                    //绑定拖拽事件
+                    bindDropEvent && bindDropEventToBootstrapNewTable(tdDom,item);
+                    bindDropEvent && tdDom.prop("ortum_tableTd_item",item);
+                    bindDropEvent && tdDom.prop("ortum_tableTd_cellOrder",cellIndex);
+                    bindDropEvent && tdDom.prop("ortum_tableTd_rowOrder",rowIndex);
+
+                    let dataOrder = "tfoot-" + cellIndex + "-" + rowIndex;
+                    //子组件的name后缀
+                    tdDom.attr("ortum-name-suffix",dataOrder).attr("data-order",dataOrder);
+
+                    //编辑table状态，并且有对应的组件
+                    if(bindDropEvent){
+                        tdDom.append(newTableTdAddTip()).addClass("ortum_bootstrap_td_waitInsert");
+                        let hasOrtumItem = null;
+                        if(item.uuid){
+                            hasOrtumItem = $("*[ortum_uuid="+ item.uuid +"]").eq(0);
+                        }
+                        if(hasOrtumItem && hasOrtumItem.length && tdDom){
+                            //绑定组件属性
+                            item.uuid = $(hasOrtumItem).prop("ortum_component_properties").data.uuid;
+                            tdDom.append(hasOrtumItem)
+                        }
+                    }else if(!bindDropEvent && createJson){//创建js
+                        tdDom && (
+                            tdDom.append(`
+                                <ortum_children data-order="${dataOrder}"></ortum_children>
+                            `)
+                        );
+                    }
+                    trInfo.append(tdDom);
+                })
+            });
+        }
+        return trInfoArr;
+    };
 
     /**
      * 功能：创建bootstrap的input
@@ -192,7 +734,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
      * @param {*} moreProps.ortumItemDom 编辑器中item对象
      * @param {*} moreProps.nameSuffix 名称后缀
      */
-    let TableDom = function(parentDom,moreProps=null){
+    let NewTableDom = function(parentDom,moreProps=null){
         let customProps = null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
@@ -218,9 +760,9 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
 
         let outerDom=$(
             `
-            <div class="form-group ortum_item ortum_bootstrap_table" 
+            <div class="form-group ortum_item ortum_bootstrap_newTable" 
                 data-frame="Bootstrap" 
-                data-componentKey="tableDom"
+                data-componentKey="newTableDom"
             > 
             </div>
             `
@@ -238,13 +780,14 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
 
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('table'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('newTable'));
         let nameArr = ortum_component_properties.data.name.split("_");
         if(nameSuffix && createJson){
             ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
         }else{
             ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
         }
+
 
         let tableDom = $(`
             <table
@@ -278,10 +821,10 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         };
         Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tdMoreProps,moreProps);
         //将tr的所有td信息存放在tbody上
-        !createJson && $(outerDom).prop("ortum-childrenArr-info",ortum_component_properties.data.tbodyColumnsArr)
+        // !createJson && $(outerDom).prop("ortum-childrenArr-info",ortum_component_properties.data.tbodyColumnsArr)
 
-        //创建tbody的tr
-        let tbodyTrObj =BootstrapAsider.tableTbodyAddTrLine(tbodyDom,ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
+        //创建tbody的tr,为一组
+        let tbodyTrObj =newTableTbodyAddTrLine(tbodyDom,ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
         tbodyTrObj.forEach(function(item){
             $(tbodyDom).append(item);
         })
@@ -297,7 +840,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         if(!ortum_component_properties.data.showThead){
             theadDom.addClass("ortum_display_NONE")
         }
-        let theadTrObj =BootstrapAsider.tableTheadAddTrLine(ortum_component_properties.data.theadColumnsArr,
+        let theadTrObj =newTableTheadAddTrLine(ortum_component_properties.data.theadColumnsArr,
             {
                 trCssClass:ortum_component_properties.data.theadTrCssClass,
                 thCssClass:ortum_component_properties.data.thCssClass,
@@ -321,7 +864,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             tableName:ortum_component_properties.data.name,
         };
         Assist.getDetailType(moreProps) == "Object" &&  Object.assign(tfootTdMoreProps,moreProps);
-        let tfootTrObj =BootstrapAsider.tableTfootAddTrLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
+        let tfootTrObj =newTableTfootAddTrLine(ortum_component_properties.data.tfootColumnsArr,tfootTdMoreProps);
 
         tfootTrObj.forEach(function(item){
             $(tfootDom).append(item);
@@ -334,7 +877,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         outerDom.append(tableDom);
 
         //dom绑定property
-        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','table']);
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','newTable']);
 
         //script字符串
         let scriptStr = '';
@@ -342,108 +885,44 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         let addlineTrInfo = [];
         //创建children
         let children = [];
+
         if(createJson){
             //创建tbody的tr模板
-            let addlineTrInfoHTMLArr = BootstrapAsider.tableTbodyAddTrLine(null,ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
+            let addlineTrInfoHTMLArr = newTableTbodyAddTrLine(null,ortum_component_properties.data.tbodyColumnsArr,tdMoreProps);
             addlineTrInfoHTMLArr.forEach(function(item){
                 addlineTrInfo.push(item[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," "))
             });
+            //处理theadColumnsArr  tbodyColumnsArr  tfootColumnsArr中ortum_uuid对应的ortum-item已经不存在问题
+            function actItemUUid(arr){
+                if(Array.isArray(arr)){
+                    arr.forEach(function (item) {
+                        if(Array.isArray(item)){
+                            actItemUUid(item)
+                        }else if(item && item.uuid){
+                            let uuidObj = $("*[ortum_uuid="+ item.uuid +"]").eq(0);
+                            if(!uuidObj.length){
+                                item.uuid = undefined;
+                            }
+                        }
+                    })
+                }else if(arr && arr.uuid){
+                    let uuidObj = $("*[ortum_uuid="+ arr.uuid +"]").eq(0);
+                    if(!uuidObj.length){
+                        arr.uuid = undefined;
+                    }
+                }
+            }
+            actItemUUid(ortum_component_properties.data.tbodyColumnsArr);
+            actItemUUid(ortum_component_properties.data.theadColumnsArr);
+            actItemUUid(ortum_component_properties.data.tfootColumnsArr);
+
 
             //新增行的函数
             //可以根据table的name属性新增；也可以根据this新增，this必须是tbody下的tr的子元素，
             scriptStr +=`
-                function ortumTableDom_addLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",tableVal=null,setValueFun=null){
+                function ortumNewTableDom_addLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",tableVal=null,setValueFun=null){
                     ${typeof ortum_component_properties.data.onAddlineBefore == 'function' ? '!'+ortum_component_properties.data.onAddlineBefore.toString()+'(tableName);' : ''}
-                
-                    let tableDom;
-                    let rendPowerArr=[];
-                    tableName && (tableDom = $("table[name="+ tableName +"]"));
-                    !tableName && (tableDom = $(this).parents("table").eq(0));
-                    if(!tableDom.length){
-                        console.error("缺少table信息");
-                        return false;
-                    };
-                    let tdInfoArr =tableDom.parents(".ortum_item").eq(0).prop("ortum-childrenArr-info");
-                    let addlineTr =tableDom.parents(".ortum_item").eq(0).prop("ortum_tbodyTr_info");
-                    
-                    /*对应的行*/
-                    let tbodyFirstTr = tableDom.find("tbody tr:nth-of-type(1)");
-                 
-                    let maxRowspan = addlineTr.length || 1;
-                    let tbodyTrLength = tableDom.find('tbody tr').length;
-                    /*组号*/
-                    let order = maxRowspan && (tbodyTrLength/maxRowspan);
-                    
-                    function ortum_BootstraptableDom_addLine(arr,trDom){
-                        arr.forEach(function(item){
-                            let itemDom = item;
-                            if(item.childrenType == "choose"){
-                                itemDom = item.chooseFun(null,order+1);
-                            };
-                            let nextHtml = $(itemDom.html);
-                            
-                            let hide = false;
-                            let read = false;
-                            let required = false;
-                            let verifyInfo = "";
-                            let tdHide = false;
-                            nextHtml.find("*[name]").each(function(index2,item2){
-                                let nameValArr = $(item2).attr("name") && $(item2).attr("name").split("_");
-                                if(nameValArr && nameValArr.length && nameValArr[0] == "table"){
-                                    /*********获取权限**********/
-                                    if(tbodyFirstTr.length){
-                                        let brotherDom = tbodyFirstTr.find("*[name="+ $(item2).attr("name") +"]").eq(0);
-                                        brotherDom.parents(".ortum_item").eq(0).css("display") == "none" && (hide=true);
-                                        brotherDom.parents("td").eq(0).css("display") == "none" && (tdHide=true);
-                                        brotherDom.attr("disabled") && (read=true);
-                                        brotherDom.attr("ortum-verify") && (verifyInfo=brotherDom.attr("ortum-verify"));
-                                    };
-                                    nameValArr[nameValArr.length - 1] = order+1;
-                                };
-                                $(item2).attr("name",nameValArr.join("_"));
-                            });
-                            if(itemDom.children && itemDom.children.length){
-                                ortum_BootstraptableDom_addLine(itemDom.children,nextHtml);
-                            };
-                            $(trDom).find("ortum_children[data-order="+ itemDom.ortumChildren +"]").eq(0).replaceWith(nextHtml);
-                            rendPowerArr.push({
-                                dom:nextHtml,
-                                name:nextHtml.find("*[name]").attr("name")
-                            });
-                            /*********设置权限**********/
-                            if(hide){
-                                nextHtml.hide();
-                            };
-                            if(tdHide){
-                                nextHtml.parents("td").eq(0).hide();
-                            };
-                            if(read){
-                                nextHtml.find("*[name]").attr("disabled","disabled");
-                            };
-                            if(required){
-                                nextHtml.find("*[name]").attr("ortum-verify","required");
-                            };
-                            if(verifyInfo){
-                                nextHtml.attr("ortum_authority","verifyInfo");
-                            };
-                            /*********设置值**********/
-                            tableVal && (typeof setValueFun == "function") && rendPowerArr.forEach(function(item){
-                                setValueFun(item.dom,item.name,tableVal);
-                            });
-                        });
-                    };
-                    let nextArrTr = [];
-                    addlineTr.forEach(function(item,index){
-                        let nextTr = $(item);
-                        tbodyFirstTr = tableDom.find("tbody tr:nth-of-type("+ (index+1) +")");
-                        ortum_BootstraptableDom_addLine(tdInfoArr,nextTr);
-                        nextTr.find("td[data-type=order] span").text(order+1+index);
-                        tableDom.find("tbody").eq(0).append(nextTr);
-                        nextArrTr.push(nextTr);
-                    });
-                    if(nextArrTr.length == 1){
-                        nextArrTr = nextArrTr[0];
-                    };
+                    let nextArrTr = ${'!'+ ortumNewTableDom_addLine.toString()+'.call(this,tableName,tableVal,setValueFun);'}            
                     ${typeof ortum_component_properties.data.onAddlineAfter == 'function' ? '!'+ortum_component_properties.data.onAddlineAfter.toString()+'(tableName,nextArrTr);' : ''}
                     return false;
                 };
@@ -451,95 +930,25 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             //删除行的函数
             //可以根据table的name属性删除；也可以根据this删除，this必须是tbody下的tr的子元素，
             //根据table的name属性删除，必须提供order，表示删除第几行,如果是删除一组为单位的行，提供一组的第一行行号
-            scriptStr+=`
-                function ortumTableDom_delLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",order=false,act=false){
+            scriptStr+=` 
+                function ortumNewTableDom_delLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",order=false,act=false){
                     ${typeof ortum_component_properties.data.onDellineBefore == 'function' ? '!'+ortum_component_properties.data.onDellineBefore.toString()+'(tableName);' : ''}
-                    let tableDom;
-                    tableName && (tableDom = $("table[name="+ tableName +"]"));
-                    !tableName && (tableDom = $(this).parents("table").eq(0));
-                    if(!tableDom.length){
-                        console.error("缺少table信息");
-                        return false;
-                    };
-                    let tbodyDom = tableDom.find("tbody").eq(0);
-                    if(act){
-                        let tbodyDom = $(this).parents("tbody").eq(0);
-                        let trFather = $(this).parents("tr").eq(0);
-                        let rowspan = $(this).parents("td").eq(0).attr("ortum-grouplength") || $(this).parents("td").eq(0).attr("rowspan") || 1;
-                        $(trFather).nextAll("tr").each(function(index,item){
-                            if(index < (rowspan-1)){
-                                return true;
-                            };
-                            $(this).find("*[name]").each(function(index2,item2){
-                                let name = $(item2).attr("name");
-                                let nameArr = name.split("_");
-                                if(nameArr[0] === "table"){
-                                    let oldOrder = nameArr.pop();
-                                    nameArr.push(--oldOrder);
-                                };
-                                $(item2).attr("name",nameArr.join("_"));
-                            });
-                        });
-                        $(trFather).nextAll("tr").each(function(index,item){
-                            if(index < (rowspan-1)){
-                                $(this).remove();
-                                return true;
-                            }else{
-                                return false;
-                            }
-                        });
-                        $(this).parents("tr").eq(0).remove();
-                        $(tbodyDom).find("td[data-type=order]").each(function(index,item){
-                            $(item).find("span").eq(0).text(index+1);
-                        });
-                    }else if(/^[1-9]\d*$/.test(order)){
-                        let delTr = tbodyDom.find("tr:nth-of-type("+ order +")");
-                        let tbodyDom = $(delTr).parents("tbody").eq(0);
-                        let rowspan = $(delTr).find("td").eq(0).attr("ortum-grouplength") || $(delTr).find("td").eq(0).attr("rowspan") || 1;
-                        $(delTr).nextAll("tr").each(function(index,item){
-                            if(index < (rowspan-1)){
-                                return true;
-                            };
-                            $(this).find("*[name]").each(function(index2,item2){
-                                let name = $(item2).attr("name");
-                                let nameArr = name.split("_");
-                                if(nameArr[0] === "table"){
-                                    let oldOrder = nameArr.pop();
-                                    nameArr.push(--oldOrder);
-                                };
-                                $(item2).attr("name",nameArr.join("_"));
-                            });
-                        });
-                        $(delTr).nextAll("tr").each(function(index,item){
-                            if(index < (rowspan-1)){
-                                $(this).remove();
-                                return true;
-                            }else{
-                                return false;
-                            }
-                        });
-                        $(this).parents("tr").eq(0).remove();
-                        $(tbodyDom).find("td[data-type=order]").each(function(index,item){
-                            $(item).find("span").eq(0).text(index+1);
-                        });
-                    };
+                    ${'!'+ ortumNewTableDom_delLine.toString()+'.call(this,tableName,order,act);'}    
                     ${typeof ortum_component_properties.data.onDellineAfter == 'function' ? '!'+ortum_component_properties.data.onDellineAfter.toString()+'(tableName);' : ''}
                 };
             `;
             //点击和删除的按钮
             scriptStr+=`
-                $("table[name=${ortum_component_properties.data.name}]").on("click.addline","td[data-type=act] .icon-jiahao",function(){
-                    ortumTableDom_addLine_${ortum_component_properties.data.name}();
+                $("table[name=${ortum_component_properties.data.name}]").on("click.addline","td[ortum_td_type=act] .icon-jiahao",function(){
+                    ortumNewTableDom_addLine_${ortum_component_properties.data.name}();
                 });
-                $("table[name=${ortum_component_properties.data.name}]").on("click.delete","td[data-type=act] .icon-shanchu",function(){
-                    ortumTableDom_delLine_${ortum_component_properties.data.name}.call(this,false,false,true);
+                $("table[name=${ortum_component_properties.data.name}]").on("click.delete","td[ortum_td_type=act] .icon-shanchu",function(){
+                    ortumNewTableDom_delLine_${ortum_component_properties.data.name}.call(this,false,false,true);
                 });
             `;
 
-
             //创建tfoot的td的json信息
             ortumItemDom && $(ortumItemDom).find("tfoot").eq(0).find(".ortum_item").each(function(domIndex,domItem){
-
                 if($(domItem).parents(".ortum_item")[0] !== $(ortumItemDom)[0]){
                     return true;
                 };
@@ -556,7 +965,14 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                 //创建组件的属性
                 let createDomProp = Object.assign({},moreProps);
                 createDomProp.customProps = $(domItem).prop('ortum_component_properties');
-                createDomProp.ortumChildren = "tfoot"+colIndex+"-"+rowIndex;//插入第几个ortum_children
+                createDomProp.ortumChildren = "tfoot-"+colIndex+"-"+rowIndex;//插入第几个ortum_children
+                let nameSuffixDom = $(domItem).parents("*[ortum-name-suffix]").eq(0);
+                let nameSuffix;
+                if(nameSuffixDom.length){
+                    nameSuffix = nameSuffixDom.attr("ortum-name-suffix");
+                    nameSuffix = "_"+nameSuffix;
+                };
+                createDomProp.nameSuffix = nameSuffix;
                 createDomProp.HasProperties = HasProperties;
                 createDomProp.ortumItemDom = $(domItem);
                 let comDom = require("createDom")[Settings.menuListDataJSON[componentKey].createFn](null,frame,createDomProp);
@@ -570,7 +986,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     if($(sonItem).parents(".ortum_item")[0] !== $(domItem)[0]){
                         return true;
                     };
-
                     let ortum_component_type =  $(domItem).prop("ortum_component_type");
                     //首字母大写
                     let s = ortum_component_type[1].slice(0,1).toUpperCase();
@@ -599,7 +1014,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                 let rowIndex = $(domItem).parents("tr").eq(0).index();//从0开始
                 let tdParent = $(domItem).parents("td").eq(0);
                 let colIndex = tdParent.index();//从0开始
-                let tdType = tdParent.attr("data-type");
+                let tdType = tdParent.attr("ortum_td_type");
                 let comDom;
 
                 if(!ortum_component_properties.data.tbodyColumnsArr[rowIndex] || !ortum_component_properties.data.tbodyColumnsArr[rowIndex][colIndex]){
@@ -610,14 +1025,22 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                 let createDomProp = Object.assign({},moreProps);
                 createDomProp.customProps = $(domItem).prop('ortum_component_properties');
                 createDomProp.HasProperties = HasProperties;
-                createDomProp.customName = ortum_component_properties.data.name+"_"+colIndex+"-"+rowIndex  + "_" + 1;//1代表第一行
                 createDomProp.ortumItemDom = $(domItem);
 
+                let ortumChildren = colIndex+"-"+rowIndex + "_" + 1;//插入第几个ortum_children
+                createDomProp.ortumChildren = ortumChildren;//插入第几个ortum_children
+                let nameSuffixDom = $(domItem).parents("*[ortum-name-suffix]").eq(0);
+                let nameSuffix;
+                if(nameSuffixDom.length){
+                    nameSuffix = nameSuffixDom.attr("ortum-name-suffix");
+                    nameSuffix = "_"+nameSuffix;
+                };
+                createDomProp.nameSuffix = nameSuffix;
                 switch (tdType){
                     case "order":
                         comDom ={
                             "html":`<span class="ortum_item ortum_item_custom">1</span>`,
-                            "ortumChildren":colIndex+"-"+rowIndex,//插入第几个ortum_children
+                            "ortumChildren":ortumChildren,
                         };
                         children.push(Object.assign({
                             "frame":null,
@@ -626,7 +1049,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         },comDom));
                         break;
                     case "act":
-                        createDomProp.ortumChildren= colIndex+"-"+rowIndex;//插入第几个ortum_children
                         //新增
                         let addComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
                             "iconName":"icon-jiahao",
@@ -634,7 +1056,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         //删除
                         let delComDom = require('createDom')[Settings.menuListDataJSON["iconButtonDom"].createFn](null,Global.ortum_createDom_frame,Object.assign({
                             "iconName":"icon-shanchu",
-                        },createDomProp));
+                        },Object.assign({},createDomProp)));
                         comDom = {
                             "childrenType":"choose",
                             "chooseFun":function (parents,sureOrder=false) {
@@ -670,7 +1092,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                         break;
                     default:
                         if(frame && componentKey){
-                            createDomProp.ortumChildren=colIndex+"-"+rowIndex;//插入第几个ortum_children
                             comDom =require("createDom")[Settings.menuListDataJSON[componentKey].createFn](null,frame,createDomProp);
                             children.push(Object.assign({
                                 "frame":frame,
@@ -691,9 +1112,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                             if(require(ortum_component_type[0] + s + h).getOrtumChildrenOrder){
                                 ortumChildrenOrder = require(ortum_component_type[0] + s + h).getOrtumChildrenOrder($(domItem),$(sonItem));
                             };
-
-                            // let ortumChildrenOrder = $(sonItem).parent().attr("data-order");
-                            // !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = sonIndex);
 
                             require("feature").getFormContentJson("dom",{
                                 "dom":$(sonItem),
@@ -986,19 +1404,19 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             let editTfootColumnArr = eval("tfootColumns");
 
             //绑定属性先
-            $(globalComponent).prop("ortum-childrenArr-info",editTbodyColumnArr);
+            // $(globalComponent).prop("ortum-childrenArr-info",editTbodyColumnArr);
 
-            let tbodyTrObj =BootstrapAsider.tableTbodyAddTrLine(tbodyDom,editTbodyColumnArr,{
+            let tbodyTrObj =newTableTbodyAddTrLine(tbodyDom,editTbodyColumnArr,{
                 trCssClass:evenProperties.data.tbodyTrCssClass,
                 tdCssClass:evenProperties.data.tdCssClass,
                 tableName:evenProperties.data.name,
-            },settings="againEdit");
+            },true);
             $(tbodyDom).empty();//tbody 必须放在此处清空
             tbodyTrObj.forEach(function(item){
                 $(tbodyDom).append(item);
             });
 
-            let theadTrObj =BootstrapAsider.tableTheadAddTrLine(editTheadColumnArr,
+            let theadTrObj =newTableTheadAddTrLine(editTheadColumnArr,
                 {
                     trCssClass:evenProperties.data.theadTrCssClass,
                     thCssClass:evenProperties.data.thCssClass,
@@ -1006,9 +1424,9 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             $(theadDom).empty();//thead 必须放在此处清空
             theadTrObj.forEach(function(item){
                 $(theadDom).append(item);
-            })
+            });
 
-            let tfootTrObj =BootstrapAsider.tableTfootAddTrLine(editTfootColumnArr,
+            let tfootTrObj =newTableTfootAddTrLine(editTfootColumnArr,
                 {
                     trCssClass:evenProperties.data.tfootTrCssClass,
                     tdCssClass:evenProperties.data.tfootTdCssClass,
@@ -1021,7 +1439,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             evenProperties.data.tfootColumnsArr = editTfootColumnArr;
             evenProperties.data.tbodyColumnsArr = editTbodyColumnArr;
             evenProperties.data.theadColumnsArr = editTheadColumnArr;
-
         }catch (e) {
             console.error(e);
             console.error("编辑table的column信息错误");
@@ -1054,7 +1471,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     let pushItem = {};
                     for(let key in item){
                         if(item.hasOwnProperty(key)){
-                            key !== "customProps" && (pushItem[key] = item[key]);
+                            pushItem[key] = item[key]
                         }
                     };
                     pushArr.push(pushItem);
@@ -1069,7 +1486,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     let pushItem = {};
                     for(let key in item){
                         if(item.hasOwnProperty(key)){
-                            key !== "customProps" && (pushItem[key] = item[key]);
+                            pushItem[key] = item[key]
                         }
                     };
                     pushArr.push(pushItem);
@@ -1084,14 +1501,13 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
                     let pushItem = {};
                     for(let key in item){
                         if(item.hasOwnProperty(key)){
-                            key !== "customProps" && (pushItem[key] = item[key]);
+                            pushItem[key] = item[key]
                         }
                     };
                     pushArr.push(pushItem);
                 })
                 tfootArr.push(pushArr)
             });
-
             //格式化
             let theadArrStr = js_beautify(JSON.stringify(theadArr),2);
             let tbodyArrStr = js_beautify(JSON.stringify(tbodyArr),2);
@@ -1100,7 +1516,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             codeObj.setValue(`//编辑thead的列信息\nvar theadColumns = ${theadArrStr};\n//编辑tbody的列信息\nvar tbodyColumns = ${tbodyArrStr};\n//编辑tfoot的列信息\nvar tfootColumns = ${tfootArrStr};
                 `)
         }
-
         $('#ortum_top_dialog_xl').modal({
             "backdrop":"static",
             "keyboard":false,
@@ -1112,7 +1527,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         });
         return false;
     }
-
     /**
      * 功能：td中的组件被替换后
      */
@@ -1121,7 +1535,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             Assist.dangerTip("缺少td节点");
             return false;
         }
-        let ItemProperties =replaceItem ? $(replaceItem).prop("ortum_component_properties") : null;
+        // let ItemProperties =replaceItem ? $(replaceItem).prop("ortum_component_properties") : null;
         let componentKey = replaceItem ? $(replaceItem).attr("data-componentKey") : otherParems.componentKey;
         let frame = replaceItem ? $(replaceItem).attr("data-frame") : otherParems.frame;
         let item = tdDom.prop("ortum_tableTd_item");
@@ -1131,65 +1545,60 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             Assist.dangerTip("缺少构造属性");
             return false;
         }
-
-        if(componentKey == "tableDom"){
+        if(componentKey == "tableDom" || componentKey == "newTableDom"){
             Assist.dangerTip("插入或替换对象咱不支持table");
             return false;
         }
 
-        // cellIndex  第几列，从0开始
-        // rowIndex 表示整个table中的tr行数，从thead算起，从0开始计数
-        // let cellIndex = tdDom[0].cellIndex;
-        // let rowIndex = $(tdDom).parents("tr")[0].rowIndex;
-
-
-        let cellOrder = $(tdDom).prop("ortum_tableTd_cellOrder");
-        let rowOrder = $(tdDom).prop("ortum_tableTd_rowOrder");
-
-        let rowIndex = (rowOrder*1)+1;//1为第一行
-
         if(tdDom.parents("tbody").length){
-            let customName = tdDom.parents("table").eq(0).attr("name")+"_" + cellOrder + "-"+ rowOrder +"_" + rowIndex;
-            let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
-                customName:customName,
-                customProps:ItemProperties,
-            });
-            $(tdDom).html(createDom);
+            // let nameSuffix = "_" + cellOrder + "-"+ rowOrder +"_" + rowIndex;
+            let createDom = null;
+            if($(replaceItem).length){
+                createDom = $(replaceItem).eq(0);
+            }else{
+                createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,frame,{});
+            }
+            $(tdDom).append(createDom);
             //将绑定的组件属性，绑定到td上
-            item.customProps = $(createDom).prop("ortum_component_properties");
             item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
-            item.frame =Global.ortum_createDom_frame;
-            item.componentKey =componentKey;
         }else if(tdDom.parents("tfoot").length){
-            let customName = tdDom.parents("table").eq(0).attr("name")+"_" + "tfoot" + "_" + cellOrder+"-"+rowOrder;
-            let createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,Global.ortum_createDom_frame,{
-                customName:customName,
-                customProps:ItemProperties,
-            });
-            tdDom.html(createDom);
+            let createDom = null;
+            if($(replaceItem).length){
+                createDom = $(replaceItem).eq(0);
+            }else{
+                createDom = require('createDom')[Settings.menuListDataJSON[componentKey].createFn](null,frame,{});
+            }
+            tdDom.append(createDom);
             //将绑定的组件属性，绑定到td上
-            item.customProps = $(createDom).prop("ortum_component_properties");
             item.uuid = $(createDom).prop("ortum_component_properties").data.uuid;
-            item.frame =Global.ortum_createDom_frame;
-            item.componentKey =componentKey;
         }
     };
     /**
      * 功能：td中子组件被删除后
      */
     let sonOrtumItemDelete = function(tdDom){
-        $(tdDom).append(require('BootstrapAsider').tableTdAddTip())//增加提示语
+        // let cellOrder = $(tdDom).prop("ortum_tableTd_cellOrder");
+        // let rowOrder = $(tdDom).prop("ortum_tableTd_rowOrder");
+        //
+        // let isTbody = $(tdDom).parents("tr").eq(0).parent("tbody").eq(0);
+        // let isTfoot = $(tdDom).parents("tr").eq(0).parent("tfoot").eq(0);
+        // let dataOrder = undefined;
+
+        // if(isTbody){
+        //     dataOrder = cellOrder + "-"+ rowOrder +"_"+ 1;
+        // }else if(isTfoot){
+        //     dataOrder = "tfoot-"+cellOrder + "-"+ rowOrder;
+        // }
+        // dataOrder && $(tdDom).append(newTableTdAddTip())//增加提示语
+
         let tdItem = $(tdDom).prop("ortum_tableTd_item");
         //去除item的组件属性
-        delete tdItem.frame;
-        delete tdItem.componentKey;
         delete tdItem.type;
-        delete tdItem.customProps;
         delete tdItem.uuid;
     };
 
     return {
-        TableDom,
+        NewTableDom,
 
         inputSetProperties,
         blurSetProperties,
@@ -1207,7 +1616,5 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
 
         sonOrtumItemNew,
         sonOrtumItemDelete,
-
-
     }
 })

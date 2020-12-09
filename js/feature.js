@@ -13,6 +13,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         let formComponents = $(".ortum_components[data-type=form]").eq(0);
         let layoutComponents = $(".ortum_components[data-type=layout]").eq(0);
         let decorateComponents = $(".ortum_components[data-type=decorate]").eq(0);
+        let superComponents = $(".ortum_components[data-type=super]").eq(0);
 
         // let ortumComponents = document.createElement("div");
         // ortumComponents.className = 'ortum_components';
@@ -31,6 +32,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         let layoutFragment = document.createDocumentFragment();
         let formFragment = document.createDocumentFragment();
         let decorateFragment = document.createDocumentFragment();
+        let superFragment = document.createDocumentFragment();
         Settings.menuListsData.forEach(element => {
             let item =createDragComponents(element);
             //此处的dom节点要做存储处理
@@ -47,11 +49,15 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             if(element.sort == "layout"){
                 layoutFragment.appendChild(item)
             };
+            if(element.sort == "super"){
+                superFragment.appendChild(item)
+            };
             // fragment.appendChild(item)
         });
         formComponents.append(formFragment);
         layoutComponents.append(layoutFragment);
         decorateComponents.append(decorateFragment);
+        superComponents.append(superFragment)
 
         // ortumComponents.appendChild(fragment);
         // $(ortumLeft).append(ortumComponents)
@@ -504,10 +510,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         if(!Array.isArray(prevArrJSON))return false;
         prevArrJSON.forEach(function (item) {
             let domItem = item;
-            /*if(item.childrenType == "choose"){
+            //有选择性的组件
+            if(item.childrenType == "choose"){
                 (typeof item.chooseFun !=="function") && (item.chooseFun = Function('return ' + item.chooseFun)());
                 domItem = item.chooseFun(parentDom);
-            };*/
+            };
             let frame = domItem.frame;
             let componentKey = domItem.componentKey;
             let component_properties = require("assist").jsonParase(domItem.componentProperties);
@@ -520,7 +527,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             }else if(domItem.html){
                 appendDom= domItem.html;
             }else{
-                console.error("缺少渲染节点");
+                console.log(item,"缺少渲染节点");
             }
 
             switch (way) {
@@ -528,15 +535,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     $(parentDom).append(appendDom);
                     break;
                 case "replace":
-                    if(parentDom.find("*[data-children]").length && /[\d]+$/.test(domItem.ortumChildren)){
-                        parentDom.find("*[data-children="+ domItem.ortumChildren +"]").eq(0).html(appendDom);
-                    }else if(parentDom.find("*[data-children]").length){
-                        parentDom.find("*[data-children]").eq(0).html(appendDom);
+                    if(parentDom.find("*[data-order]").length && domItem.ortumChildren){
+                        parentDom.find("*[data-order="+ domItem.ortumChildren +"]").eq(0).append(appendDom);
+                    }else if(parentDom.find("*[data-order]").length){
+                        parentDom.find("*[data-order]").eq(0).append(appendDom);
                     };
                     break;
             };
 
-            //如果是bootstrap的grid，不处理其children
             if(frame == "Bootstrap" && componentKey=="tableDom"){
                 //return，break会终止for of循环
                 //forEach的return实现continue的效果
@@ -709,9 +715,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             }else{
 
             }
-
         })
-
     }
 
     /**
@@ -749,6 +753,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     let frame= $(item).attr("data-frame");
                     let componentKey = $(item).attr("data-componentKey");
 
+                    //寻找name后缀
+                    let nameSuffixDom = $(item).parents("*[ortum-name-suffix]").eq(0);
+                    let nameSuffix = undefined;
+                    if(nameSuffixDom.length){
+                        nameSuffix = nameSuffixDom.attr("ortum-name-suffix");
+                        nameSuffix = "_" + nameSuffix;
+                    };
+
                     let comDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                         customProps:$(item).prop('ortum_component_properties'),
                         ortumItemDom:$(item),
@@ -757,6 +769,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                         bindDropEvent:false,//绑定拖拽事件
                         HasProperties:HasProperties,//保存组件属性
                         ortumChildren:ortumChildren,
+                        nameSuffix:nameSuffix,//name后缀
                     });
                     parentsJson.push(Object.assign({
                         "frame":frame,
@@ -765,7 +778,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     },comDom));
 
                     //如果是Bootstrap_tableDom 不在向下寻找ortum_item;
-                    if(frame == "Bootstrap" && componentKey == "tableDom"){
+                    if(frame == "Bootstrap" && (componentKey == "tableDom" || componentKey == "newTableDom")){
                         return true;
                     };
                     let parentsJsonLength = parentsJson.length;
@@ -774,8 +787,15 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                             return true;
                         };
 
-                        let ortumChildrenOrder = $(item2).parent().attr("data-children");
-                        !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
+                        let ortum_component_type =  $(item).prop("ortum_component_type");
+                        //首字母大写
+                        let s = ortum_component_type[1].slice(0,1).toUpperCase();
+                        let h = ortum_component_type[1].slice(1);
+                        let ortumChildrenOrder = index2;
+                        if(require(ortum_component_type[0] + s + h).getOrtumChildrenOrder){
+                            ortumChildrenOrder = require(ortum_component_type[0] + s + h).getOrtumChildrenOrder($(item),$(item2));
+                        };
+
                         getFormContentJson("dom",{
                             "dom":$(item2),
                             "win":datas.win,
@@ -797,6 +817,14 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 let frame= $(datas.dom).attr("data-frame");
                 let componentKey = $(datas.dom).attr("data-componentKey");
 
+                //寻找name后缀
+                let nameSuffixDom = $(datas.dom).parents("*[ortum-name-suffix]").eq(0);
+                let nameSuffix = undefined;
+                if(nameSuffixDom.length){
+                    nameSuffix = nameSuffixDom.attr("ortum-name-suffix");
+                    nameSuffix = "_"+ nameSuffix;
+                };
+
                 let comDom = CreateDom[Settings.menuListDataJSON[componentKey].createFn](null,frame,{
                     customProps:$(datas.dom).prop('ortum_component_properties'),
                     ortumItemDom:$(datas.dom),
@@ -805,6 +833,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     bindDropEvent:false,
                     HasProperties:HasProperties,
                     ortumChildren:ortumChildren,
+                    nameSuffix:nameSuffix,//name后缀
                 });
 
                 datas.parent.children.push(Object.assign({
@@ -814,7 +843,7 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 },comDom));
 
                 //如果是Bootstrap_tableDom 不在向下寻找ortum_item;
-                if(frame == "Bootstrap" && componentKey == "tableDom"){
+                if(frame == "Bootstrap" && (componentKey == "tableDom" || componentKey == "newTableDom")){
                     return true;
                 };
 
@@ -823,8 +852,16 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     if($(item2).parents(".ortum_item")[0] !== $(datas.dom)[0]){
                         return true;
                     };
-                    let ortumChildrenOrder = $(item2).parent().attr("data-order");
-                    !/[\d]+$/.test(ortumChildrenOrder) && (ortumChildrenOrder = index2);
+
+                    let ortum_component_type =  $(datas.dom).prop("ortum_component_type");
+                    //首字母大写
+                    let s = ortum_component_type[1].slice(0,1).toUpperCase();
+                    let h = ortum_component_type[1].slice(1);
+                    let ortumChildrenOrder = index2;
+                    if(require(ortum_component_type[0] + s + h).getOrtumChildrenOrder){
+                        ortumChildrenOrder = require(ortum_component_type[0] + s + h).getOrtumChildrenOrder($(datas.dom),$(item2));
+                    }
+
                     getFormContentJson("dom",{
                         "dom":$(item2),
                         "win":datas.win,
@@ -947,7 +984,6 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         $(ele).on('dragover.firstbind',function(e){
             return false;
         });
-
         $(ele).on("dragenter.firstbind",function(e){//有拖动对象(包括自己作为拖动对象)进入我的领空时
             if(!Global.ortumNowDragObj)return false;
            
@@ -959,13 +995,11 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             }
             return false;
         });
-        
         $(ele).on('drop.firstbind',function(e){
             ortumDragShadow(e,"drop",{That:this});
             if(!Global.ortumNowDragObj){
                 return false;
             }
-
             //获取要创建的组件key
             let componentKey = $(Global.ortumNowDragObj).attr('data-key');
             //拖拽的是绘制区的组件
@@ -984,9 +1018,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                 let createDom =$(Global.ortumNowDragObj);
                 let parentsItemLength = $(this).parents(".ortum_item").length;
                 if(parentsItemLength){
-                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom)
+                    $(this).parents(".ortum_item").eq(parentsItemLength-1).before(createDom);
                 }else{
-                    $(this).before(createDom)
+                    $(this).before(createDom);
                 }
             }else if(componentKey){
                 if(!require('createDom')[Settings.menuListDataJSON[componentKey].createFn]){

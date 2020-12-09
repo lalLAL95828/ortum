@@ -3,29 +3,25 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         data:{
             id:"",//id
             name:'',//name
-            verification:"",//校验
             authority:"3",//权限
-            cssClass:"ortum_bootstrap_hDom",
+            cssClass:"",
             title:"",
-            bindComponentName:"",//关联组件，label的权限由绑定组件一致
-            defaultVal:"绑定",
-            titleType:"h2",
             uuid: "",
             attributesArr:[],//属性数组
+            customHtmlContent:`<div>自定义html内容</div>`,
+
+            onBefore:"",//渲染之前的回调
+            onAfter:"",//渲染之后的回调
         },
-        inputChange:["id","name","verification","cssClass","title","defaultVal"],//input事件修改值
+        inputChange:["id","name","cssClass","title"],//input事件修改值
         clickChange:["authority"],
-        changeChange:[],
+        changeChange:["bindComponentName"],
         purview:{//属性编辑权限
             id:3,//id
             name:3,
             cssClass:3,
-            verification:3,
             authority:3,//权限
             title:3,
-            bindComponentName:3,
-            defaultVal:3,
-            titleType:3,
         },
         dataShowType:{
             authority:"checkbox",
@@ -37,7 +33,6 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} parentDom
      * @param {*} moreProps 一个json对象，
      * @param {*} moreProps.customProps 自定义属性
-     * @param {*} moreProps.generateDom 函数也存在dom中
      * @param {*} moreProps.createJson 生成对应的json
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
@@ -46,9 +41,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.customName 自定义name
      * @param {*} moreProps.nameSuffix 名称后缀
      */
-    let HDom = function(parentDom,moreProps=null){
+    let CustomHtmlDom = function(parentDom,moreProps=null){
         let customProps = null;
-        // let generateDom =  null;
         let clickChangeAttrs = true;
         let dropAddComponent = true;
         let customName = '';//自定义name
@@ -60,20 +54,19 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
-            // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.createJson !== null && moreProps.createJson !== undefined && (createJson =moreProps.createJson);
-            moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
-            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
+            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
+            moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom=$(
             `
-            <div class="ortum_item ortum_bootstrap_h" data-frame="Bootstrap" 
-            data-componentKey="hDom">
+            <div class="ortum_item ortum_bootstrap_customHtml" data-frame="Bootstrap" 
+            data-componentKey="customHtmlDom">
                
             </div>
             `
@@ -82,41 +75,50 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
         //拖拽事件
         dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
-
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
 
         //生成uuid
         ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
-        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid)
+        outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid);
         //设定name
         customName && (ortum_component_properties.data.name = customName);
-        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('h'));
+        ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('customHtml'));
         let nameArr = ortum_component_properties.data.name.split("_");
         if(nameSuffix && createJson){
             ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
         }else{
-            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1];
         }
 
-
-        $(outerDom).append($(`   
-            <${ortum_component_properties.data.titleType} class="${ortum_component_properties.data.cssClass}" 
-                ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' }
-                ${ortum_component_properties.data.bindComponentName ? "ortum_bindcomponentname="+ortum_component_properties.data.bindComponentName : '' } >
-                ${ortum_component_properties.data.defaultVal}
-            </${ortum_component_properties.data.titleType}>
-        `));
+        let customHtmlWrap = $(`
+            <div ortum-id="customHtml" 
+            class="${ortum_component_properties.data.cssClass}" 
+            ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : ''} 
+            name="${ortum_component_properties.data.name}" > 
+            </div>
+        `);
+        customHtmlWrap.append(ortum_component_properties.data.customHtmlContent)
+        $(outerDom).append(customHtmlWrap)
 
         //修改编辑的属性
-        if(Array.isArray(ortum_component_properties.data.attributesArr)){
-            ortum_component_properties.data.attributesArr.forEach(function(item){
-                outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
-            });
+        // if(Array.isArray(ortum_component_properties.data.attributesArr)){
+        //     ortum_component_properties.data.attributesArr.forEach(function(item){
+        //         outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
+        //     });
+        // }
+
+        //scriptDom
+        let scriptDom ='';
+        if(createJson){
+            scriptDom = $(`<script>
+                    ${(ortum_component_properties.data.onAfter && typeof ortum_component_properties.data.onAfter === "function") ? '!'+ortum_component_properties.data.onAfter+'("'+ ortum_component_properties.data.name +'");' : ''}
+                </script>`);
         }
 
-        //dom绑定property
-        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','h']);
 
+
+        //dom绑定property
+        clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','customHtml']);
         if(parentDom){
             $(parentDom).append(outerDom);
         }else if(createJson){//生成json
@@ -127,6 +129,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
                 "title":(ortum_component_properties.data.title ? ortum_component_properties.data.title : ortum_component_properties.data.labelName),
                 "componentProperties":(HasProperties ? Assist.jsonStringify(ortum_component_properties) : undefined),
                 "ortumChildren":ortumChildren,
+                "script":scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," ").length >= 20 ? scriptDom[0].outerHTML.replace(/\n/g,'').replace(/(\s)+/g," ") : '',
             }
         }else{
             return outerDom
@@ -157,16 +160,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return false;
         }
         switch(property){
-            case "defaultVal":
-                $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).text(val)
-                break;
-            case "verification":
-                //TODO 验证
-                console.log(val)
-                break;
             default:
                 if(evenProperties.inputChange.indexOf(property) != -1){
-                    $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).attr(property,val)
+                    $(globalComponent).find('*[ortum-id=customHtml]').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -181,6 +177,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
     let blurSetProperties = function(property,that,e){
         let val=$(that).val();
         let checked=$(that).prop('checked');
+
 
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
@@ -211,9 +208,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} e
      */
     let clickSetProperties = function(property,that,e){
-        let val= $(that).val();
+        let val=$(that).val();
         let checked=$(that).prop('checked');
-
 
         if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
             return false;
@@ -229,13 +225,9 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //更新到dom属性上
         // evenProperties.data[property] = val;
         switch(property){
-            case "authority":
-                //TODO 权限
-                console.log(val)
-                break;
             default:
                 if(evenProperties.clickChange.indexOf(property) != -1){
-                    $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).attr(property,val)
+                    $(globalComponent).find('*[ortum-id=customHtml]').eq(0).attr(property,val)
                 }
                 break;
         }
@@ -263,70 +255,110 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             return false;
         }
         switch(property){
-            case "bindComponentName":
-                evenProperties.data[property] = val;
-                val && $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).attr("ortum_bindcomponentname",val);
-                !val && $(globalComponent).find('.ortum_bootstrap_hDom').eq(0).removeAttr("ortum_bindcomponentname");
-                break
-            case "titleType":
-                evenProperties.data[property] = val;
-                $(globalComponent).html($(`   
-                    <${val} class="${evenProperties.data.cssClass}" 
-                        ${evenProperties.data.id ? "id="+evenProperties.data.id : '' }
-                        ${evenProperties.data.bindComponentName ? "ortum_bindcomponentname="+evenProperties.data.bindComponentName : '' } >
-                        ${evenProperties.data.defaultVal}
-                    </${val}>
-                `));
-                //修改编辑的属性
-                if(Array.isArray(evenProperties.data.attributesArr)){
-                    evenProperties.data.attributesArr.forEach(function(item){
-                        $(globalComponent).find("*[name="+ evenProperties.data.name +"]").attr(item.label,item.value);
-                    });
-                }
-
-                break
             default:
                 if(evenProperties.changeChange.indexOf(property) != -1){
-                    $(globalComponent).changeChange.eq(0).attr(property,val)
+                    $(globalComponent).find('*[ortum-id=customHtml]').eq(0).attr(property,val)
                 }
                 break;
         }
     }
-    /**
-     * 功能：参数设置显示之前的操作
-     */
-    let beforeSetPrperies = function () {
-        //设置关联组件选项
-        let optionArr = require('feature').getFormComponentsProps(null,"name");
-        $("#ortum_property_bindComponentName").html('')
-        if(optionArr.length){
-            $("#ortum_property_bindComponentName").append(`<option value="" selected>请选择</option>`)
-            optionArr.forEach((item)=>{
-                $("#ortum_property_bindComponentName").append(`
-                    <option value="${item.text}">${item.title}</option>
-                `)
-            })
-        }else{
-            $("#ortum_property_bindComponentName").append(`<option value="" disabled>暂无组件可选</option>`)
-        };
-    }
+
 
     /**
      * 功能：设置js
      */
-    let ortumComponentSetJs = function(){
-        
+    let ortumComponentSetJs = function(codeObj){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let setStr = "var ortum_BootstrapInput_setJs = {";
+        if(evenProperties.data.onBefore){
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:function(){},"
+        }
+        if(evenProperties.data.onAfter){
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+        }else{
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:function(name){},"
+        }
+        setStr +="\n};";
+
+        //格式化
+        setStr = js_beautify(setStr,2);
+        codeObj.setValue(setStr)
     }
     /**
      * 功能：保存js
      */
     let ortumComponentSaveJs = function(val){
-        
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        let packer = new Packer;
+        let valFormat = packer.pack(val, 0, 0);
+        try{
+            eval(valFormat);
+            evenProperties.data.onBefore = ortum_BootstrapInput_setJs.onBefore;
+            evenProperties.data.onAfter = ortum_BootstrapInput_setJs.onAfter;
+        }catch (e) {
+            console.error(e);
+            console.error("设置customHtml的js有误，请重新设置");
+        }
     };
 
+    /**
+     * 功能：保存js
+     */
+    let saveCustomHtml = function(val){
+        if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+            return false;
+        }
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        try{
+            // evenProperties.data.customHtmlContent = val.replace(/\n/g,'').replace(/(\s)+/g," ");
+            evenProperties.data.customHtmlContent = val;
+            $(globalComponent).find('*[ortum-id=customHtml]').html(val);
+        }catch (e) {
+            console.error(e);
+            console.error("设置自定义内容有误，请重新设置");
+        }
+    };
+    /**
+     * 功能：设置html
+     */
+    let showCustomHtml = function(){
+        $('#ortum_top_dialog_xl').modal({
+            "backdrop":"static",
+            "keyboard":false,
+        });
+        let globalComponent =Global.ortum_edit_component.comObj;
+        let evenProperties = $(globalComponent).prop('ortum_component_properties');
+
+        Global.ortum_codemirrorHTML_setVal = function(codeObj){
+            if(!Global.ortum_edit_component || !Global.ortum_edit_component.comObj){
+                return false;
+            }
+            let setStr =`${evenProperties.data.customHtmlContent}`
+            codeObj.setValue(setStr);
+        };
+        Global.ortum_codemirrorHTML_save =saveCustomHtml;
+        $("#ortum_top_model_xl_content").load("html/common/codeMirrorHtml.html",function(){
+            $('#ortum_top_model_xl_wait').hide();
+        });
+        return false
+    }
 
     return {
-        HDom,
+        CustomHtmlDom,
 
         inputSetProperties,
         blurSetProperties,
@@ -334,9 +366,12 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         clickSetProperties,
         // keyDownSetProperties,
         // keyUpSetProperties,
-        beforeSetPrperies,
+
 
         ortumComponentSetJs,
         ortumComponentSaveJs,
+
+        showCustomHtml,
+        saveCustomHtml,
     }
 })

@@ -42,8 +42,10 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
      * @param {*} moreProps.createJson 生成对应的json
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
+     * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let GridDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -51,8 +53,10 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         let clickChangeAttrs = true;
         let createJson = false;
         let HasProperties = false;
+        let dropAddComponent = true;
         let ortumChildren = null;
         let customName = '';//自定义name
+        let nameSuffix = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -61,13 +65,17 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
+            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
 
-            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
+            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom= $('<div class="ortum_item ortum_bootstrap_grid" data-frame="Bootstrap" data-componentKey="gridDom"></div>');
         //点击事件，修改属性
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        //拖拽事件
+        dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
 
@@ -77,6 +85,12 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('grid'));
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+        }
 
 
         let row = $(`
@@ -300,6 +314,15 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         
     };
 
+    /**
+     * 根据组件返回子组件的位置
+     * @param ortumItemDom
+     */
+    let getOrtumChildrenOrder = function (ortumItemDom,sonOrtumItem) {
+        let ortumChildrenOrder = $(sonOrtumItem).parent().attr("data-order");
+        return ortumChildrenOrder
+    }
+
     return {
         GridDom,
 
@@ -315,5 +338,7 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
 
         ortumComponentSetJs,
         ortumComponentSaveJs,
+
+        getOrtumChildrenOrder,
     }
 })

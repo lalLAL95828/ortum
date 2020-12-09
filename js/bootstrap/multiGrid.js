@@ -18,6 +18,20 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
                     {
                         "classValue":"col",
                     }
+                ],
+                [
+                    {
+                        "classValue":"col-2",
+                    },
+                    {
+                        "classValue":"col",
+                    },
+                    {
+                        "classValue":"col-2",
+                    },
+                    {
+                        "classValue":"col",
+                    }
                 ]
             ],
             title:"名称",
@@ -43,7 +57,9 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
      * @param {*} moreProps.HasProperties 保存组件的component_properties
      * @param {*} moreProps.clickChangeAttrs 是否允许修改点击属性（=== false的时候，去除点击修改属性）
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
+     * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let MultiGridDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -54,6 +70,9 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         let ortumChildren = null;
         let customName = '';//自定义name
 
+        let dropAddComponent = true;
+        let nameSuffix = null;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
@@ -61,13 +80,17 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
             moreProps.HasProperties !== null && moreProps.HasProperties !== undefined && (HasProperties =moreProps.HasProperties);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
+            moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
 
-            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs)
+            moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom= $('<div class="ortum_item ortum_bootstrap_multiGrid" data-frame="Bootstrap" data-componentKey="multiGridDom"></div>');
         //点击事件，修改属性
         clickChangeAttrs !== false && $(outerDom).off('click.addClickChoose').on('click.addClickChoose',Assist.addClickChoose);
+        //拖拽事件
+        dropAddComponent !== false && require("feature").bindDropEventToOrtumItem(outerDom);
 
         let ortum_component_properties = customProps ? customProps : Assist.deepClone(component_properties);
 
@@ -77,6 +100,12 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('multiGrid'));
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1];
+        }
 
         ortum_component_properties.data.id && outerDom.attr("id", ortum_component_properties.data.id);
 
@@ -106,11 +135,13 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         })
 
         //TODO 修改编辑的属性
-        /* if(Array.isArray(ortum_component_properties.data.attributesArr)){
+        /*
+        if(Array.isArray(ortum_component_properties.data.attributesArr)){
             ortum_component_properties.data.attributesArr.forEach(function(item){
                 outerDom.find("*[name="+ ortum_component_properties.data.name +"]").attr(item.label,item.value);
             });
-        } */
+        }
+        */
 
         //dom绑定property
         clickChangeAttrs !== false && $(outerDom).prop('ortum_component_properties',ortum_component_properties).prop('ortum_component_type',['Bootstrap','grid']);
@@ -232,50 +263,6 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
                 break;
         }
     }
-
-
-    /**
-     * 功能：新增选项
-     * @param {*} newArr
-     */
-    let setGridItems = function(newArr){
-        let globalComponent =Global.ortum_edit_component.comObj;
-        let evenProperties = $(globalComponent).prop('ortum_component_properties');
-        let colDiv = $(globalComponent).find('.ortum_boot_col_default');
-
-        colDiv.each(function (index,item) {
-            $(item).removeClass(function (index, className) {
-                return (className.match (/(?<=(^|\s))col(\S)*?(?=($|\s))/g) || []).join(' ');
-            })
-            $(item).addClass(newArr[index].classValue)
-        })
-
-        evenProperties.data.columnsArr = newArr;
-    }
-    /**
-     * 功能：回显选项
-     */
-    let showGridItems = function(){
-        $('#ortum_top_dialog').modal({
-            "backdrop":"static",
-        });
-        $("#ortum_top_model_content").load("html/bootstrap/grid_settings.html",function(){
-            let globalComponent =Global.ortum_edit_component.comObj;
-            let evenProperties = $(globalComponent).prop('ortum_component_properties');
-
-            let itemsArr = evenProperties.data.columnsArr;
-            let itemsLength = itemsArr.length;
-            for(let i =1 ;i<itemsLength;i++){
-                $('#ortum_grid_addLine').click();
-            }
-            itemsLength && $('#ortum_grid_ModalLabel .ModalLabelTable').find('.ortum_order_dataTr').each(function(index,item){
-                $(item).find('.ortum_grid_colValue').eq(0).val(itemsArr[index].classValue)
-            })
-            $('#ortum_top_model_wait').hide();
-        });
-        return false;
-    };
-
     /**
      * 功能：设置js
      */
@@ -294,30 +281,45 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
      */
     let saveMultiGridColumns = function (val) {
         let globalComponent =Global.ortum_edit_component.comObj;
-        let tbodyDom = globalComponent.find("tbody").eq(0);
         let evenProperties = $(globalComponent).prop('ortum_component_properties');
 
         let packer = new Packer;
         let valFormat = packer.pack(val, 0, 0);
+
         try{
             eval(valFormat);
             let editColumnArr = eval("MultiGridClumns");
 
-            let tbodyTrObj =BootstrapAsider.tableTbodyAddTrLine(tbodyDom,editColumnArr,{
-                trCssClass:evenProperties.data.tbodyTrCssClass,
-                tdCssClass:evenProperties.data.tdCssClass,
-                tableName:evenProperties.data.name,
-            },settings="againEdit");
-            $(tbodyDom).empty();//tbody 必须放在此处清空
-            tbodyTrObj.forEach(function(item){
-                $(tbodyDom).append(item);
+            let rowDomArr = [];
+            editColumnArr.forEach(function(rowItem,rowIndex){
+                let row = $(`
+                    <div class="${evenProperties.data.cssClass}" 
+                    style="margin: 0"></div>
+                `);
+                rowItem.forEach(function(columnItem,columnIndex){
+                    let col=BootstrapAsider.tipAddComponentFn(true,{
+                        "ortumChildren": rowIndex+"-"+columnIndex,
+                        "classValue":columnItem.classValue
+                    });
+
+                    if(columnItem.uuid){
+                        let hasOrtumItem = $("*[ortum_uuid="+ columnItem.uuid +"]").eq(0);
+                        if(hasOrtumItem.length){
+                            col.append(hasOrtumItem)
+                        }
+                        columnItem.uuid = undefined;
+                    }
+                    $(row).append(col);
+                })
+                rowDomArr.push(row);
+            });
+            $(globalComponent).empty();
+            rowDomArr.forEach(function(rowItem){
+                $(globalComponent).append(rowItem);
             });
 
-
-
             //替换table上的属性值
-            evenProperties.data.tbodyColumnsArr = editColumnArr;
-
+            evenProperties.data.gridArr = editColumnArr;
 
         }catch (e) {
             console.error(e);
@@ -331,26 +333,30 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
 
         Global.ortum_codemirrorJS_setVal = function(codeObj){
             let columnsArr = [];
-            evenProperties.data.gridArr.forEach(function (itemArr,indexArr) {
+            evenProperties.data.gridArr.forEach(function (rowItem,rowIndex) {
                 let pushArr = [];
-                itemArr.forEach(function (item,index) {
+                rowItem.forEach(function (columnItem,columnIndex) {
                     let pushItem = {};
-                    for(let key in item){
-                        if(item.hasOwnProperty(key)){
-                            key !== "customProps" && (pushItem[key] = item[key]);
-                        }
+                    for(let key in columnItem){
+                        if(columnItem.hasOwnProperty(key)){
+                            pushItem[key] = columnItem[key]
+                        };
                     };
+
+                    let ortumChildren = rowIndex + "-" + columnIndex;
+                    let hasOrtumItem = $(globalComponent).find("*[data-order="+ ortumChildren +"] > .ortum_item").eq(0);
+                    if(hasOrtumItem.length){
+                        pushItem.uuid = hasOrtumItem.attr("ortum_uuid");
+                    }
                     pushArr.push(pushItem);
-                })
+                });
                 columnsArr.push(pushArr)
             });
-
 
             //格式化
             let columnsArrStr = js_beautify(JSON.stringify(columnsArr),2);
 
-
-            codeObj.setValue(`//编辑multiGrid的柵格信息信息\nvar MultiGridClumns = ${columnsArrStr};
+            codeObj.setValue(`//编辑multiGrid的柵格信息\nvar MultiGridClumns = ${columnsArrStr};
                 `)
         }
 
@@ -366,6 +372,17 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         return false;
     }
 
+    /**
+     * 根据组件返回子组件的位置
+     * @param ortumItemDom
+     */
+    let getOrtumChildrenOrder = function (ortumItemDom,sonOrtumItem) {
+        let ortumChildrenOrder = $(sonOrtumItem).parent().attr("data-order");
+        return ortumChildrenOrder;
+    }
+
+
+
     return {
         MultiGridDom,
 
@@ -377,11 +394,12 @@ define(["require","assist","settings","global",'BootstrapAsider'],function(requi
         // keyUpSetProperties,
 
         setMultiGridColumns,
+        saveMultiGridColumns,
 
-        setGridItems,
-        showGridItems,
 
         ortumComponentSetJs,
         ortumComponentSaveJs,
+
+        getOrtumChildrenOrder,
     }
 })

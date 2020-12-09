@@ -13,6 +13,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             title:"名称",//设置dom的title属性，一般与labelName一致
             labelPosition:"rowLeft",//标签位置
             labelCSS:"col-form-label col-2",//标签css类
+
             onBefore:"",//渲染之前的回调
             onAfter:"",//渲染之后的回调
             onClick:"",//点击事件的回调
@@ -57,6 +58,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.customName 自定义name
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let InputDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -69,6 +71,8 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let HasProperties = false;
         let ortumChildren = null;
 
+        let nameSuffix = null;
+
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
             // moreProps.generateDom !== null && moreProps.generateDom !== undefined && (generateDom =moreProps.generateDom);
@@ -78,6 +82,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.clickChangeAttrs === false && (clickChangeAttrs = moreProps.clickChangeAttrs);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         };
 
 
@@ -102,9 +107,15 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         ortum_component_properties.data.uuid || (ortum_component_properties.data.uuid = Assist.getUUId());
         outerDom.attr("ortum_uuid",ortum_component_properties.data.uuid);
 
-        //设定name
+        //设定name input_16074056371568a07_1-0_1
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('input'));
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+        }
 
 
         //控制标签
@@ -146,7 +157,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         //插入dom
         $(outerDom).append(inputDom);
-
 
         //TODO 后渲染的关联组件，可能无法正常控制权限
         switch (ortum_component_properties.data.authority) {
@@ -417,14 +427,14 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         let setStr = "var ortum_BootstrapInput_setJs = {";
         if(evenProperties.data.onBefore){
-            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
         }else{
-            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:function(){},"
         }
         if(evenProperties.data.onAfter){
-            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
         }else{
-            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that,name){},"
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:function(that,name){},"
         }
         if(evenProperties.data.onClick){
             setStr += "\n//click事件\nonClick:"+ evenProperties.data.onClick.toString() + ",";

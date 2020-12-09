@@ -73,6 +73,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let CheckboxDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -83,6 +84,8 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         let dropAddComponent = true;
         let ortumChildren = null;
         let customName = '';//自定义name
+        let nameSuffix = null;
+
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -93,6 +96,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom=$(
@@ -118,7 +122,13 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('checkbox'));
-        // ortum_component_properties.data.name || (ortum_component_properties.data.name = "checkbox_21561456456456456");
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+        }
+
 
         for(let i=0;i<ortum_component_properties.data.items.length;i++){
             let choose = false;
@@ -384,14 +394,14 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
 
         let setStr = "var ortum_BootstrapInput_setJs = {";
         if(evenProperties.data.onBefore){
-            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:"+ evenProperties.data.onBefore.toString() + ",";
         }else{
-            setStr += "\n//DOM渲染前的函数执行函数\nonBefore:function(){},"
+            setStr += "\n//DOM渲染前的执行函数\nonBefore:function(){},"
         }
         if(evenProperties.data.onAfter){
-            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:"+ evenProperties.data.onAfter.toString() + ",";
         }else{
-            setStr += "\n//DOM渲染后的函数执行函数\nonAfter:function(that){},"
+            setStr += "\n//DOM渲染后的执行函数\nonAfter:function(that){},"
         }
         if(evenProperties.data.onClick){
             setStr += "\n//click事件\nonClick:"+ evenProperties.data.onClick.toString() + ",";

@@ -8,11 +8,12 @@ define(["BootstrapGrid","BootstrapInput","BootstrapRangeInput","BootstrapRadio",
 "BootstrapLabel",
 "BootstrapDate",
 "BootstrapTable", "BootstrapButton","BootstrapButtonGroup",
-"BootstrapIconButton","BootstrapH","BootstrapMultiGrid"
+"BootstrapIconButton","BootstrapH","BootstrapMultiGrid","BootstrapNewTable",
+"BootstrapCustomHtml",
 ],
 function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,BootstrapTextarea,BootstrapCheckbox,
     BootstrapFile,BootstrapSwitch,BootstrapSelect,BootstrapLabel,BootstrapDate,BootstrapTable,BootstrapButton,BootstrapButtonGroup,
-    BootstrapIconButton,BootstrapH,BootstrapMultiGrid){
+    BootstrapIconButton,BootstrapH,BootstrapMultiGrid,BootstrapNewTable,BootstrapCustomHtml){
     /**
      * 创建栅格系统
      * @param {*} type 
@@ -160,7 +161,7 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
     }
 
     /**
-     * 创建table
+     * 创建table，不可以插入布局组件
      * @param {*} type
      */
     let createTableDom = function(parentDom,type,moreProps=null){
@@ -238,6 +239,31 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
             default:
         }
     }
+    /**
+     * 创建新版table，可以插入布局组件
+     * @param {*} type
+     */
+    let createNewTableDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootstrapNewTable.NewTableDom(parentDom,moreProps)
+                break;
+            default:
+        }
+    }
+
+    /**
+     * 创建新版table，可以插入布局组件
+     * @param {*} type
+     */
+    let createCustomHtmlDom = function(parentDom,type,moreProps=null){
+        switch(type){
+            case 'Bootstrap':
+                return BootstrapCustomHtml.CustomHtmlDom(parentDom,moreProps)
+                break;
+            default:
+        }
+    }
 
 
     //设置对应Bootstrap框架 生成组件的函数是否开启
@@ -258,6 +284,8 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
     createIconButtonDom.ortum_Bootstrap = true;
     createHDom.ortum_Bootstrap = true;
     createMultiGridDom.ortum_Bootstrap = true;
+    createNewTableDom.ortum_Bootstrap = true;
+    createCustomHtmlDom.ortum_Bootstrap = true;
     return {
         createGridDom,
         createInputDom,
@@ -276,5 +304,7 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
         createIconButtonDom,
         createHDom,
         createMultiGridDom,
+        createNewTableDom,
+        createCustomHtmlDom,
     }
 })

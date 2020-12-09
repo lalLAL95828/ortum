@@ -55,6 +55,7 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
      * @param {*} moreProps.dropAddComponent 拖拽添加组件
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.customName 自定义name
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let SwitchDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -65,6 +66,7 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
         let HasProperties = false;
         let ortumChildren = null;
         let customName = '';//自定义name
+        let nameSuffix = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -75,6 +77,7 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
             moreProps.customName !== null && moreProps.customName !== undefined && (customName =moreProps.customName);
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom=$(
@@ -97,6 +100,12 @@ define(["require","assist","createDom","global","BootstrapAsider"],function(requ
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('switch'));
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+        }
 
         
         $(outerDom).append($(`

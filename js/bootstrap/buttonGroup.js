@@ -105,6 +105,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
      * @param {*} moreProps.customName 自定义name
      * @param {*} moreProps.ortumChildren 插入<ortum_children>的data-order
      * @param {*} moreProps.ortumItemDom 编辑器中item对象
+     * @param {*} moreProps.nameSuffix 名称后缀
      */
     let ButtonGroupDom = function(parentDom,moreProps=null){
         let customProps = null;
@@ -113,11 +114,11 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         let dropAddComponent = true;
         let customName = '';//自定义name
 
-
         let createJson = false;
         let HasProperties = false;
         let ortumChildren = null;
         let ortumItemDom = null;
+        let nameSuffix = null;
 
         if(Assist.getDetailType(moreProps) == "Object"){
             customProps = (Assist.getDetailType(moreProps.customProps) == "Object" ? moreProps.customProps : null);
@@ -129,6 +130,7 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             moreProps.dropAddComponent === false && (dropAddComponent = moreProps.dropAddComponent);
             moreProps.ortumChildren !== null && moreProps.ortumChildren !== undefined && (ortumChildren = moreProps.ortumChildren);
             moreProps.ortumItemDom !== null && moreProps.ortumItemDom !== undefined && (ortumItemDom =moreProps.ortumItemDom);
+            moreProps.nameSuffix !== null && moreProps.nameSuffix !== undefined && (nameSuffix = moreProps.nameSuffix);
         }
 
         let outerDom=$(
@@ -153,6 +155,13 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         //设定name
         customName && (ortum_component_properties.data.name = customName);
         ortum_component_properties.data.name || (ortum_component_properties.data.name = Assist.timestampName('buttonGroup'));
+
+        let nameArr = ortum_component_properties.data.name.split("_");
+        if(nameSuffix && createJson){
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1] + nameSuffix;
+        }else{
+            ortum_component_properties.data.name = nameArr[0] + "_"+ nameArr[1]
+        }
 
         let divGroup = $(`
             <div ${ortum_component_properties.data.id ? "id="+ortum_component_properties.data.id : '' } 
@@ -184,15 +193,17 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
                 $(divGroup).append(`<ortum_children data-order=${ortum_component_properties.data.childrenSlot-slotNum}></ortum_children>`)
                 slotNum--;
             };
-        }
-
-        /*if(ortum_component_properties.data.childrenSlot && /(^[1-9]\d*$)/.test(ortum_component_properties.data.childrenSlot)){//需要建立按钮插槽
+        }else{
+            if(!ortum_component_properties.data.childrenSlot){
+                ortum_component_properties.data.childrenSlot = 0;
+            }
             let slotNum = ortum_component_properties.data.childrenSlot;
             while (slotNum>0){
-                $(divGroup).append(`<ortum_children data-order=${ortum_component_properties.data.childrenSlot-slotNum}></ortum_children>`)
+                $(divGroup).append(`<div data-order=${ortum_component_properties.data.childrenSlot-slotNum}></div>`)
                 slotNum--;
             };
-        };*/
+        }
+
 
         $(outerDom).append(divGroup)
 
@@ -213,7 +224,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             return outerDom
         }
     };
-
     /**
      * 功能：input事件，在这个事件上重置组件属性
      * @param {*} property 
@@ -358,6 +368,15 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
         
     };
 
+    /**
+     * 根据组件返回子组件的位置
+     * @param ortumItemDom
+     */
+    let getOrtumChildrenOrder = function (ortumItemDom,sonOrtumItem) {
+        let ortumChildrenOrder = $(sonOrtumItem).index();
+        return ortumChildrenOrder;
+    }
+
     return {
         ButtonGroupDom,
 
@@ -370,5 +389,6 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
 
         ortumComponentSetJs,
         ortumComponentSaveJs,
+        getOrtumChildrenOrder,
     }
 })

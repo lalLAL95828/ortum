@@ -8,20 +8,27 @@
     padding-right:0!important;
     padding-left:0!important;
 }
-
 /* grid柵格 */
+.ortum_bootstrap_grid > .row > .ortum_boot_col_default:nth-child(2n+1) > .ortum_boot_col_waitInsert{
+    background-color: #cecdcc;
+}
+.ortum_bootstrap_grid > .row > .ortum_boot_col_default:nth-child(2n) > .ortum_boot_col_waitInsert{
+    background-color:#dddddd;
+}
 .ortum_boot_col_waitInsert{
-    background-color:#e6e6e6;
     display:flex;
     justify-content: center;
     align-items: center;
     height:100%;
     color:rgba(166,166,166,0.8);
     position:absolute;
-    z-index: -1203;
+    z-index: -1;
     width: 100%;
     top: 0;
     left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .ortum_bootstrap_grid{
     margin: 0!important;
@@ -32,6 +39,13 @@
 .ortum_boot_col_default{
     padding-left:0!important;
     padding-right:0!important;
+}
+/*多行栅格*/
+.ortum_bootstrap_multiGrid > .row > .ortum_boot_col_default:nth-child(2n+1) > .ortum_boot_col_waitInsert{
+    background-color: #cecdcc;
+}
+.ortum_bootstrap_multiGrid > .row > .ortum_boot_col_default:nth-child(2n) > .ortum_boot_col_waitInsert{
+    background-color:#dddddd;
 }
 
 /* input */
@@ -144,7 +158,7 @@ input::-webkit-calendar-picker-indicator{
 }
 
 .ortum_bootstrap_tbody tr:nth-of-type(2n-1){
-    background-color: #eeeeee;
+    background-color: #eeeeee66;
 }
 .ortum_bootstrap_tbody tr td:last-of-type{
     position: relative;
@@ -155,6 +169,8 @@ input::-webkit-calendar-picker-indicator{
 }
 .ortum_bootstrap_td{
     border:1px solid gray;
+    position: relative;
+    min-height: 16px;
 }
 
 
@@ -187,6 +203,7 @@ input::-webkit-calendar-picker-indicator{
     align-items: center;
     min-height: calc(1.5em + .75rem + 2px);
     box-sizing: border-box;
+    min-width: 50px;
 }
 .ortum_bootstrap_buttonGroup_drop_div{
     background-color: #dddddd;
@@ -224,3 +241,9 @@ input::-webkit-calendar-picker-indicator{
 .custom-file-flexGrow .custom-file-input{
     overflow: hidden!important;
 }
+/*自定义组件*/
+#ortum_field .ortum_bootstrap_customHtml > div[ortum-id]{
+    min-height: 38px;
+    background-color: #cecdcc;
+}
+

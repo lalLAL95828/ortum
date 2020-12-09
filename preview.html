@@ -284,8 +284,8 @@
                     renderJson(domItem.children,htmlDom,"replace");
                 };
                 //特殊处理Bootstrap_tableDom
-                if(domItem.frame == "Bootstrap" && domItem.componentKey == "tableDom"){
-                    $(htmlDom).prop("ortum_tbodyTds_info",domItem.children);//tr中组件的信息
+                if(domItem.frame == "Bootstrap" && (domItem.componentKey == "tableDom" || domItem.componentKey == "newTableDom")){
+                    $(htmlDom).prop("ortum-childrenArr-info",domItem.children);//tr中组件的信息
                     $(htmlDom).prop("ortum_tbodyTr_info",domItem.ortum_tbodyTr_info);//tr信息
                 };
                 switch (way) {

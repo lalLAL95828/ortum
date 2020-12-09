@@ -111,6 +111,24 @@
 #ortum_table_act .ortum_tableAct_icon:hover{
     cursor: pointer;
 }
+.ortum_table_td_waitInsert{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color:#c3bebe;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index:-1;
+}
+.ortum_bootstrap_td_waitInsert{
+    height: 30px;
+    position: relative;
+}
 
 
 /* 左侧组件 */
@@ -319,14 +337,14 @@
 
 
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
-::-webkit-scrollbar{
+.body_bgc_newPC ::-webkit-scrollbar,.body_bgc_editPC ::-webkit-scrollbar{
     width: 7px;
     height: 7px;
     background-color: #F5F5F5;
 }
 
 /*定义滚动条轨道 内阴影+圆角*/
-::-webkit-scrollbar-track{
+.body_bgc_newPC ::-webkit-scrollbar-track,.body_bgc_editPC ::-webkit-scrollbar-track{
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
@@ -334,14 +352,14 @@
 }
 
 /*定义滑块 内阴影+圆角*/
-::-webkit-scrollbar-thumb{
+.body_bgc_newPC ::-webkit-scrollbar-thumb,.body_bgc_editPC ::-webkit-scrollbar-thumb{
     border-radius: 10px;
     box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
     background-color: #5a71f1;
 }
 /* 火狐浏览器 */
-* {
+.body_bgc_newPC *,.body_bgc_editPC *{
     scrollbar-color: #5a71f1 #F5F5F5; /* 滑块颜色  滚动条背景颜色 */
     scrollbar-width: none; /* 滚动条宽度有三种：thin、auto、none */
 }
@@ -355,3 +373,5 @@
 .ortum_mCustomScrollbar .mCS-dark-3.mCSB_scrollTools .mCSB_dragger:hover .mCSB_dragger_bar{
     background-color: #007bff!important;
 }
+
+

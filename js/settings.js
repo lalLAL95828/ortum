@@ -28,7 +28,6 @@ define(['assist'],function(Assist){
         key:"textareaDom",
         name:"多行文本",
         sort:"form",
-        sort:"form",
         createFn:"createTextareaDom",
         children:{
             "Bootstrap":null,
@@ -160,8 +159,17 @@ define(['assist'],function(Assist){
         },
     },
     {
+        key:"customHtmlDom",
+        name:"自定义组件",
+        sort:"super",
+        createFn:"createCustomHtmlDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
         key:"tableDom",
-        name:"表格",
+        name:"表格[待删除]",
         sort:"layout",
         createFn:"createTableDom",
         children:{
@@ -169,8 +177,17 @@ define(['assist'],function(Assist){
         },
     },
     {
+        key:"newTableDom",
+        name:"新表格",
+        sort:"layout",
+        createFn:"createNewTableDom",
+        children:{
+            "Bootstrap":null,
+        },
+    },
+    {
         key:"gridDom",
-        name:"栅格布局",
+        name:"单行栅格",
         sort:"layout",
         createFn:"createGridDom",
         children:{

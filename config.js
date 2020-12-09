@@ -30,6 +30,8 @@ require.config({
         "BootstrapLabel":"js/bootstrap/label",
         "BootstrapDate":"js/bootstrap/date",
         "BootstrapTable":"js/bootstrap/table",
+        "BootstrapNewTable":"js/bootstrap/newTable",
+        "BootstrapCustomHtml":"js/bootstrap/customHtml",
 
         "CSS":"lib/css.min",
 

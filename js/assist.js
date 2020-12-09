@@ -207,8 +207,11 @@ define(['require'],function(require){
         //删除后的下一步处理方式
         if(parentDom.length){
             //bootstrap的td
-            if($(parentDom).hasClass('ortum_bootstrap_td')){
+            if($(parentDom).hasClass('ortum_bootstrap_td') && $(parentDom).parents(".ortum_item").eq(0).hasClass('ortum_bootstrap_table')){
                 require("BootstrapTable").sonOrtumItemDelete(parentDom);
+            };
+            if($(parentDom).hasClass('ortum_bootstrap_td') && $(parentDom).parents(".ortum_item").eq(0).hasClass('ortum_bootstrap_newTable')){
+                require("BootstrapNewTable").sonOrtumItemDelete(parentDom);
             };
         };
 
@@ -348,7 +351,7 @@ define(['require'],function(require){
             // }
             let width = getComputedStyle(element).getPropertyValue('width');
             // let height = getComputedStyle(element).getPropertyValue('height');
-            let spanswidth = $(ele).attr("data-spanswidth");
+            let spanswidth = $(ele).attr("ortum-spanswidth");
             // console.log(width,height,spanswidth);
             if(spanswidth*1 > parseFloat(width)){
                 $("#ortum_shadow > span").hide();
@@ -442,7 +445,14 @@ define(['require'],function(require){
             return false;
         })
 
-
+        //bootstrap_customHtml
+        if($(this).hasClass('ortum_bootstrap_customHtml')){
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapCustomHtml_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            });
+        }
 
         //bootstrap_grid
         if($(this).hasClass('ortum_bootstrap_grid')){
@@ -456,7 +466,7 @@ define(['require'],function(require){
         if($(this).hasClass('ortum_bootstrap_multiGrid')){
             shadowDivActArr.push({
                 title:"设置",
-                onlyClass:"ortum_shadow_bootstrapGrid_settings",
+                onlyClass:"ortum_shadow_bootstrapMultiGrid_settings",
                 html:`<span class="iconfont icon-shezhi1" ></span>`
             })
         }
@@ -494,6 +504,14 @@ define(['require'],function(require){
                 html:`<span class="iconfont icon-shezhi1" ></span>`
             })
         }
+        //bootstrap_newTable
+        if($(this).hasClass('ortum_bootstrap_newTable')){
+            shadowDivActArr.push({
+                title:"设置",
+                onlyClass:"ortum_shadow_bootstrapTable_settings",
+                html:`<span class="iconfont icon-shezhi1" ></span>`
+            })
+        }
         shadowDivActArr.push({
             title:"编辑js",
             onlyClass:"ortum_shadow_editJs",
@@ -525,7 +543,7 @@ define(['require'],function(require){
         let spanOuterWidth = parseFloat(shadowDiv.find("span").eq(0).outerWidth(true));
         spanOuterWidth = spanOuterWidth ? Math.ceil(spanOuterWidth) : 0 ;
         shadowDiv.attr("data-spanlength",spanNum);
-        shadowDiv.attr("data-spanswidth",spanNum*spanOuterWidth);
+        shadowDiv.attr("ortum-spanswidth",spanNum*spanOuterWidth);
 
 
 
@@ -536,6 +554,12 @@ define(['require'],function(require){
         //编辑属性按钮绑定事件
         $("#ortum_shadow .ortum_shadow_editAttrs").off('click.editAttrs').on('click.editAttrs',ortumComponentSetAttr);
 
+
+        //customHtml的设置按钮绑定事件
+        if($(this).hasClass('ortum_bootstrap_customHtml')){
+            $("#ortum_shadow .ortum_shadow_bootstrapCustomHtml_settings").off('click.setting').on('click.setting',require('BootstrapCustomHtml').showCustomHtml);
+        }
+
         //radio的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_radio')){
             $("#ortum_shadow .ortum_shadow_bootstrapRadio_settings").off('click.setting').on('click.setting',require('BootstrapRadio').showRadioItems);
@@ -544,9 +568,9 @@ define(['require'],function(require){
         if($(this).hasClass('ortum_bootstrap_grid')){
             $("#ortum_shadow .ortum_shadow_bootstrapGrid_settings").off('click.setting').on('click.setting',require('BootstrapGrid').showGridItems);
         }
-        //grid的设置按钮绑定事件
-        if($(this).hasClass('ortum_bootstrap_MultiGrid')){
-            $("#ortum_shadow .ortum_shadow_bootstrapGrid_settings").off('click.setting').on('click.setting',require('BootstrapMultiGrid').setMultiGridColumns);
+        //multiGrid的设置按钮绑定事件
+        if($(this).hasClass('ortum_bootstrap_multiGrid')){
+            $("#ortum_shadow .ortum_shadow_bootstrapMultiGrid_settings").off('click.setting').on('click.setting',require('BootstrapMultiGrid').setMultiGridColumns);
         }
 
         //checkbox的设置按钮绑定事件
@@ -560,6 +584,11 @@ define(['require'],function(require){
         //table的设置按钮绑定事件
         if($(this).hasClass('ortum_bootstrap_table')){
             $("#ortum_shadow .ortum_shadow_bootstrapTable_settings").off('click.setting').on('click.setting',require('BootstrapTable').setTableColumns);
+        }
+
+        //newTable的设置按钮绑定事件
+        if($(this).hasClass('ortum_bootstrap_newTable')){
+            $("#ortum_shadow .ortum_shadow_bootstrapTable_settings").off('click.setting').on('click.setting',require('BootstrapNewTable').setTableColumns);
         }
 
         let properiesObj = $(this).prop('ortum_component_properties')

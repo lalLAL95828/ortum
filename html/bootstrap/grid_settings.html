@@ -30,7 +30,7 @@
                 <span style="font-family:宋体;color:rgb(255,0,0);font-size:14px">*</span>列宽
             </td>
         </tr>
-        <tr class="ortum_order_dataTr" data-line="1">
+        <tr class="ortum_order_dataTr" ortum-line="1">
             <td name="'span'" style="text-align: center;">
                 <span class="ortum_grid_order">1</span>
             </td>
@@ -61,7 +61,7 @@
         order = (order*1 + 1);
 
         $(this).parents('tr').eq(0).before(`
-            <tr class="ortum_order_dataTr" data-line=${order}>
+            <tr class="ortum_order_dataTr" ortum-line=${order}>
 
                 <td name="span" style="text-align: center;">
                     <span class="ortum_grid_order">${order}</span>
