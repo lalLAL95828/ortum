@@ -16,7 +16,10 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             rows:3,//行数
             title:"",
             uuid: "",
-            attributesArr:[{"maxlength":200}],//属性数组
+            attributesArr:[{
+                "label":"maxlength",
+                "value":200,
+            }],//属性数组
 
             onBefore:"",//渲染之前的回调
             onAfter:"",//渲染之后的回调

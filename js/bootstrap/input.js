@@ -21,7 +21,12 @@ define(["require","assist","createDom","global","settings"],function(require,Ass
             onInput:"",
 
             uuid: "",
-            attributesArr:[],//属性数组
+            attributesArr:[
+                {
+                    "label":"autocomplete",
+                    "value":"off",
+                },
+            ],//属性数组
         },
         inputChange:["id","name","defaultVal","verification","placeholder","cssClass","labelName","labelCSS","title"],//input事件修改值
         clickChange:["authority","hideLabel","labelPosition"],

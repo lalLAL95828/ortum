@@ -5,7 +5,7 @@ define(["require","assist","createDom","global"],function(require,Assist,CreateD
             name:'',//name
             authority:"3",//权限
             cssClass:"",
-            title:"",
+            title:"名称",
             uuid: "",
             attributesArr:[],//属性数组
             customHtmlContent:`<div>自定义html内容</div>`,

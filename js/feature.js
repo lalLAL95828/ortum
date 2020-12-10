@@ -1063,6 +1063,9 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
                     }else if(item.childrenType==="choose"){
                         nameArr.push(item.name)
                         titleArr.push(item.title)
+                    }else if(item.componentKey && require("settings").menuListDataJSON[item.componentKey].sort === "super"){
+                        nameArr.push(item.name)
+                        titleArr.push(item.title)
                     };
                     if(item.children.length){
                         let backData = getTitleAndNameFun(item.children);
