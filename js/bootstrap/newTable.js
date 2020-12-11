@@ -174,7 +174,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
     let ortumNewTableDom_addLine = function(tableId=undefined,tableVal=null,setValueFun=null){
         let tableDom;
         let rendPowerArr=[];
-        tableId && (tableDom = $("table[name="+ tableId +"]"));
+        tableId && (tableDom = $("table[id="+ tableId +"]"));
         !tableId && (tableDom = $(this).parents("table").eq(0));
         if(!tableDom.length){
             console.error("缺少table信息");
@@ -929,11 +929,11 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             //新增行的函数
             //可以根据table的name属性新增；也可以根据this新增，this必须是tbody下的tr的子元素，
             scriptStr +=`
-                function ortumNewTableDom_addLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",tableVal=null,setValueFun=null){
-                    ${typeof ortum_component_properties.data.onAddlineBefore == 'function' ? '!'+ortum_component_properties.data.onAddlineBefore.toString()+'(tableName);' : ''}
+                function ortumNewTableDom_addLine_${ortum_component_properties.data.name}(tableId="${ortum_component_properties.data.id}",tableVal=null,setValueFun=null){
+                    ${typeof ortum_component_properties.data.onAddlineBefore == 'function' ? '!'+ortum_component_properties.data.onAddlineBefore.toString()+'(tableId);' : ''}
                     let ortumNewTableDom_addLine = ${ortumNewTableDom_addLine.toString()};
-                    let nextArrTr = ortumNewTableDom_addLine.call(this,tableName,tableVal,setValueFun);     
-                    ${typeof ortum_component_properties.data.onAddlineAfter == 'function' ? '!'+ortum_component_properties.data.onAddlineAfter.toString()+'(tableName,nextArrTr);' : ''}
+                    let nextArrTr = ortumNewTableDom_addLine.call(this,tableId,tableVal,setValueFun);     
+                    ${typeof ortum_component_properties.data.onAddlineAfter == 'function' ? '!'+ortum_component_properties.data.onAddlineAfter.toString()+'(tableId,nextArrTr);' : ''}
                     return false;
                 };
             `;
@@ -941,11 +941,11 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             //可以根据table的name属性删除；也可以根据this删除，this必须是tbody下的tr的子元素，
             //根据table的name属性删除，必须提供order，表示删除第几行,如果是删除一组为单位的行，提供一组的第一行行号
             scriptStr+=` 
-                function ortumNewTableDom_delLine_${ortum_component_properties.data.name}(tableName="${ortum_component_properties.data.name}",order=false,act=false){
-                    ${typeof ortum_component_properties.data.onDellineBefore == 'function' ? '!'+ortum_component_properties.data.onDellineBefore.toString()+'(tableName);' : ''}
+                function ortumNewTableDom_delLine_${ortum_component_properties.data.name}(tableId="${ortum_component_properties.data.id}",order=false,act=false){
+                    ${typeof ortum_component_properties.data.onDellineBefore == 'function' ? '!'+ortum_component_properties.data.onDellineBefore.toString()+'(tableId);' : ''}
                     let ortumNewTableDom_delLine = ${ortumNewTableDom_delLine.toString()};
-                    ortumNewTableDom_delLine.call(this,tableName,order,act);
-                    ${typeof ortum_component_properties.data.onDellineAfter == 'function' ? '!'+ortum_component_properties.data.onDellineAfter.toString()+'(tableName);' : ''}
+                    ortumNewTableDom_delLine.call(this,tableId,order,act);
+                    ${typeof ortum_component_properties.data.onDellineAfter == 'function' ? '!'+ortum_component_properties.data.onDellineAfter.toString()+'(tableId);' : ''}
                 };
             `;
             //点击和删除的按钮
@@ -1343,22 +1343,22 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
         if(evenProperties.data.onAddlineBefore){
             setStr += "\n//新增之前的回调\nonAddlineBefore:"+ evenProperties.data.onAddlineBefore.toString() + ",";
         }else{
-            setStr += "\n//新增之前的回调\nonAddlineBefore:function(tableName){},"
+            setStr += "\n//新增之前的回调\nonAddlineBefore:function(tableId){},"
         }
         if(evenProperties.data.onAddlineAfter){
             setStr += "\n//新增之后的回调\nonAddlineAfter:"+ evenProperties.data.onAddlineAfter.toString() + ",";
         }else{
-            setStr += "\n//新增之后的回调\nonAddlineAfter:function(tableName,trDom){},"
+            setStr += "\n//新增之后的回调\nonAddlineAfter:function(tableId,trDom){},"
         }
         if(evenProperties.data.onDellineBefore){
             setStr += "\n//删除之前的回调\nonDellineBefore:"+ evenProperties.data.onDellineBefore.toString() + ",";
         }else{
-            setStr += "\n//删除之前的回调\nonDellineBefore:function(tableName){},"
+            setStr += "\n//删除之前的回调\nonDellineBefore:function(tableId){},"
         }
         if(evenProperties.data.onDellineAfter){
             setStr += "\n//删除之后的回调\nonDellineAfter:"+ evenProperties.data.onDellineAfter.toString() + ",";
         }else{
-            setStr += "\n//删除之后的回调\nonDellineAfter:function(tableName){},"
+            setStr += "\n//删除之后的回调\nonDellineAfter:function(tableId){},"
         }
 
 

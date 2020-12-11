@@ -15,8 +15,13 @@
 .ortum_bootstrap_grid > .row > .ortum_boot_col_default:nth-child(2n) > .ortum_boot_col_waitInsert{
     background-color:#dddddd;
 }
-.ortum_boot_col_waitInsert{
+
+/*控制grid组件的提示样式*/
+.ortum_boot_col_default .ortum_boot_col_waitInsert:only-child{
     display:flex;
+}
+.ortum_boot_col_waitInsert{
+    display: none;
     justify-content: center;
     align-items: center;
     height:100%;
@@ -171,6 +176,27 @@ input::-webkit-calendar-picker-indicator{
     border:1px solid gray;
     position: relative;
     min-height: 16px;
+}
+.ortum_table_td_waitInsert{
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color:#c3bebe;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index:-1;
+}
+.ortum_bootstrap_td_waitInsert{
+    height: 30px;
+    position: relative;
+}
+.ortum_bootstrap_td_waitInsert .ortum_table_td_waitInsert:only-child{
+    display: flex;
 }
 
 

@@ -947,12 +947,12 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
         let dom = ajaxDom || $("#ortum_body");
         if(Array.isArray(props)){
             for(let propName of props){
-                $(dom).find("input,select,textarea").each(function(index,item){
+                $(dom).find("input,select,textarea,button,div[ortum-id=customHtml]").each(function(index,item){
                     let parentProp = $(item).parents(".ortum_item").eq(0).prop('ortum_component_properties');
-                    if($(item).prop(propName)){
+                    if($(item).attr(propName) && parentProp){
                         backArr.push({
                             id:propName+ "_"+$(item).prop(propName),
-                            text:$(item).prop(propName),
+                            text:$(item).attr(propName),
                             title: parentProp.data.title|| parentProp.data.labelName,
                             type:propName,
                         });
@@ -961,12 +961,12 @@ define(["settings","global",'createDom'],function(Settings,Global,CreateDom,){
             }
         }else{
             let propName = props.toString();
-            $(dom).find("input,select,textarea").each(function(index,item){
+            $(dom).find("input,select,textarea,button,div[ortum-id=customHtml]").each(function(index,item){
                 let parentProp = $(item).parents(".ortum_item").eq(0).prop('ortum_component_properties');
-                if($(item).prop(propName)){
+                if($(item).attr(propName) && parentProp){
                     backArr.push({
                         id:propName+ "_"+$(item).prop(propName),
-                        text:$(item).prop(propName),
+                        text:$(item).attr(propName),
                         title: parentProp.data.title|| parentProp.data.labelName,
                         type:propName,
                     })

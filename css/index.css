@@ -111,24 +111,6 @@
 #ortum_table_act .ortum_tableAct_icon:hover{
     cursor: pointer;
 }
-.ortum_table_td_waitInsert{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color:#c3bebe;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index:-1;
-}
-.ortum_bootstrap_td_waitInsert{
-    height: 30px;
-    position: relative;
-}
 
 
 /* 左侧组件 */
