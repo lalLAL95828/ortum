@@ -265,7 +265,6 @@ function(BootstrapGrid,BootstrapInput,BootstrapRangeInput,BootstrapRadio,Bootstr
         }
     }
 
-
     //设置对应Bootstrap框架 生成组件的函数是否开启
     createGridDom.ortum_Bootstrap = true;
     createInputDom.ortum_Bootstrap = true;
