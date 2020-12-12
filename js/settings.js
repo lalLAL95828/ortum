@@ -79,7 +79,7 @@ define(['assist'],function(Assist){
     },
     {
         key:"hDom",
-        name:"标题标签",
+        name:"标题",
         sort:"decorate",//修饰组件
         createFn:"createHDom",
         children:{

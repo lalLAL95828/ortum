@@ -951,7 +951,7 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
             //点击和删除的按钮
             scriptStr+=`
                 $("table[name=${ortum_component_properties.data.name}]").on("click.addline","td[ortum_td_type=act] .icon-jiahao",function(){
-                    ortumNewTableDom_addLine_${ortum_component_properties.data.name}();
+                    ortumNewTableDom_addLine_${ortum_component_properties.data.name}.call(this);
                 });
                 $("table[name=${ortum_component_properties.data.name}]").on("click.delete","td[ortum_td_type=act] .icon-shanchu",function(){
                     ortumNewTableDom_delLine_${ortum_component_properties.data.name}.call(this,false,false,true);
