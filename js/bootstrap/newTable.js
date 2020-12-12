@@ -457,7 +457,6 @@ define(["require","assist","createDom","global","settings",'BootstrapAsider'], f
 
         let bindDropEvent = true;//绑定拖拽事件
         let createJson = false;
-
         let prevGroupNum = 0;//上一组的组号(默认没有上一组)
         let maxRowspan = tbodyInfo.length;
         if(tbodyDom){
