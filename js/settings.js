@@ -178,7 +178,7 @@ define(['assist'],function(Assist){
     },
     {
         key:"newTableDom",
-        name:"新表格",
+        name:"表格",
         sort:"layout",
         createFn:"createNewTableDom",
         children:{
